@@ -100,8 +100,7 @@ class ElevenLabsTts {
     );
   }
 
-  ElevenLabsTts._({required AudioPlayer player, required this._loudness})
-    : _player = player;
+  ElevenLabsTts._({required this._player, required this._loudness});
 
   final AudioPlayer _player;
 
