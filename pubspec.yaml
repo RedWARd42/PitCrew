@@ -40,6 +40,8 @@ dependencies:
   # answers. Both use the platform's speech services on Android.
   speech_to_text: ^7.0.0
   flutter_tts: ^4.2.0
+  livekit_client: ^2.13.2
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:
