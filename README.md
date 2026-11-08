@@ -201,3 +201,20 @@ gray-on-black "elegance"), primary actions at least 56dp tall, drone
 targets 52–56dp, plain outcome-named buttons, and the fleet honors the
 system reduce-motion setting by landing instantly instead of flying.
 The native overlay panel over Google Messages uses the same scale.
+
+## Talk to a drone — voice conversations
+
+Tap any drone after a scan and choose **"Talk to … — ask by voice"**.
+Each drone holds a real conversation about the message it just checked:
+
+- **Dictation:** tap the microphone and ask out loud; your words are
+  transcribed into the question box live (platform speech recognizer).
+- **Spoken answers:** the drone replies in text and out loud
+  (text-to-speech), with a speaker toggle in the corner.
+- **Grounded, on-device answers:** replies are composed on the phone
+  from that drone's actual findings — its points, its evidence quotes,
+  the fleet's verdict and confidence — plus a small built-in base of
+  scam-safety knowledge for its specialty. It is not a cloud chatbot:
+  ask it something outside its scan and specialty and it says so and
+  points back to what it found. Typed questions work everywhere;
+  dictation needs a device speech recognizer and a microphone.

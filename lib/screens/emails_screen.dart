@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/demo_emails.dart';
 import '../models/email.dart';
 import '../models/message.dart';
+import 'drone_chat_screen.dart';
 import '../services/account_store.dart';
 import '../services/email_analyzer.dart';
 import '../services/stores.dart';
@@ -358,10 +359,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
                   const SizedBox(width: 6),
                   Text(
                     email.attachmentName!,
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 15,
-                    ),
+                    style: const TextStyle(color: Colors.white70, fontSize: 15),
                   ),
                 ],
               ),
@@ -549,6 +547,23 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
                 },
                 icon: const Icon(Icons.school_outlined),
                 label: const Text('Teach me — walk through it'),
+              ),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.of(sheetContext).pop();
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) =>
+                          DroneChatScreen(drone: drone, analysis: _analysis),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.mic),
+                label: Text('Talk to ${drone.label} — ask by voice'),
               ),
             ),
           ],

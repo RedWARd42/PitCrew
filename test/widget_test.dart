@@ -6,7 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:signal_swarm/data/demo_inbox.dart';
 import 'package:signal_swarm/main.dart';
+import 'package:signal_swarm/models/message.dart';
+import 'package:signal_swarm/screens/drone_chat_screen.dart';
+import 'package:signal_swarm/services/scam_analyzer.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -73,5 +77,33 @@ void main() {
       tester.getTopLeft(find.text('+1 214-555-0176')).dy,
       lessThan(tester.getTopLeft(find.text('Mom')).dy),
     );
+  });
+
+  testWidgets('Drone chat greets, then answers from the scan', (
+    WidgetTester tester,
+  ) async {
+    const analyzer = ScamAnalyzer();
+    final smish = analyzer.analyze(
+      demoInbox.firstWhere((m) => m.id == 'smish-tmobile'),
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        home: DroneChatScreen(drone: DroneId.link, analysis: smish),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+
+    // The drone introduces itself with the verdict up front, and offers
+    // tappable starter questions plus a dictation mic.
+    expect(find.textContaining("I'm Link"), findsOneWidget);
+    expect(find.text('Why did you flag this?'), findsOneWidget);
+    expect(find.byIcon(Icons.mic), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField), 'Why did you flag this?');
+    await tester.tap(find.byIcon(Icons.send));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    // The answer quotes the drone's actual evidence from the message.
+    expect(find.textContaining('t-mobile-verify-secure.com'), findsWidgets);
   });
 }

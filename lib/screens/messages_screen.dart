@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/message.dart';
+import 'drone_chat_screen.dart';
 import '../services/account_store.dart';
 import '../services/device_services.dart';
 import '../services/message_sorting.dart';
@@ -360,6 +361,23 @@ class _MessagesScreenState extends State<MessagesScreen> {
                 },
                 icon: const Icon(Icons.play_circle_outline),
                 label: const Text('Walk me through it'),
+              ),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.of(sheetContext).pop();
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) =>
+                          DroneChatScreen(drone: drone, analysis: analysis),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.mic),
+                label: Text('Talk to ${drone.label} — ask by voice'),
               ),
             ),
           ],
