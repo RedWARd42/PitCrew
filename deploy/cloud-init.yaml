@@ -9,6 +9,6 @@ package_update: true
 runcmd:
   - curl -fsSL https://get.docker.com | sh
   - systemctl enable --now docker
-  - git clone https://github.com/RedWARd42/Swat.git /opt/swat
+  - git clone -b mlh-tracks https://github.com/RedWARd42/Swat.git /opt/swat
   - cp /opt/swat/deploy/.env.example /opt/swat/deploy/.env
   - echo "Swat staged. Edit /opt/swat/deploy/.env, then docker compose up." > /opt/swat/SETUP.txt
