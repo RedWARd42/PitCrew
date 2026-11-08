@@ -1,6 +1,7 @@
 package com.example.signal_swarm
 
 import android.accessibilityservice.AccessibilityService
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.PixelFormat
 import android.os.Build
@@ -56,6 +57,25 @@ class OverlayHost(
         val e = FlutterEngine(svc.applicationContext)
         GeneratedPluginRegistrant.registerWith(e)
         engine = e
+        MethodChannel(e.dartExecutor.binaryMessenger, "swat/reports").setMethodCallHandler { call, result ->
+            if (call.method != "openReport") {
+                result.notImplemented()
+            } else {
+                val id = call.argument<String>("reportId")
+                if (id == null || !id.matches(Regex("[a-f0-9]{64}"))) {
+                    result.success(false)
+                } else {
+                    val opened = runCatching {
+                        svc.startActivity(Intent(svc, MainActivity::class.java).apply {
+                            putExtra("swat_report_id", id)
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                        })
+                        true
+                    }.getOrDefault(false)
+                    result.success(opened)
+                }
+            }
+        }
         installUrlLauncher(e)
         channel = MethodChannel(e.dartExecutor.binaryMessenger, "swarm/bridge").also { it.setMethodCallHandler(::onCall) }
         e.dartExecutor.executeDartEntrypoint(DartExecutor.DartEntrypoint(loader.findAppBundlePath(), "overlayMain"))

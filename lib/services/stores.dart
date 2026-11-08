@@ -13,7 +13,8 @@ import '../models/family_and_blocked.dart';
 import '../models/message.dart';
 import 'account_store.dart';
 import 'scam_analyzer.dart';
-import 'walkthrough.dart';
+import 'walkthrough.dart' hide ProtectionReport;
+import 'protection_reports.dart';
 
 class BlocklistStore {
   BlocklistStore._();
@@ -79,10 +80,7 @@ class BlocklistStore {
     for (final e in _entries) {
       if (e.id == analysis.message.id) return e;
     }
-    final report = buildReport(
-      analysis,
-      accountName: AccountStore.displayName,
-    );
+    final report = buildReport(analysis, accountName: AccountStore.displayName);
     final body = analysis.message.body;
     final entry = BlockedEntry(
       id: analysis.message.id,
@@ -200,10 +198,7 @@ class FamilyStore {
   /// "don't face it alone" move: the trusted contact sees exactly what
   /// the drones found, in the user's own thread with them.
   static void shareScan(MessageAnalysis analysis, String timeLabel) {
-    final report = buildReport(
-      analysis,
-      accountName: AccountStore.displayName,
-    );
+    final report = buildReport(analysis, accountName: AccountStore.displayName);
     _messages.add(
       FamilyChatMessage(
         fromMe: true,
@@ -214,6 +209,27 @@ class FamilyStore {
             '${report.incidentId} — ${analysis.verdict.label} '
             '(${analysis.riskScore}/100)',
         scanDetail: report.lines.skip(1).join('\n'),
+      ),
+    );
+    _changes.add(null);
+  }
+
+  /// Adds the saved redacted findings to Swat's local demo Family thread.
+  /// No message body or external SMS is sent by this action.
+  static void shareProtectionReport(ProtectionReport report) {
+    _messages.add(
+      FamilyChatMessage(
+        fromMe: true,
+        text: '',
+        timeLabel: 'Just now',
+        isScanCard: true,
+        scanTitle:
+            '${report.source} protection report · ${report.riskScore}/100',
+        scanDetail: [
+          report.summary,
+          for (final finding in report.findings)
+            '${finding.drone}: ${finding.title}',
+        ].join('\n'),
       ),
     );
     _changes.add(null);

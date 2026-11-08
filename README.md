@@ -134,6 +134,21 @@ In-app inbox/email scans and voice Q&A keep Swat's local analyzers. External-app
 scans use the Python backend; an unavailable backend is shown as a scan failure,
 never as an all-clear. Template explanations work with `LLM_DISABLED=1`.
 
+### Continue a report in Swat
+
+Tap **Open in Swat** at the top of the overlay report. Swat opens that exact
+report, with the selected drone expanded. The handoff works when the app is
+already running or starts fresh; if sign-in is needed, the report opens afterward.
+Back returns to the new **Reports** tab, where the latest 20 reports remain
+available offline. Saving is explicit: only reports opened this way enter history.
+
+History contains the redacted summary and drone findings, not the conversation,
+sender, draft, or full scan request. It lives in app-private storage. The trash
+button deletes a saved report. **Return to Google Messages/Gmail** reopens the
+source app without following a link from the suspicious message. **Add to Family
+chat** adds the report summary to Swat's existing local demo chat; it does not
+send an external message or claim that the contact received it.
+
 The protection settings screen reuses the Family contact for the guardian alert
 action, after explicit opt-in. An alert sends category/risk metadata only when the
 user chooses the alert action. It requires the optional Photon service.

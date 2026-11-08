@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_palette.dart';
 import '../services/stores.dart';
+import '../services/protection_reports.dart';
 import 'blocked_screen.dart';
 import 'emails_screen.dart';
 import 'family_screen.dart';
 import 'messages_screen.dart';
+import 'reports_screen.dart';
 
 /// App shell: three tabs, one protection loop.
 ///
@@ -25,6 +27,7 @@ class SwatShell extends StatefulWidget {
 class _SwatShellState extends State<SwatShell> {
   int _index = 0;
   StreamSubscription<void>? _sub;
+  bool _openingReport = false;
 
   @override
   void initState() {
@@ -32,11 +35,71 @@ class _SwatShellState extends State<SwatShell> {
     _sub = BlocklistStore.changes.listen((_) {
       if (mounted) setState(() {});
     });
+    ReportHandoff.pending.addListener(_openPendingReport);
+    unawaited(ReportHandoff.start());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _openPendingReport());
+  }
+
+  void _showFamily() {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    setState(() => _index = 3);
+  }
+
+  Future<void> _openPendingReport() async {
+    if (!mounted || _openingReport || ReportHandoff.pending.value == null) {
+      return;
+    }
+    _openingReport = true;
+    final id = ReportHandoff.pending.value!;
+    ReportHandoff.pending.value = null;
+    try {
+      final reports = await ProtectionReportStore.load();
+      if (!mounted) return;
+      setState(() => _index = 4);
+      Navigator.of(context).popUntil((route) => route.isFirst);
+      final matches = reports.where((report) => report.id == id);
+      if (matches.isNotEmpty) {
+        unawaited(
+          Navigator.of(context).push<void>(
+            MaterialPageRoute(
+              builder: (_) => ProtectionReportScreen(
+                report: matches.first,
+                onOpenFamily: _showFamily,
+              ),
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'This report is no longer saved. Your other reports are below.',
+            ),
+          ),
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Could not open the report. Please try the Reports tab.',
+            ),
+          ),
+        );
+      }
+    } finally {
+      _openingReport = false;
+      if (mounted && ReportHandoff.pending.value != null) {
+        unawaited(_openPendingReport());
+      }
+    }
   }
 
   @override
   void dispose() {
     _sub?.cancel();
+    ReportHandoff.pending.removeListener(_openPendingReport);
     super.dispose();
   }
 
@@ -50,6 +113,7 @@ class _SwatShellState extends State<SwatShell> {
           const EmailsScreen(),
           const BlockedScreen(),
           const FamilyScreen(),
+          ReportsScreen(onOpenFamily: _showFamily),
         ],
       ),
       bottomNavigationBar: NavigationBar(
@@ -80,6 +144,11 @@ class _SwatShellState extends State<SwatShell> {
             icon: Icon(Icons.family_restroom_outlined),
             selectedIcon: Icon(Icons.family_restroom),
             label: 'Family',
+          ),
+          const NavigationDestination(
+            icon: Icon(Icons.fact_check_outlined),
+            selectedIcon: Icon(Icons.fact_check),
+            label: 'Reports',
           ),
         ],
       ),

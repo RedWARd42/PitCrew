@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../contracts.dart' as c;
 import '../core/state_api.dart';
+import '../services/protection_reports.dart';
 import 'painters.dart';
 import 'palette.dart';
 
@@ -145,6 +146,11 @@ class SwarmPanel extends StatelessWidget {
                 ],
               ),
             ),
+            if (state.result != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
+                child: _OpenInSwat(state: state, tab: cur, pal: pal),
+              ),
             SizedBox(
               height: 48,
               child: SingleChildScrollView(
@@ -182,6 +188,91 @@ class SwarmPanel extends StatelessWidget {
     final f = findingsOf(state).firstWhere((f) => f.drone == id);
     return _FindingView(state: state, f: f, pal: pal);
   }
+}
+
+class _OpenInSwat extends StatefulWidget {
+  const _OpenInSwat({
+    required this.state,
+    required this.tab,
+    required this.pal,
+  });
+  final SwarmState state;
+  final String tab;
+  final Pal pal;
+  @override
+  State<_OpenInSwat> createState() => _OpenInSwatState();
+}
+
+class _OpenInSwatState extends State<_OpenInSwat> {
+  bool _opening = false;
+  String? _error;
+
+  Future<void> _open() async {
+    if (_opening) return;
+    final result = widget.state.result;
+    if (result == null) return;
+    setState(() {
+      _opening = true;
+      _error = null;
+    });
+    try {
+      final report = ProtectionReport.fromScan(
+        result,
+        widget.state.lastRequest,
+        focusDrone: droneStyles.containsKey(widget.tab) ? widget.tab : null,
+      );
+      final opened = await ReportHandoff.openInApp(report);
+      if (opened) {
+        widget.state.setPanelOpen(false);
+      } else if (mounted) {
+        setState(
+          () => _error =
+              'Report saved on this phone. Open Swat → Reports to find it.',
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(
+          () => _error = 'Could not save this report. Please try again.',
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _opening = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      FilledButton.icon(
+        onPressed: _opening ? null : _open,
+        style: FilledButton.styleFrom(
+          backgroundColor: const Color(0xFFE20074),
+          foregroundColor: Colors.white,
+          minimumSize: const Size.fromHeight(56),
+        ),
+        icon: _opening
+            ? const SizedBox.square(
+                dimension: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
+            : const Icon(Icons.open_in_new),
+        label: Text(
+          _opening ? 'Opening Swat…' : 'Open in Swat',
+          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+        ),
+      ),
+      if (_error != null)
+        Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: Text(_error!, style: ts(15, FontWeight.w500, widget.pal.text)),
+        ),
+    ],
+  );
 }
 
 class _TabChip extends StatelessWidget {

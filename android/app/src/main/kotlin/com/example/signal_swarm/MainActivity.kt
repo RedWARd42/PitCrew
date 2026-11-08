@@ -19,6 +19,8 @@ import java.util.Locale
 /// Swat's existing account, theme, inbox and communication channels, plus
 /// accessibility protection controls. Overlay rendering and scanning are Dart.
 class MainActivity : FlutterActivity() {
+    private var reportsChannel: MethodChannel? = null
+    private var pendingReportId: String? = null
 
     companion object {
         private const val SMS_CHANNEL = "swat/sms"
@@ -34,6 +36,31 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+
+        pendingReportId = intent.getStringExtra("swat_report_id")?.takeIf { it.matches(Regex("[a-f0-9]{64}")) }
+        reportsChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "swat/reports").also { channel ->
+            channel.setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "takePendingReport" -> {
+                        val id = pendingReportId
+                        pendingReportId = null
+                        intent.removeExtra("swat_report_id")
+                        result.success(id)
+                    }
+                    "openSource" -> {
+                        val pkg = when (call.argument<String>("channel")) {
+                            "sms" -> MESSAGES_PKG
+                            "email" -> GMAIL_PKG
+                            else -> null
+                        }
+                        val launch = pkg?.let { packageManager.getLaunchIntentForPackage(it) }
+                        val opened = launch != null && runCatching { startActivity(launch); true }.getOrDefault(false)
+                        result.success(opened)
+                    }
+                    else -> result.notImplemented()
+                }
+            }
+        }
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "swarm/native")
             .setMethodCallHandler { call, result ->
@@ -146,6 +173,13 @@ class MainActivity : FlutterActivity() {
                     else -> result.notImplemented()
                 }
             }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        pendingReportId = intent.getStringExtra("swat_report_id")?.takeIf { it.matches(Regex("[a-f0-9]{64}")) }
+        if (pendingReportId != null) reportsChannel?.invokeMethod("reportAvailable", null)
     }
 
     // ------------------------------------------------------------- SMS

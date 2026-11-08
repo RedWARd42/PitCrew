@@ -3,6 +3,8 @@ import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:signal_swarm/services/protection_reports.dart';
 import 'package:signal_swarm/contracts.dart' as c;
 import 'package:signal_swarm/overlay/fake_state.dart';
 import 'package:signal_swarm/overlay/fixtures.dart';
@@ -33,6 +35,59 @@ Future<void> run(WidgetTester t, int ms) async {
 final droneFinder = find.byWidgetPredicate((w) => w.key is ValueKey && (w.key as ValueKey).value.toString().startsWith('drone:'));
 
 void main() {
+  testWidgets('Open in Swat saves the selected report before handing off', (
+    t,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    final state = FakeSwarmState()
+      ..load('hero')
+      ..setPanelOpen(true);
+    var launched = false;
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(ReportHandoff.channel, (call) async {
+          final saved = (await ProtectionReportStore.load()).single;
+          expect(call.arguments, {'reportId': saved.id});
+          expect(saved.riskScore, state.result!.riskScore);
+          launched = true;
+          return true;
+        });
+    await t.pumpWidget(host(t, state));
+    await run(t, 400);
+    await t.tap(find.text('Open in Swat'));
+    await t.runAsync(() async {
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    });
+    await run(t, 400);
+    expect(launched, isTrue);
+    expect(state.panelOpen, isFalse);
+  });
+
+  testWidgets(
+    'unavailable launch keeps report open and explains saved fallback',
+    (t) async {
+      SharedPreferences.setMockInitialValues({});
+      final state = FakeSwarmState()
+        ..load('hero')
+        ..setPanelOpen(true);
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(ReportHandoff.channel, (_) async => false);
+      await t.pumpWidget(host(t, state));
+      await run(t, 400);
+      await t.tap(find.text('Open in Swat'));
+      await t.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+      });
+      await run(t, 400);
+      expect(state.panelOpen, isTrue);
+      expect(
+        find.textContaining('Report saved on this phone.'),
+        findsOneWidget,
+      );
+      expect(await ProtectionReportStore.load(), hasLength(1));
+    },
+  );
+
+
   test('embedded fixtures match contracts/fixtures', () {
     kFixtureFiles.forEach((k, f) {
       final disk = jsonDecode(File('contracts/fixtures/$f').readAsStringSync());
