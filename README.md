@@ -218,3 +218,16 @@ Each drone holds a real conversation about the message it just checked:
   ask it something outside its scan and specialty and it says so and
   points back to what it found. Typed questions work everywhere;
   dictation needs a device speech recognizer and a microphone.
+
+## Messages are organized like Messages
+
+The Messages tab opens on a **conversation list** — one row per contact
+(sender / phone number), with the latest message as a preview, a message
+count, and a risk pill showing that contact's most dangerous message.
+Tap a contact and you are in the **thread**: every message with that
+contact, where the fleet docks, flies, and scans exactly as before.
+
+The **Sort messages** bar orders the conversation list: Newest first,
+Oldest first, Highest risk first, or **By phone number** — numbers
+compared as numbers (short codes like 456 before full numbers), named
+contacts ("Mom") after the numbers.

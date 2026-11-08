@@ -12,6 +12,15 @@ import 'package:signal_swarm/models/message.dart';
 import 'package:signal_swarm/screens/drone_chat_screen.dart';
 import 'package:signal_swarm/services/scam_analyzer.dart';
 
+/// A phone-tall surface (1080x2400 at the emulator's density), so the
+/// whole conversation list is built — the default 800x600 test surface
+/// only fits about three rows.
+void usePhoneSurface(WidgetTester tester) {
+  tester.view.physicalSize = const Size(1080, 2400);
+  tester.view.devicePixelRatio = 2.625;
+  addTearDown(tester.view.reset);
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -33,25 +42,30 @@ void main() {
     );
   });
 
-  testWidgets('Messages screen loads with the drone bay', (
+  testWidgets('Messages opens on the conversation list', (
     WidgetTester tester,
   ) async {
+    usePhoneSurface(tester);
     await tester.pumpWidget(const SwatApp());
     await tester.pump(const Duration(milliseconds: 300));
     await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.text('Messages'), findsWidgets);
-    expect(find.text('Release the Fleet'), findsOneWidget);
     // Shell tabs for the blocked list and the trusted contact.
     expect(find.text('Blocked'), findsOneWidget);
     expect(find.text('Family'), findsOneWidget);
-    // The headline synthetic smishing scenario is in the demo inbox.
-    expect(find.textContaining('872-555-0147'), findsWidgets);
+    // One row per contact: the smish number, the real short code, Mom.
+    expect(find.text('+1 872-555-0147'), findsOneWidget);
+    expect(find.text('456'), findsOneWidget);
+    expect(find.text('Mom'), findsOneWidget);
+    // The fleet waits inside a thread — no Drone Bay on the list itself.
+    expect(find.text('Release the Fleet'), findsNothing);
   });
 
-  testWidgets('Messages can be re-sorted from the sort control', (
+  testWidgets('Conversations can be sorted by phone number', (
     WidgetTester tester,
   ) async {
+    usePhoneSurface(tester);
     await tester.pumpWidget(const SwatApp());
     await tester.pump(const Duration(milliseconds: 300));
     await tester.pump(const Duration(milliseconds: 300));
@@ -62,21 +76,54 @@ void main() {
     await tester.tap(find.widgetWithText(OutlinedButton, 'Newest first'));
     await tester.pump(const Duration(milliseconds: 300));
 
-    expect(find.text('Highest risk first'), findsOneWidget);
-    final oldestTile = find.ancestor(
-      of: find.text('Oldest first'),
+    expect(find.text('By phone number'), findsWidgets);
+    final phoneTile = find.ancestor(
+      of: find.text('By phone number').last,
       matching: find.byType(ListTile),
     );
-    tester.widget<ListTile>(oldestTile).onTap!();
+    tester.widget<ListTile>(phoneTile).onTap!();
     await tester.pump(const Duration(milliseconds: 300));
 
-    // The control now reflects the selected ordering, and the two oldest
-    // demo senders now lead the list in oldest-first order.
-    expect(find.widgetWithText(OutlinedButton, 'Oldest first'), findsOneWidget);
+    // Phone order: the 456 short code first, then full numbers in
+    // ascending order, and named contacts (Mom) after the numbers.
     expect(
-      tester.getTopLeft(find.text('+1 214-555-0176')).dy,
+      find.widgetWithText(OutlinedButton, 'By phone number'),
+      findsOneWidget,
+    );
+    expect(
+      tester.getTopLeft(find.text('456')).dy,
+      lessThan(tester.getTopLeft(find.text('+1 214-555-0176')).dy),
+    );
+    // Mom sorts last (named contacts after numbers) — scroll her row in
+    // and check she sits below the last number (the smish sender).
+    await tester.scrollUntilVisible(find.text('Mom'), 150);
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(
+      tester.getTopLeft(find.text('+1 872-555-0147')).dy,
       lessThan(tester.getTopLeft(find.text('Mom')).dy),
     );
+  });
+
+  testWidgets('Tapping a conversation opens its thread with the Drone Bay', (
+    WidgetTester tester,
+  ) async {
+    usePhoneSurface(tester);
+    await tester.pumpWidget(const SwatApp());
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final row = find.ancestor(
+      of: find.text('+1 872-555-0147'),
+      matching: find.byType(InkWell),
+    );
+    tester.widget<InkWell>(row).onTap!();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    // Inside the thread: back button, the fleet, and only this contact.
+    expect(find.byIcon(Icons.arrow_back), findsOneWidget);
+    expect(find.text('Release the Fleet'), findsOneWidget);
+    expect(find.textContaining('URGENT'), findsWidgets);
+    expect(find.text('Mom'), findsNothing);
   });
 
   testWidgets('Drone chat greets, then answers from the scan', (

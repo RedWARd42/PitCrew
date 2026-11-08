@@ -4,7 +4,7 @@ import '../models/message.dart';
 import 'drone_chat_screen.dart';
 import '../services/account_store.dart';
 import '../services/device_services.dart';
-import '../services/message_sorting.dart';
+import '../services/conversations.dart';
 import '../services/scam_analyzer.dart';
 import '../services/stores.dart';
 import '../services/walkthrough.dart';
@@ -56,6 +56,10 @@ class _MessagesScreenState extends State<MessagesScreen> {
   bool _loading = true;
   MessageSort _sort = MessageSort.newestFirst;
 
+  /// The conversation currently open (a sender), or null when the
+  /// contact list is showing — Google-Messages style navigation.
+  String? _openSender;
+
   String? _selectedId;
   FleetPhase _phase = FleetPhase.idle;
   int _revealedCount = 0;
@@ -86,6 +90,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
       _messages = messages;
       _fromRealStore = fromReal;
       _loading = false;
+      _openSender = null;
       _selectedId = messages.isNotEmpty ? messages.first.id : null;
       _phase = FleetPhase.idle;
     });
@@ -115,8 +120,40 @@ class _MessagesScreenState extends State<MessagesScreen> {
       .putIfAbsent(message.id, () => _analyzer.analyze(message))
       .riskScore;
 
-  List<ChatMessage> _visibleMessages() =>
-      sortChatMessages(_messages, _sort, riskScore: _riskFor);
+  List<Conversation> _sortedConversations() => sortConversations(
+    buildConversations(_messages),
+    _sort,
+    riskScore: _riskFor,
+  );
+
+  Conversation? _openConversation(List<Conversation> conversations) {
+    if (_openSender == null) return null;
+    for (final c in conversations) {
+      if (c.sender == _openSender) return c;
+    }
+    return null;
+  }
+
+  void _openThread(Conversation conversation) {
+    setState(() {
+      _openSender = conversation.sender;
+      _selectedId = conversation.latest.id;
+      _phase = FleetPhase.idle;
+      _revealedCount = 0;
+      _scanningIdx = -1;
+      _walkSteps = null;
+    });
+  }
+
+  void _closeThread() {
+    setState(() {
+      _openSender = null;
+      _phase = FleetPhase.idle;
+      _revealedCount = 0;
+      _scanningIdx = -1;
+      _walkSteps = null;
+    });
+  }
 
   void _showSortSheet() {
     showModalBottomSheet<void>(
@@ -190,7 +227,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
     MessageSort.newestFirst => Icons.schedule,
     MessageSort.oldestFirst => Icons.history,
     MessageSort.highestRiskFirst => Icons.warning_amber,
-    MessageSort.senderAZ => Icons.sort_by_alpha,
+    MessageSort.phoneNumber => Icons.phone,
   };
 
   Widget _buildSortBar() {
@@ -481,22 +518,35 @@ class _MessagesScreenState extends State<MessagesScreen> {
   @override
   Widget build(BuildContext context) {
     final analysis = _analysis;
-    final visibleMessages = _loading
-        ? const <ChatMessage>[]
-        : _visibleMessages();
+    final conversations = _loading
+        ? const <Conversation>[]
+        : _sortedConversations();
+    final openConv = _openConversation(conversations);
+    final inThread = openConv != null;
     return Scaffold(
       backgroundColor: kBackground,
       appBar: AppBar(
         backgroundColor: const Color(0xFF12121C),
+        leading: inThread
+            ? IconButton(
+                tooltip: 'Back to conversations',
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: _closeThread,
+              )
+            : null,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Messages',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              inThread ? openConv.sender : 'Messages',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis,
             ),
             Text(
-              'Protecting ${AccountStore.firstName}',
+              inThread
+                  ? '${openConv.count} message${openConv.count == 1 ? '' : 's'} '
+                        'with this contact'
+                  : 'Protecting ${AccountStore.firstName}',
               style: const TextStyle(fontSize: 13.5, color: kMagenta),
             ),
           ],
@@ -542,27 +592,173 @@ class _MessagesScreenState extends State<MessagesScreen> {
               style: const TextStyle(color: Colors.white54, fontSize: 14),
             ),
           ),
-          _buildSortBar(),
+          if (!inThread) _buildSortBar(),
           Expanded(
             child: _loading
                 ? const Center(child: CircularProgressIndicator())
+                : !inThread
+                ? _buildConversationList(conversations)
                 : LayoutBuilder(
                     builder: (context, constraints) => Stack(
                       key: _stackKey,
                       children: [
                         ListView.builder(
                           padding: const EdgeInsets.fromLTRB(12, 12, 96, 90),
-                          itemCount: visibleMessages.length,
+                          itemCount: openConv.messages.length,
                           itemBuilder: (context, i) =>
-                              _buildBubble(visibleMessages[i]),
+                              _buildBubble(openConv.messages[i]),
                         ),
                         ..._buildFlyingDrones(constraints, analysis),
                       ],
                     ),
                   ),
           ),
-          _buildBottomPanel(analysis),
+          if (inThread)
+            _buildBottomPanel(analysis)
+          else
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+              color: const Color(0xFF12121C),
+              child: const Text(
+                'Tap a conversation to open it — the fleet scans the '
+                'messages inside.',
+                style: TextStyle(color: Colors.white54, fontSize: 14.5),
+              ),
+            ),
         ],
+      ),
+    );
+  }
+
+  // ------------------------------------------------------- conversations
+  Widget _buildConversationList(List<Conversation> conversations) {
+    if (conversations.isEmpty) {
+      return const Center(
+        child: Text(
+          'No messages yet.',
+          style: TextStyle(color: Colors.white54, fontSize: 17),
+        ),
+      );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemCount: conversations.length,
+      itemBuilder: (context, i) => _buildConversationRow(conversations[i]),
+    );
+  }
+
+  Widget _buildConversationRow(Conversation conversation) {
+    final worst = conversation.messages
+        .map(_riskFor)
+        .fold<int>(0, (a, b) => a > b ? a : b);
+    final riskColor = worst >= 60
+        ? const Color(0xFFEF4444)
+        : const Color(0xFFF59E0B);
+    return InkWell(
+      onTap: () => _openThread(conversation),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CircleAvatar(
+              radius: 24,
+              backgroundColor: const Color(0xFF2A2A3A),
+              child: Text(
+                _avatarInitial(conversation.sender),
+                style: const TextStyle(color: Colors.white70, fontSize: 19),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          conversation.sender,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        conversation.latest.timeLabel,
+                        style: const TextStyle(
+                          color: Colors.white54,
+                          fontSize: 13.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    conversation.latest.body,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Colors.white54,
+                      fontSize: 15,
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            Column(
+              children: [
+                if (conversation.count > 1)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white10,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      '${conversation.count}',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                if (worst >= 30) ...[
+                  const SizedBox(height: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: riskColor.withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: riskColor),
+                    ),
+                    child: Text(
+                      'Risk $worst',
+                      style: TextStyle(
+                        color: riskColor,
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -621,12 +817,17 @@ class _MessagesScreenState extends State<MessagesScreen> {
                 children: [
                   Row(
                     children: [
-                      Text(
-                        m.sender,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15.5,
+                      // Expanded + ellipsis: a long sender can never push
+                      // the time (or QR marker) off the bubble's edge.
+                      Expanded(
+                        child: Text(
+                          m.sender,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15.5,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const SizedBox(width: 8),
