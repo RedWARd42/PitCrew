@@ -1,0 +1,1 @@
+{"dependencies":{"@solana/web3.js":"^1.95.0"},"description":"Anchor Swat's community blocklist fingerprints to Solana devnet via Memo transactions.","name":"swat-solana-anchor","private":true,"scripts":{"anchor":"node anchor.mjs","test":"node test/anchor.test.mjs"},"type":"module","version":"1.0.0"}
