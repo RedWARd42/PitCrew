@@ -6,13 +6,20 @@ import 'screens/login_screen.dart';
 import 'screens/swat_shell.dart';
 import 'services/account_store.dart';
 import 'services/theme_store.dart';
+import 'services/protection_reports.dart';
 import 'theme/app_palette.dart';
+import 'ui/overlay_host.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ThemeStore.load();
+  await ReportHandoff.start();
   runApp(const SwatApp());
 }
+
+/// Flutter surface hosted by Swat's Android accessibility service.
+@pragma('vm:entry-point')
+void overlayMain() => runApp(buildOverlayApp());
 
 /// Swat — a fleet of specialist drones that patrol your text messages.
 ///

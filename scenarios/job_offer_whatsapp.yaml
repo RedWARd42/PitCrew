@@ -1,0 +1,11 @@
+id: job_offer_whatsapp
+desc: ''
+sender: '2145550123'
+steps:
+- delay: 0
+  text: 'Hi, we reviewed your resume. Earn $300/day working from home, no experience needed. Message us on WhatsApp: wa.me/15555550199'
+expect:
+  verdict: scam
+  drones:
+  - angler
+  - pressure

@@ -1,0 +1,21 @@
+id: docusign_lure
+desc: DocuSign lure
+from_name: DocuSign via HR
+from_address: dse@docusgn-secure-sign.click
+reply_to: null
+to: you@example.com
+subject: 'Completed: Salary Revision 2026 - please review and sign'
+body: 'HR has sent you a document to review and sign.
+
+
+  [https://docusgn-secure-sign.click/s/91ab](https://docusgn-secure-sign.click/s/91ab)
+
+
+  Do not forward this email.'
+attachments: []
+expect:
+  verdict: scam
+  drones:
+  - angler
+  - link
+  - impersonator

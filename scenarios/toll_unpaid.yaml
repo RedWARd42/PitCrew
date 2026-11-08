@@ -1,0 +1,12 @@
+id: toll_unpaid
+desc: ''
+sender: '3475550133'
+steps:
+- delay: 0
+  text: 'E-ZPass: you have an unpaid toll balance of $12.40. Pay within 24h to avoid a $50 fee: ezpass-tollpay-help41.top/9c2'
+expect:
+  verdict: scam
+  drones:
+  - angler
+  - link
+  - pressure

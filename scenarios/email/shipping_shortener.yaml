@@ -1,0 +1,20 @@
+id: shipping_shortener
+desc: Shipping notice with shortener link
+from_name: UPS Delivery
+from_address: tracking@ups-parcel-notice.top
+reply_to: null
+to: you@example.com
+subject: Package on hold - address confirmation needed
+body: 'Your parcel could not be delivered. Confirm your address and pay a $1.99 redelivery
+  fee:
+
+
+  [https://bit.ly/3xK9fakeUPS](https://bit.ly/3xK9fakeUPS)'
+attachments: []
+expect:
+  verdict: scam
+  drones:
+  - angler
+  - link
+  - pressure
+  - impersonator

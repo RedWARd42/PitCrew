@@ -1,0 +1,249 @@
+[
+ {
+  "brand": "T-Mobile",
+  "aliases": [
+   "t-mobile",
+   "tmobile",
+   "t mobile",
+   "tmo",
+   "metro by t-mobile"
+  ],
+  "domains": [
+   "t-mobile.com",
+   "tmobile.com",
+   "t-mobile.net",
+   "metrobyt-mobile.com"
+  ],
+  "shortCodes": [
+   "611"
+  ],
+  "officialPhone": "611",
+  "officialUrl": "https://www.t-mobile.com",
+  "verified": true,
+  "sourceUrl": "https://www.t-mobile.com/support"
+ },
+ {
+  "brand": "USPS",
+  "aliases": [
+   "usps",
+   "postal service",
+   "us postal"
+  ],
+  "domains": [
+   "usps.com",
+   "usps.gov"
+  ],
+  "shortCodes": [],
+  "officialPhone": null,
+  "officialUrl": "https://www.usps.com",
+  "verified": false,
+  "sourceUrl": null
+ },
+ {
+  "brand": "UPS",
+  "aliases": [
+   "ups",
+   "united parcel"
+  ],
+  "domains": [
+   "ups.com"
+  ],
+  "shortCodes": [],
+  "officialPhone": null,
+  "officialUrl": "https://www.ups.com",
+  "verified": false,
+  "sourceUrl": null
+ },
+ {
+  "brand": "FedEx",
+  "aliases": [
+   "fedex",
+   "fed ex"
+  ],
+  "domains": [
+   "fedex.com"
+  ],
+  "shortCodes": [],
+  "officialPhone": null,
+  "officialUrl": "https://www.fedex.com",
+  "verified": false,
+  "sourceUrl": null
+ },
+ {
+  "brand": "Amazon",
+  "aliases": [
+   "amazon",
+   "amzn"
+  ],
+  "domains": [
+   "amazon.com",
+   "amazon.co.uk",
+   "amazon.ca",
+   "amzn.com",
+   "a.co"
+  ],
+  "shortCodes": [],
+  "officialPhone": null,
+  "officialUrl": "https://www.amazon.com",
+  "verified": false,
+  "sourceUrl": null
+ },
+ {
+  "brand": "Apple",
+  "aliases": [
+   "apple",
+   "icloud",
+   "apple id"
+  ],
+  "domains": [
+   "apple.com",
+   "icloud.com"
+  ],
+  "shortCodes": [],
+  "officialPhone": null,
+  "officialUrl": "https://www.apple.com",
+  "verified": false,
+  "sourceUrl": null
+ },
+ {
+  "brand": "Chase",
+  "aliases": [
+   "chase",
+   "jpmorgan"
+  ],
+  "domains": [
+   "chase.com",
+   "jpmorgan.com"
+  ],
+  "shortCodes": [],
+  "officialPhone": null,
+  "officialUrl": "https://www.chase.com",
+  "verified": false,
+  "sourceUrl": null
+ },
+ {
+  "brand": "Bank of America",
+  "aliases": [
+   "bank of america",
+   "bofa"
+  ],
+  "domains": [
+   "bankofamerica.com",
+   "bofa.com"
+  ],
+  "shortCodes": [],
+  "officialPhone": null,
+  "officialUrl": "https://www.bankofamerica.com",
+  "verified": false,
+  "sourceUrl": null
+ },
+ {
+  "brand": "Wells Fargo",
+  "aliases": [
+   "wells fargo",
+   "wellsfargo"
+  ],
+  "domains": [
+   "wellsfargo.com"
+  ],
+  "shortCodes": [],
+  "officialPhone": null,
+  "officialUrl": "https://www.wellsfargo.com",
+  "verified": false,
+  "sourceUrl": null
+ },
+ {
+  "brand": "PayPal",
+  "aliases": [
+   "paypal"
+  ],
+  "domains": [
+   "paypal.com",
+   "paypal.me"
+  ],
+  "shortCodes": [],
+  "officialPhone": null,
+  "officialUrl": "https://www.paypal.com",
+  "verified": false,
+  "sourceUrl": null
+ },
+ {
+  "brand": "Venmo",
+  "aliases": [
+   "venmo"
+  ],
+  "domains": [
+   "venmo.com"
+  ],
+  "shortCodes": [],
+  "officialPhone": null,
+  "officialUrl": "https://venmo.com",
+  "verified": false,
+  "sourceUrl": null
+ },
+ {
+  "brand": "Zelle",
+  "aliases": [
+   "zelle"
+  ],
+  "domains": [
+   "zellepay.com"
+  ],
+  "shortCodes": [],
+  "officialPhone": null,
+  "officialUrl": "https://www.zellepay.com",
+  "verified": false,
+  "sourceUrl": null
+ },
+ {
+  "brand": "IRS",
+  "aliases": [
+   "irs",
+   "internal revenue"
+  ],
+  "domains": [
+   "irs.gov"
+  ],
+  "shortCodes": [],
+  "officialPhone": null,
+  "officialUrl": "https://www.irs.gov",
+  "verified": false,
+  "sourceUrl": null
+ },
+ {
+  "brand": "E-ZPass",
+  "aliases": [
+   "e-zpass",
+   "ezpass",
+   "ez pass",
+   "sunpass",
+   "ntta",
+   "txtag"
+  ],
+  "domains": [
+   "ezpass.com",
+   "sunpass.com",
+   "ntta.org",
+   "txtag.org"
+  ],
+  "shortCodes": [],
+  "officialPhone": null,
+  "officialUrl": "https://www.ezpass.com",
+  "verified": false,
+  "sourceUrl": null
+ },
+ {
+  "brand": "Netflix",
+  "aliases": [
+   "netflix"
+  ],
+  "domains": [
+   "netflix.com"
+  ],
+  "shortCodes": [],
+  "officialPhone": null,
+  "officialUrl": "https://www.netflix.com",
+  "verified": false,
+  "sourceUrl": null
+ }
+]

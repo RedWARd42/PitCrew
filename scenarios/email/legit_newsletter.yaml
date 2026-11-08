@@ -1,0 +1,18 @@
+id: legit_newsletter
+desc: Newsletter via known ESP
+from_name: Morning Brew
+from_address: crew@morningbrew.com
+reply_to: null
+to: you@example.com
+subject: Your Monday briefing
+body: 'Markets open mixed. Read the full story:
+
+
+  [Read online](https://www.morningbrew.com/daily/stories/2026/11/08)
+
+
+  [Unsubscribe](https://www.morningbrew.com/unsubscribe)'
+attachments: []
+expect:
+  verdict: safe
+  drones: []

@@ -17,11 +17,11 @@
 
     <!-- Microphone permission for LiveKit calls -->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-
-    <!-- Internet access for LiveKit and the SWAT backend -->
+    <!-- INTERNET powers the LiveKit call agent backend. The scan
+         engine itself never leaves the device. -->
     <uses-permission android:name="android.permission.INTERNET"/>
-
     <application
+        android:networkSecurityConfig="@xml/network_security_config"
         android:label="Swat"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
@@ -74,6 +74,22 @@
             </intent-filter>
         </receiver>
 
+        <!-- Accessibility overlay (from the overlay-integration line):
+             reads visible Google Messages/Gmail screens so the fleet
+             can scan what the SMS store cannot show. Android owns the
+             service lifecycle; Flutter renders the fleet. -->
+        <service
+            android:name=".SwarmAccessibilityService"
+            android:exported="true"
+            android:label="Swat"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config"/>
+        </service>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
@@ -83,6 +99,8 @@
 
     <!-- Required by Flutter for processing shared text -->
     <queries>
+        <package android:name="com.google.android.apps.messaging"/>
+        <package android:name="com.google.android.gm"/>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>

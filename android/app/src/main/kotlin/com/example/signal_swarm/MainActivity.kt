@@ -1,10 +1,10 @@
 package com.example.signal_swarm
 
 import android.Manifest
+import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.provider.Settings
 import android.text.format.DateUtils
 import androidx.core.app.ActivityCompat
@@ -16,14 +16,11 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-/// Hosts the two platform channels the Dart side talks to:
-///
-///  * `swat/sms` — reads the real SMS inbox (content://sms/inbox) once the
-///    user grants READ_SMS. Returns an empty list when permission is
-///    missing; Dart then falls back to the synthetic demo inbox.
-///  * `swat/overlay` — controls the floating-drone overlay service that
-///    hovers over other apps, including the stock Messages app.
+/// Swat's existing account, theme, inbox and communication channels, plus
+/// accessibility protection controls. Overlay rendering and scanning are Dart.
 class MainActivity : FlutterActivity() {
+    private var reportsChannel: MethodChannel? = null
+    private var pendingReportId: String? = null
 
     companion object {
         private const val SMS_CHANNEL = "swat/sms"
@@ -39,6 +36,43 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+
+        pendingReportId = intent.getStringExtra("swat_report_id")?.takeIf { it.matches(Regex("[a-f0-9]{64}")) }
+        reportsChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "swat/reports").also { channel ->
+            channel.setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "takePendingReport" -> {
+                        val id = pendingReportId
+                        pendingReportId = null
+                        intent.removeExtra("swat_report_id")
+                        result.success(id)
+                    }
+                    "openSource" -> {
+                        val pkg = when (call.argument<String>("channel")) {
+                            "sms" -> MESSAGES_PKG
+                            "email" -> GMAIL_PKG
+                            else -> null
+                        }
+                        val launch = pkg?.let { packageManager.getLaunchIntentForPackage(it) }
+                        val opened = launch != null && runCatching { startActivity(launch); true }.getOrDefault(false)
+                        result.success(opened)
+                    }
+                    else -> result.notImplemented()
+                }
+            }
+        }
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "swarm/native")
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "openAccessibilitySettings" -> {
+                        openOverlaySettings()
+                        result.success(null)
+                    }
+                    "isAccessibilityEnabled" -> result.success(canDrawOverlays())
+                    else -> result.notImplemented()
+                }
+            }
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, SMS_CHANNEL)
             .setMethodCallHandler { call, result ->
@@ -119,20 +153,18 @@ class MainActivity : FlutterActivity() {
                     }
                     "startOverlay" -> result.success(startOverlay())
                     "stopOverlay" -> {
-                        stopService(Intent(this, OverlayService::class.java))
+                        SwarmAccessibilityService.instance?.disableSelf()
                         result.success(null)
                     }
                     // Senders blocked from the overlay panel, so the
                     // in-app Blocked tab can show them too.
                     "getNativeBlocks" -> result.success(SwatPrefs.readBlocks(this))
-                    // The overlay's incoming-text trigger needs RECEIVE_SMS
-                    // (and READ_SMS for badge-tap scans of the store).
+                    // Inbox permission is separate from Accessibility consent.
                     "requestSmsPermissions" -> {
                         ActivityCompat.requestPermissions(
                             this,
                             arrayOf(
                                 Manifest.permission.READ_SMS,
-                                Manifest.permission.RECEIVE_SMS,
                             ),
                             SMS_PERMISSION_REQUEST,
                         )
@@ -141,6 +173,13 @@ class MainActivity : FlutterActivity() {
                     else -> result.notImplemented()
                 }
             }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        pendingReportId = intent.getStringExtra("swat_report_id")?.takeIf { it.matches(Regex("[a-f0-9]{64}")) }
+        if (pendingReportId != null) reportsChannel?.invokeMethod("reportAvailable", null)
     }
 
     // ------------------------------------------------------------- SMS
@@ -208,24 +247,25 @@ class MainActivity : FlutterActivity() {
 
     // ------------------------------------------------------------- Overlay
 
-    private fun canDrawOverlays(): Boolean =
-        Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)
-
-    private fun openOverlaySettings() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val intent = Intent(
-                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                Uri.parse("package:$packageName"),
-            )
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
+    private fun canDrawOverlays(): Boolean {
+        val component = ComponentName(this, SwarmAccessibilityService::class.java)
+        val enabled = Settings.Secure.getString(
+            contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
+        ) ?: return false
+        return enabled.split(':').any {
+            ComponentName.unflattenFromString(it) == component
         }
     }
 
+    private fun openOverlaySettings() {
+        startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+    }
+
     private fun startOverlay(): Boolean {
-        if (!canDrawOverlays()) return false
-        val intent = Intent(this, OverlayService::class.java)
-        ContextCompat.startForegroundService(this, intent)
-        return true
+        if (!canDrawOverlays()) {
+            openOverlaySettings()
+            return false
+        }
+        return true // Android starts the accessibility service after explicit consent.
     }
 }

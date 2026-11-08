@@ -1,0 +1,9 @@
+id: legit_delivery_shortcode
+desc: ''
+sender: '26266'
+steps:
+- delay: 0
+  text: 'Amazon: Your package was delivered to your front door. Order #112-5550142.'
+expect:
+  verdict: safe
+  drones: []

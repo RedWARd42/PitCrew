@@ -1,5 +1,15 @@
 # Swat — Signal Swarm
 
+## Integrated Android app
+
+`overlay-integration` combines Swat's `main` and the Signal Swarm development
+history into **one Flutter app at the repository root**. Swat remains the app
+shell: accounts, theme toggle, conversation list, email, voice, Blocked and Family.
+The accessibility overlay uses Swat's quadcopter artwork, specialty colors and
+surface palette, with backend-backed evidence, on-device redaction and DraftGuard.
+The former standalone `app/` sources and tests have moved into `lib/`, `android/`
+and `test/`; run Flutter commands from this directory.
+
 A fleet of specialist drones that patrol your text messages. Built for the
 T-Mobile **Safe Signal** prompt at HackUTD 2026: protect customers from
 scams *before, during, and after* a threat — with the drone fleet as the
@@ -107,32 +117,43 @@ Demo note: replies in the Family thread are canned on-device responses
 that demonstrate the shape of the exchange; the share/scan/SOS mechanics
 are real app state.
 
-## Over the real Messages app (Android) — the primary surface
+## Over Google Messages and Gmail (Android)
 
-Swat's protection does not live inside Swat. Arm it once from the app bar
-and a native foreground service (`OverlayService.kt`) patrols **over other
-apps, including Google Messages**, using the system alert window:
+Tap the layers button in Swat's Messages app bar to open **Protection outside
+Swat**. Choose **Enable protection**, then enable **Swat** in Android Accessibility
+settings. This replaces the old foreground/system-alert-window overlay and SMS
+broadcast trigger; no second app or separate display-over-apps permission is needed.
 
-1. A text arrives → `SmsReceiver` catches the broadcast → the overlay's
-   **fleet scan panel opens right on top of Messages**: the message, all
-   six drones lighting up one by one with their points, each drone's
-   evidence highlighted in the text, then the verdict.
-2. **Block & Report works from the panel itself** — the sender lands in
-   the shared block list that Swat's Blocked tab reads.
-3. "Teach me" jumps into Swat for the step-by-step walkthrough; the
-   floating SWAT badge stays on patrol, and tapping it scans your latest
-   text on demand.
+Open a synthetic conversation in Google Messages or an email in Gmail. The native
+service parses only those visible screens and passes them to an in-process Flutter
+engine. Dart redacts names, card numbers and codes before `/v1/scan`, then anchors
+the fleet to the sender, suspicious words, links or attachments. Tap a drone for its
+findings and privacy receipt. DraftGuard checks outgoing drafts on-device.
 
-The overlay runs a Kotlin port of the same engine (`KotlinScamAnalyzer.kt`
-— same drones, same registry, same scoring; verified to match the Dart
-engine's scores on the demo corpus). The message under scan comes from the
-SMS broadcast / the device SMS store — the same store Messages reads.
+In-app inbox/email scans and voice Q&A keep Swat's local analyzers. External-app
+scans use the Python backend; an unavailable backend is shown as a scan failure,
+never as an all-clear. Template explanations work with `LLM_DISABLED=1`.
 
-Honest platform limits: an overlay can warn and act on its own surface,
-but no Android API lets a third-party app reach into Messages to block a
-tap or quarantine a text inside it — so Swat blocks at its own layer and
-says so. iOS offers no overlay and no SMS-store access at all, which is
-why this is an Android build (demoed on the emulator).
+### Continue a report in Swat
+
+Tap **Open in Swat** at the top of the overlay report. Swat opens that exact
+report, with the selected drone expanded. The handoff works when the app is
+already running or starts fresh; if sign-in is needed, the report opens afterward.
+Back returns to the new **Reports** tab, where the latest 20 reports remain
+available offline. Saving is explicit: only reports opened this way enter history.
+
+History contains the redacted summary and drone findings, not the conversation,
+sender, draft, or full scan request. It lives in app-private storage. The trash
+button deletes a saved report. **Return to Google Messages/Gmail** reopens the
+source app without following a link from the suspicious message. **Add to Family
+chat** adds the report summary to Swat's existing local demo chat; it does not
+send an external message or claim that the contact received it.
+
+The protection settings screen reuses the Family contact for the guardian alert
+action, after explicit opt-in. An alert sends category/risk metadata only when the
+user chooses the alert action. It requires the optional Photon service.
+Reporting opens the SMS composer for the user's final send; Android block/delete
+operations are not represented as completed unless Android actually performs them.
 
 ## Architecture
 
@@ -162,35 +183,52 @@ lib/
                                safe-word quick actions, call/SMS hand-offs
   widgets/drone_widget.dart    the drone itself (rotors, scan pulse, badges)
 android/.../MainActivity.kt    swat/sms + swat/overlay + swat/comms hosts
-android/.../OverlayService.kt  badge + fleet scan panel over other apps
-android/.../KotlinScamAnalyzer.kt  the detection engine, ported to Kotlin
-                               so the fleet runs inside the overlay
-android/.../SmsReceiver.kt     incoming-text trigger for the overlay scan
-android/.../SwatPrefs.kt       shared state: armed flag, last message,
-                               native block list
+android/.../SwarmAccessibilityService.kt  visible Messages/Gmail screens + intents
+android/.../OverlayHost.kt     transparent Flutter engine + native hit windows
+lib/core/                     redact, prefilter, backend scan, DraftGuard, bridge
+lib/overlay/                  anchored fleet, evidence panel and privacy receipt
+lib/ui/protected_screen.dart  Swat's accessibility and backend setup screen
+backend/                      FastAPI scan service + template explanations
+contracts/, intel/, data/     schemas, reputation and synthetic datasets
+android/.../SwatPrefs.kt       compatibility with earlier native block entries
 test/                          engine tests (SMS + email), store tests,
                                app-shell smoke test
 ```
 
 The engine is pure Dart with zero Flutter imports, so it is unit-tested
 without a device and runs identically on real and synthetic messages.
-Message content never leaves the phone.
+In-app analysis stays on the phone; external-app backend scans send only redacted text.
 
 ## Run it
 
-```bash
+```sh
+# Terminal 1, repository root.
+python -m pip install -r requirements.txt
+python -m uvicorn backend.app:app --port 8000
+
+# Terminal 2, Android emulator running.
 flutter pub get
-flutter test          # engine + smoke tests
+adb reverse tcp:8000 tcp:8000
 flutter run -d emulator-5554
 ```
 
-For the full demo: start the overlay from the app bar (grant "Display
-over other apps" plus the SMS permissions), open **Google Messages**, then
-in the emulator's Extended Controls → Phone, send an SMS to the emulated
-device from `+1 872-555-0147` with the smishing text. The fleet scan panel
-opens **over Messages itself** — drones, highlights, verdict, Block &
-Report — without ever entering Swat. Back in Swat, the same text is in
-the inbox view and the overlay block shows in the Blocked tab.
+Enable Swat in Android Accessibility settings from the app's layers button. For a
+development emulator, `bash scripts/enable_service.sh` performs the same setup.
+Use synthetic fixtures only; `python scripts/inject.py tmobile_account_lock`
+injects the demo SMS. Open its conversation in Google Messages to see the drones.
+The backend defaults to `http://127.0.0.1:8000`, `X-Swarm-Key: dev-key` and
+`LLM_DISABLED=1`. Change the URL/key under **Scan connection** if needed.
+The Android cleartext policy allows loopback only; remote backends require HTTPS.
+
+```sh
+flutter test
+flutter analyze
+python -m pytest -q contracts backend intel eval/tests
+cd photon && bun install && bun test
+```
+
+The two evaluation checks named `*_do_not_resolve` depend on live DNS and can be
+excluded for an offline run with `-k 'not do_not_resolve'`.
 
 ## Accessibility — senior-first by design
 
@@ -200,7 +238,7 @@ meaningful below 13.5sp, secondary text kept at white70 (no
 gray-on-black "elegance"), primary actions at least 56dp tall, drone
 targets 52–56dp, plain outcome-named buttons, and the fleet honors the
 system reduce-motion setting by landing instantly instead of flying.
-The native overlay panel over Google Messages uses the same scale.
+The Flutter overlay uses 48dp drone hit targets and supports reduced motion.
 
 ## Talk to a drone — voice conversations
 

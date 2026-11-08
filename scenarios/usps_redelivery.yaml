@@ -1,0 +1,12 @@
+id: usps_redelivery
+desc: ''
+sender: '6465550177'
+steps:
+- delay: 0
+  text: 'USPS: your package could not be delivered, address incomplete. Reschedule: usps-redeliver-track27.xyz/b71'
+expect:
+  verdict: scam
+  drones:
+  - angler
+  - link
+  - impersonator

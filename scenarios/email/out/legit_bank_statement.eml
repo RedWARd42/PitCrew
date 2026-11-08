@@ -1,0 +1,25 @@
+From: Chase <no-reply@alerts.chase.com>
+To: you@example.com
+Subject: Your statement is ready
+Date: Sun, 08 Nov 2026 05:50:41 -0600
+Message-ID: <179413864110.44492.7754599559888959992@swarm-test.invalid>
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="===============4615968536504314655=="
+
+--===============4615968536504314655==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+Your October statement is available. Sign in at chase.com to view it. We neve=
+r ask for your password by email.
+
+--===============4615968536504314655==
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+<html><body><p>Your October statement is available. Sign in at chase.com to v=
+iew it. We never ask for your password by email.</p></body></html>
+
+--===============4615968536504314655==--

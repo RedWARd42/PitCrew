@@ -1,0 +1,19 @@
+id: otp_harvest
+desc: Legit short-code OTP, then scammer long code asks for it
+sender: '4695550911'
+steps:
+- delay: 0
+  sender: '22000'
+  text: Your T-Mobile verification code is 482913. Do not share this code with anyone.
+- delay: 4
+  text: Hi, it's T-Mobile support, we just texted you a code, reply with it to confirm your identity.
+- delay: 0
+  user_reply: '482913'
+  note: 'Presenter: type the 6-digit code into the reply box; Warden should dive onto compose.'
+expect:
+  verdict: scam
+  drones:
+  - angler
+  - pressure
+  - impersonator
+  - warden

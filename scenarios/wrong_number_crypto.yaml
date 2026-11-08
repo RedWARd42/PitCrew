@@ -1,0 +1,22 @@
+id: wrong_number_crypto
+desc: Slow-burn, 6 steps 5s apart
+sender: '3055550166'
+steps:
+- delay: 0
+  text: Hi, is this Linda? We met at the conference last week.
+- delay: 5
+  text: Oh sorry, wrong number! But you sound lovely. I'm Marcus.
+- delay: 5
+  text: I just moved here for work. What do you do for fun?
+- delay: 5
+  text: I'm into investing. My uncle taught me crypto, it changed my life.
+- delay: 5
+  text: His trading app made me $4,200 this week. Want me to show you? Add me on WhatsApp.
+- delay: 5
+  text: Just deposit $250 at coinvault-trade-pro88.cc/x1 and withdraw profit tomorrow, guaranteed.
+expect:
+  verdict: scam
+  drones:
+  - drift
+  - angler
+  - pressure

@@ -1,0 +1,82 @@
+{
+ "n": 100,
+ "accuracy": 1.0,
+ "overall": {
+  "precision": 1.0,
+  "recall": 1.0,
+  "f1": 1.0
+ },
+ "legit_false_positive_rate": 0.0,
+ "ece": 0.083,
+ "reliability": [
+  [
+   0.025277777777777777,
+   0.0,
+   36
+  ],
+  [
+   0.12,
+   0.0,
+   4
+  ],
+  [
+   0.6366666666666667,
+   1.0,
+   6
+  ],
+  [
+   0.75,
+   1.0,
+   4
+  ],
+  [
+   0.8535714285714286,
+   1.0,
+   14
+  ],
+  [
+   0.9527777777777777,
+   1.0,
+   36
+  ]
+ ],
+ "per_category": {
+  "legit": {
+   "false_positive_rate": 0.0,
+   "n": 40
+  },
+  "phish": {
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0,
+   "n": 60
+  }
+ },
+ "worst_errors": [],
+ "drone_hit_rate": {
+  "angler": {
+   "hit": 43,
+   "n": 60,
+   "rate": 0.717
+  },
+  "impersonator": {
+   "hit": 32,
+   "n": 60,
+   "rate": 0.533
+  },
+  "link": {
+   "hit": 60,
+   "n": 60,
+   "rate": 1.0
+  },
+  "pressure": {
+   "hit": 32,
+   "n": 32,
+   "rate": 1.0
+  }
+ },
+ "latency_ms": {
+  "p50": 17.4,
+  "p95": 36.8
+ }
+}

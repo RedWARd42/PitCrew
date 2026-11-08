@@ -1,0 +1,12 @@
+id: apple_id_locked
+desc: ''
+sender: '2125550199'
+steps:
+- delay: 0
+  text: 'Apple: your Apple ID has been locked for security reasons. Unlock now: appleid-verify-secure52.top/k9'
+expect:
+  verdict: scam
+  drones:
+  - angler
+  - link
+  - impersonator

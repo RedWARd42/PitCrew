@@ -1,0 +1,6 @@
+# Classifier notes
+- `data/tmobile/` is **absent**, so there is no T-Mobile baseline classifier. `backend/classifier.py` trains the fallback: word+char TF-IDF -> LogisticRegression (multiclass: 8 scam categories + `legit`). Results carry `category.source = "fallback"`; `/v1/healthz` reports `classifier:"fallback"`.
+- `predict(text) -> {category_id, label, prob}`, `prob = 1 - P(legit)`. To plug in a T-Mobile model, implement the same `predict` and change `SOURCE`.
+- Training data: `backend/bootstrap_data.py` (template-generated, synthetic, seeded). `data/synthetic/` did not exist when this was built; swap `bootstrap_data.generate()` for its split files when a format is agreed (not done).
+- Ensemble (`engine.py`): features = classifier prob (out-of-fold) + sender/link/pressure/impersonator/drift scores + multi-message flag -> LogisticRegression -> `CalibratedClassifierCV` (sigmoid for n<=1000, isotonic above). Probability is clipped to [0.02, 0.98]. Wrong-number crypto threads are trained at a 70% scam base rate so they land in "suspicious" (about 0.67).
+- Models persist to `backend/models/*.joblib`, trained on first start (about 8s) if missing. Delete them to retrain. Metrics on the synthetic corpus are optimistic (templated text); do not quote them as real-world accuracy.

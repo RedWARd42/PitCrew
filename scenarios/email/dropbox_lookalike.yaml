@@ -1,0 +1,21 @@
+id: dropbox_lookalike
+desc: Dropbox share lookalike
+from_name: Dropbox
+from_address: share@dropb0x-share.co
+reply_to: null
+to: you@example.com
+subject: Maria shared Q3 Payroll.pdf with you
+body: 'Maria Lopez shared a file with you.
+
+
+  [https://dropb0x-share.co/s/8Qa](https://dropb0x-share.co/s/8Qa)
+
+
+  Sign in with your work email to view.'
+attachments: []
+expect:
+  verdict: scam
+  drones:
+  - angler
+  - link
+  - impersonator

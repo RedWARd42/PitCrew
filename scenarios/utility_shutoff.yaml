@@ -1,0 +1,12 @@
+id: utility_shutoff
+desc: ''
+sender: '7135550166'
+steps:
+- delay: 0
+  text: 'Final notice: your electric service will be disconnected today unless you pay $184.20. Pay now: powerco-pay-acct30.xyz/z4'
+expect:
+  verdict: scam
+  drones:
+  - angler
+  - link
+  - pressure

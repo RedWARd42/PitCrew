@@ -1,0 +1,9 @@
+id: legit_bank_alert
+desc: Short code, no link
+sender: '62884'
+steps:
+- delay: 0
+  text: 'Chase: a $42.18 purchase was made on your card ending 4821. Not you? Call the number on the back of your card.'
+expect:
+  verdict: safe
+  drones: []

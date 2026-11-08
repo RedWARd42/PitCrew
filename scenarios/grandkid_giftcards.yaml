@@ -1,0 +1,11 @@
+id: grandkid_giftcards
+desc: ''
+sender: '9725550144'
+steps:
+- delay: 0
+  text: Grandma it's me, I'm in trouble and need help. Please don't tell mom. Can you buy Apple gift cards and send me the codes?
+expect:
+  verdict: scam
+  drones:
+  - angler
+  - pressure

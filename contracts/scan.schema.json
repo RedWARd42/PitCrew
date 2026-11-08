@@ -1,0 +1,646 @@
+{
+ "ScanRequest": {
+  "$defs": {
+   "EmailAttachment": {
+    "properties": {
+     "name": {
+      "title": "Name",
+      "type": "string"
+     }
+    },
+    "required": [
+     "name"
+    ],
+    "title": "EmailAttachment",
+    "type": "object"
+   },
+   "EmailInfo": {
+    "description": "Present when channel == \"email\". Body goes in messages[0].text (redacted on device).",
+    "properties": {
+     "subject": {
+      "title": "Subject",
+      "type": "string"
+     },
+     "fromName": {
+      "title": "Fromname",
+      "type": "string"
+     },
+     "fromAddress": {
+      "title": "Fromaddress",
+      "type": "string"
+     },
+     "replyTo": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Replyto"
+     },
+     "links": {
+      "default": [],
+      "items": {
+       "$ref": "#/$defs/EmailLink"
+      },
+      "title": "Links",
+      "type": "array"
+     },
+     "attachments": {
+      "default": [],
+      "items": {
+       "$ref": "#/$defs/EmailAttachment"
+      },
+      "title": "Attachments",
+      "type": "array"
+     }
+    },
+    "required": [
+     "subject",
+     "fromName",
+     "fromAddress"
+    ],
+    "title": "EmailInfo",
+    "type": "object"
+   },
+   "EmailLink": {
+    "properties": {
+     "text": {
+      "title": "Text",
+      "type": "string"
+     },
+     "href": {
+      "title": "Href",
+      "type": "string"
+     }
+    },
+    "required": [
+     "text",
+     "href"
+    ],
+    "title": "EmailLink",
+    "type": "object"
+   },
+   "MessageIn": {
+    "properties": {
+     "id": {
+      "title": "Id",
+      "type": "string"
+     },
+     "direction": {
+      "enum": [
+       "in",
+       "out"
+      ],
+      "title": "Direction",
+      "type": "string"
+     },
+     "text": {
+      "title": "Text",
+      "type": "string"
+     },
+     "ts": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Ts"
+     },
+     "hasAttachment": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Hasattachment"
+     }
+    },
+    "required": [
+     "id",
+     "direction",
+     "text"
+    ],
+    "title": "MessageIn",
+    "type": "object"
+   },
+   "Redaction": {
+    "properties": {
+     "type": {
+      "title": "Type",
+      "type": "string"
+     },
+     "count": {
+      "title": "Count",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "type",
+     "count"
+    ],
+    "title": "Redaction",
+    "type": "object"
+   },
+   "Sender": {
+    "properties": {
+     "raw": {
+      "title": "Raw",
+      "type": "string"
+     },
+     "kind": {
+      "enum": [
+       "long_code",
+       "short_code",
+       "toll_free",
+       "email",
+       "alphanumeric",
+       "unknown"
+      ],
+      "title": "Kind",
+      "type": "string"
+     },
+     "e164": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "E164"
+     },
+     "isContact": {
+      "default": false,
+      "title": "Iscontact",
+      "type": "boolean"
+     }
+    },
+    "required": [
+     "raw",
+     "kind"
+    ],
+    "title": "Sender",
+    "type": "object"
+   }
+  },
+  "properties": {
+   "channel": {
+    "default": "sms",
+    "enum": [
+     "sms",
+     "email"
+    ],
+    "title": "Channel",
+    "type": "string"
+   },
+   "email": {
+    "anyOf": [
+     {
+      "$ref": "#/$defs/EmailInfo"
+     },
+     {
+      "type": "null"
+     }
+    ],
+    "default": null
+   },
+   "requestId": {
+    "title": "Requestid",
+    "type": "string"
+   },
+   "client": {
+    "enum": [
+     "android",
+     "photon",
+     "web"
+    ],
+    "title": "Client",
+    "type": "string"
+   },
+   "mode": {
+    "enum": [
+     "incoming",
+     "outgoing_draft"
+    ],
+    "title": "Mode",
+    "type": "string"
+   },
+   "sender": {
+    "$ref": "#/$defs/Sender"
+   },
+   "messages": {
+    "items": {
+     "$ref": "#/$defs/MessageIn"
+    },
+    "maxItems": 20,
+    "title": "Messages",
+    "type": "array"
+   },
+   "targetMessageId": {
+    "title": "Targetmessageid",
+    "type": "string"
+   },
+   "locale": {
+    "default": "en-US",
+    "title": "Locale",
+    "type": "string"
+   },
+   "redactions": {
+    "default": [],
+    "items": {
+     "$ref": "#/$defs/Redaction"
+    },
+    "title": "Redactions",
+    "type": "array"
+   }
+  },
+  "required": [
+   "requestId",
+   "client",
+   "mode",
+   "sender",
+   "messages",
+   "targetMessageId"
+  ],
+  "title": "ScanRequest",
+  "type": "object"
+ },
+ "ScanResult": {
+  "$defs": {
+   "Action": {
+    "properties": {
+     "id": {
+      "enum": [
+       "report_7726",
+       "call_official",
+       "alert_guardian",
+       "block_sender",
+       "delete",
+       "mark_safe",
+       "dont_send",
+       "send_anyway"
+      ],
+      "title": "Id",
+      "type": "string"
+     },
+     "label": {
+      "title": "Label",
+      "type": "string"
+     },
+     "payload": {
+      "anyOf": [
+       {
+        "additionalProperties": {
+         "type": "string"
+        },
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Payload"
+     },
+     "primary": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Primary"
+     }
+    },
+    "required": [
+     "id",
+     "label"
+    ],
+    "title": "Action",
+    "type": "object"
+   },
+   "Anchor": {
+    "properties": {
+     "messageId": {
+      "title": "Messageid",
+      "type": "string"
+     },
+     "field": {
+      "enum": [
+       "sender",
+       "body",
+       "link",
+       "compose"
+      ],
+      "title": "Field",
+      "type": "string"
+     },
+     "span": {
+      "anyOf": [
+       {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+         {
+          "type": "integer"
+         },
+         {
+          "type": "integer"
+         }
+        ],
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Span"
+     }
+    },
+    "required": [
+     "messageId",
+     "field"
+    ],
+    "title": "Anchor",
+    "type": "object"
+   },
+   "Category": {
+    "properties": {
+     "id": {
+      "title": "Id",
+      "type": "string"
+     },
+     "label": {
+      "title": "Label",
+      "type": "string"
+     },
+     "source": {
+      "enum": [
+       "tmobile_taxonomy",
+       "fallback"
+      ],
+      "title": "Source",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "label",
+     "source"
+    ],
+    "title": "Category",
+    "type": "object"
+   },
+   "Evidence": {
+    "properties": {
+     "kind": {
+      "title": "Kind",
+      "type": "string"
+     },
+     "value": {
+      "title": "Value",
+      "type": "string"
+     },
+     "source": {
+      "enum": [
+       "heuristic",
+       "classifier",
+       "reputation",
+       "intel",
+       "llm"
+      ],
+      "title": "Source",
+      "type": "string"
+     }
+    },
+    "required": [
+     "kind",
+     "value",
+     "source"
+    ],
+    "title": "Evidence",
+    "type": "object"
+   },
+   "Finding": {
+    "properties": {
+     "drone": {
+      "enum": [
+       "angler",
+       "link",
+       "pressure",
+       "impersonator",
+       "warden",
+       "drift",
+       "carrier",
+       "scanner"
+      ],
+      "title": "Drone",
+      "type": "string"
+     },
+     "severity": {
+      "enum": [
+       "info",
+       "low",
+       "medium",
+       "high"
+      ],
+      "title": "Severity",
+      "type": "string"
+     },
+     "confidence": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Confidence",
+      "type": "number"
+     },
+     "title": {
+      "maxLength": 60,
+      "title": "Title",
+      "type": "string"
+     },
+     "explanation": {
+      "maxLength": 280,
+      "title": "Explanation",
+      "type": "string"
+     },
+     "evidence": {
+      "default": [],
+      "items": {
+       "$ref": "#/$defs/Evidence"
+      },
+      "title": "Evidence",
+      "type": "array"
+     },
+     "anchor": {
+      "$ref": "#/$defs/Anchor"
+     },
+     "whatWouldChangeMyMind": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Whatwouldchangemymind"
+     }
+    },
+    "required": [
+     "drone",
+     "severity",
+     "confidence",
+     "title",
+     "explanation",
+     "anchor"
+    ],
+    "title": "Finding",
+    "type": "object"
+   },
+   "Privacy": {
+    "properties": {
+     "fieldsReceived": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Fieldsreceived",
+      "type": "array"
+     },
+     "retained": {
+      "const": false,
+      "default": false,
+      "title": "Retained",
+      "type": "boolean"
+     },
+     "llmUsed": {
+      "title": "Llmused",
+      "type": "boolean"
+     }
+    },
+    "required": [
+     "fieldsReceived",
+     "llmUsed"
+    ],
+    "title": "Privacy",
+    "type": "object"
+   }
+  },
+  "properties": {
+   "requestId": {
+    "title": "Requestid",
+    "type": "string"
+   },
+   "verdict": {
+    "enum": [
+     "scam",
+     "suspicious",
+     "unsure",
+     "safe"
+    ],
+    "title": "Verdict",
+    "type": "string"
+   },
+   "riskScore": {
+    "maximum": 100,
+    "minimum": 0,
+    "title": "Riskscore",
+    "type": "integer"
+   },
+   "confidence": {
+    "maximum": 1,
+    "minimum": 0,
+    "title": "Confidence",
+    "type": "number"
+   },
+   "category": {
+    "anyOf": [
+     {
+      "$ref": "#/$defs/Category"
+     },
+     {
+      "type": "null"
+     }
+    ],
+    "default": null
+   },
+   "summary": {
+    "title": "Summary",
+    "type": "string"
+   },
+   "findings": {
+    "items": {
+     "$ref": "#/$defs/Finding"
+    },
+    "maxItems": 8,
+    "title": "Findings",
+    "type": "array"
+   },
+   "actions": {
+    "default": [],
+    "items": {
+     "$ref": "#/$defs/Action"
+    },
+    "title": "Actions",
+    "type": "array"
+   },
+   "riskSeries": {
+    "anyOf": [
+     {
+      "items": {
+       "type": "number"
+      },
+      "type": "array"
+     },
+     {
+      "type": "null"
+     }
+    ],
+    "default": null,
+    "title": "Riskseries"
+   },
+   "privacy": {
+    "$ref": "#/$defs/Privacy"
+   },
+   "latencyMs": {
+    "title": "Latencyms",
+    "type": "integer"
+   },
+   "modelVersion": {
+    "title": "Modelversion",
+    "type": "string"
+   }
+  },
+  "required": [
+   "requestId",
+   "verdict",
+   "riskScore",
+   "confidence",
+   "summary",
+   "findings",
+   "privacy",
+   "latencyMs",
+   "modelVersion"
+  ],
+  "title": "ScanResult",
+  "type": "object"
+ }
+}

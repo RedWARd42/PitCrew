@@ -1,3 +1,13 @@
+.env
+node_modules/
+__pycache__/
+*.joblib
+build/
+.dart_tool/
+data/tmobile/
+.pytest_cache/
+# Obsolete standalone app build cache after migration to Swat's root app.
+/app/
 # Miscellaneous
 *.class
 *.log

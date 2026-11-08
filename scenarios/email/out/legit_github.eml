@@ -1,0 +1,29 @@
+From: GitHub <notifications@github.com>
+To: you@example.com
+Subject: [acme/api] Pull request #412: Fix retry backoff (merged)
+Date: Sun, 08 Nov 2026 05:50:41 -0600
+Message-ID: <179413864111.44492.1472016114244163636@swarm-test.invalid>
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="===============1148264168993620458=="
+
+--===============1148264168993620458==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+@sam-dev merged #412 into main.
+
+View pull request
+
+You are receiving this because you were mentioned.
+
+--===============1148264168993620458==
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+<html><body><p>@sam-dev merged #412 into main.</p><p><a href=3D"https://githu=
+b.com/acme/api/pull/412">View pull request</a></p><p>You are receiving this b=
+ecause you were mentioned.</p></body></html>
+
+--===============1148264168993620458==--

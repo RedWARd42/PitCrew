@@ -1,0 +1,26 @@
+{
+ "romance_overseas": {
+  "turns": 2,
+  "risk_series": [
+   6,
+   6
+  ],
+  "detection_turn": null,
+  "expected": "scam",
+  "ok": false
+ },
+ "wrong_number_crypto": {
+  "turns": 6,
+  "risk_series": [
+   6,
+   6,
+   6,
+   6,
+   6,
+   6
+  ],
+  "detection_turn": null,
+  "expected": "scam",
+  "ok": false
+ }
+}

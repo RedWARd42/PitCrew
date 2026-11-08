@@ -12,6 +12,7 @@ import '../services/scam_analyzer.dart';
 import '../services/stores.dart';
 import '../services/walkthrough.dart';
 import '../widgets/drone_widget.dart';
+import '../ui/protected_screen.dart';
 
 const Color kMagenta = Color(0xFFE20074);
 
@@ -81,6 +82,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
   void initState() {
     super.initState();
     _loadInbox();
+    OverlayService.canDrawOverlays().then((enabled) {
+      if (mounted) setState(() => _overlayOn = enabled);
+    });
   }
 
   Future<void> _loadInbox() async {
@@ -485,41 +489,10 @@ class _MessagesScreenState extends State<MessagesScreen> {
   }
 
   Future<void> _toggleOverlay() async {
-    if (_overlayOn) {
-      await OverlayService.stopOverlay();
-      setState(() => _overlayOn = false);
-      return;
-    }
-    if (!await OverlayService.canDrawOverlays()) {
-      await OverlayService.openPermissionSettings();
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Allow "Display over other apps" for Swat, then tap the drone '
-            'button again. The floating drone hovers over Google Messages.',
-          ),
-        ),
-      );
-      return;
-    }
-    // The patrol needs RECEIVE_SMS to wake on incoming texts and
-    // READ_SMS for badge-tap scans — ask once, up front.
-    await OverlayService.requestSmsPermissions();
-    final started = await OverlayService.startOverlay();
-    if (!mounted) return;
-    setState(() => _overlayOn = started);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          started
-              ? 'Fleet on patrol over your apps — open Messages: new texts '
-                    'get scanned right on top of it. Tap the badge to scan '
-                    'your latest text.'
-              : 'Overlay is only available on Android.',
-        ),
-      ),
-    );
+    await Navigator.of(context)
+        .push<void>(MaterialPageRoute(builder: (_) => const ProtectedScreen()));
+    final enabled = await OverlayService.canDrawOverlays();
+    if (mounted) setState(() => _overlayOn = enabled);
   }
 
   @override
@@ -573,8 +546,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
           ),
           IconButton(
             tooltip: _overlayOn
-                ? 'Stop the floating drone'
-                : 'Float a drone over the real Messages app (Android)',
+                ? 'Manage protection in Messages and Gmail'
+                : 'Protect Google Messages and Gmail',
             icon: Icon(
               _overlayOn ? Icons.layers : Icons.layers_outlined,
               color: _overlayOn ? kMagenta : context.palette.secondaryText,

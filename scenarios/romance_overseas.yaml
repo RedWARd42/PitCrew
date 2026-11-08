@@ -1,0 +1,13 @@
+id: romance_overseas
+desc: ''
+sender: '3055550155'
+steps:
+- delay: 0
+  text: Hello dear, I saw your profile and felt a connection. I'm deployed overseas. Can we chat on Telegram?
+- delay: 5
+  text: My love, I need $600 for my flight home. Can you send it as gift cards? Please keep this private.
+expect:
+  verdict: scam
+  drones:
+  - drift
+  - pressure

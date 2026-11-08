@@ -1,0 +1,38 @@
+{
+ "requestId": "22222222-2222-4222-8222-222222222222",
+ "client": "android",
+ "mode": "incoming",
+ "channel": "email",
+ "sender": {
+  "raw": "security@paypa1-support.com",
+  "kind": "email",
+  "isContact": false
+ },
+ "email": {
+  "subject": "Your account is limited - verify within 24 hours",
+  "fromName": "PayPal Support",
+  "fromAddress": "security@paypa1-support.com",
+  "replyTo": "help@mailbox-relay.biz",
+  "links": [
+   {
+    "text": "https://www.paypal.com/verify",
+    "href": "https://paypa1-support.com/login?id=88a"
+   }
+  ],
+  "attachments": [
+   {
+    "name": "invoice_4491.html"
+   }
+  ]
+ },
+ "messages": [
+  {
+   "id": "e1",
+   "direction": "in",
+   "text": "Dear customer, we noticed unusual activity. Verify your account within 24 hours or it will be permanently limited. https://www.paypal.com/verify"
+  }
+ ],
+ "targetMessageId": "e1",
+ "locale": "en-US",
+ "redactions": []
+}

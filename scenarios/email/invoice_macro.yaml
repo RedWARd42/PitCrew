@@ -1,0 +1,17 @@
+id: invoice_macro
+desc: Invoice with macro document
+from_name: Accounts Receivable
+from_address: billing@northwind-invoices.xyz
+reply_to: null
+to: you@example.com
+subject: Overdue invoice INV-20877 - payment required
+body: Please find the overdue invoice attached. Enable editing and content to view
+  it. Payment is required today to avoid a late fee.
+attachments:
+- INV-20877.docm
+expect:
+  verdict: scam
+  drones:
+  - angler
+  - pressure
+  - carrier

@@ -1,0 +1,12 @@
+id: prize_winner
+desc: ''
+sender: '6465550102'
+steps:
+- delay: 0
+  text: 'Congratulations! You''ve been selected to win a $500 gift card. Claim your prize within 12 hours: gift-claim-prize19.click/e5'
+expect:
+  verdict: scam
+  drones:
+  - angler
+  - link
+  - pressure

@@ -1,0 +1,18 @@
+id: legit_github
+desc: Real GitHub notification
+from_name: GitHub
+from_address: notifications@github.com
+reply_to: null
+to: you@example.com
+subject: '[acme/api] Pull request #412: Fix retry backoff (merged)'
+body: '@sam-dev merged #412 into main.
+
+
+  [View pull request](https://github.com/acme/api/pull/412)
+
+
+  You are receiving this because you were mentioned.'
+attachments: []
+expect:
+  verdict: safe
+  drones: []
