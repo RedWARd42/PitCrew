@@ -94,18 +94,32 @@ Demo note: replies in the Family thread are canned on-device responses
 that demonstrate the shape of the exchange; the share/scan/SOS mechanics
 are real app state.
 
-## Over the real Messages app (Android)
+## Over the real Messages app (Android) — the primary surface
 
-The layers icon in the app bar starts a native foreground service
-(`OverlayService.kt`) that draws a floating Swat drone **over other apps,
-including Google Messages**, using the system alert window. Drag it
-anywhere; tap it to bring Swat forward and run the fleet.
+Swat's protection does not live inside Swat. Arm it once from the app bar
+and a native foreground service (`OverlayService.kt`) patrols **over other
+apps, including Google Messages**, using the system alert window:
 
-Honest platform limits: an overlay can warn and launch, but no Android API
-lets a third-party app reach into Messages to block a tap or quarantine a
-text — so detection lives in Swat's own inbox view, and the floating drone
-is the bridge to it. iOS offers no overlay and no SMS-store access at all,
-which is why this is an Android build (demoed on the emulator).
+1. A text arrives → `SmsReceiver` catches the broadcast → the overlay's
+   **fleet scan panel opens right on top of Messages**: the message, all
+   six drones lighting up one by one with their points, each drone's
+   evidence highlighted in the text, then the verdict.
+2. **Block & Report works from the panel itself** — the sender lands in
+   the shared block list that Swat's Blocked tab reads.
+3. "Teach me" jumps into Swat for the step-by-step walkthrough; the
+   floating SWAT badge stays on patrol, and tapping it scans your latest
+   text on demand.
+
+The overlay runs a Kotlin port of the same engine (`KotlinScamAnalyzer.kt`
+— same drones, same registry, same scoring; verified to match the Dart
+engine's scores on the demo corpus). The message under scan comes from the
+SMS broadcast / the device SMS store — the same store Messages reads.
+
+Honest platform limits: an overlay can warn and act on its own surface,
+but no Android API lets a third-party app reach into Messages to block a
+tap or quarantine a text inside it — so Swat blocks at its own layer and
+says so. iOS offers no overlay and no SMS-store access at all, which is
+why this is an Android build (demoed on the emulator).
 
 ## Architecture
 
@@ -135,7 +149,12 @@ lib/
                                safe-word quick actions, call/SMS hand-offs
   widgets/drone_widget.dart    the drone itself (rotors, scan pulse, badges)
 android/.../MainActivity.kt    swat/sms + swat/overlay + swat/comms hosts
-android/.../OverlayService.kt  floating drone over other apps
+android/.../OverlayService.kt  badge + fleet scan panel over other apps
+android/.../KotlinScamAnalyzer.kt  the detection engine, ported to Kotlin
+                               so the fleet runs inside the overlay
+android/.../SmsReceiver.kt     incoming-text trigger for the overlay scan
+android/.../SwatPrefs.kt       shared state: armed flag, last message,
+                               native block list
 test/                          engine tests (SMS + email), store tests,
                                app-shell smoke test
 ```
@@ -152,8 +171,10 @@ flutter test          # engine + smoke tests
 flutter run -d emulator-5554
 ```
 
-For the full demo: in the emulator's Extended Controls → Phone, send an
-SMS to the emulated device from `+1 872-555-0147` with a smishing text,
-grant Swat SMS permission, hit refresh — the fleet analyzes a *real*
-stored SMS. Then start the overlay from the app bar, open Google Messages,
-and watch the drone hover over it.
+For the full demo: start the overlay from the app bar (grant "Display
+over other apps" plus the SMS permissions), open **Google Messages**, then
+in the emulator's Extended Controls → Phone, send an SMS to the emulated
+device from `+1 872-555-0147` with the smishing text. The fleet scan panel
+opens **over Messages itself** — drones, highlights, verdict, Block &
+Report — without ever entering Swat. Back in Swat, the same text is in
+the inbox view and the overlay block shows in the Blocked tab.

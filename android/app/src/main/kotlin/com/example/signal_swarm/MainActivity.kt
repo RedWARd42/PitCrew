@@ -71,6 +71,22 @@ class MainActivity : FlutterActivity() {
                         stopService(Intent(this, OverlayService::class.java))
                         result.success(null)
                     }
+                    // Senders blocked from the overlay panel, so the
+                    // in-app Blocked tab can show them too.
+                    "getNativeBlocks" -> result.success(SwatPrefs.readBlocks(this))
+                    // The overlay's incoming-text trigger needs RECEIVE_SMS
+                    // (and READ_SMS for badge-tap scans of the store).
+                    "requestSmsPermissions" -> {
+                        ActivityCompat.requestPermissions(
+                            this,
+                            arrayOf(
+                                Manifest.permission.READ_SMS,
+                                Manifest.permission.RECEIVE_SMS,
+                            ),
+                            SMS_PERMISSION_REQUEST,
+                        )
+                        result.success(null)
+                    }
                     else -> result.notImplemented()
                 }
             }

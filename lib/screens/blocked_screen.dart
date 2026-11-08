@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../models/family_and_blocked.dart';
 import '../models/message.dart';
+import '../services/device_services.dart';
 import '../services/stores.dart';
 
 /// The Blocked view — "show me what Swat stopped".
@@ -29,6 +30,10 @@ class _BlockedScreenState extends State<BlockedScreen> {
     super.initState();
     _sub = BlocklistStore.changes.listen((_) {
       if (mounted) setState(() {});
+    });
+    // Pull in anything blocked from the overlay panel over Messages.
+    OverlayService.nativeBlocks().then((blocks) {
+      if (blocks.isNotEmpty) BlocklistStore.mergeNativeBlocks(blocks);
     });
   }
 

@@ -267,6 +267,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
       );
       return;
     }
+    // The patrol needs RECEIVE_SMS to wake on incoming texts and
+    // READ_SMS for badge-tap scans — ask once, up front.
+    await OverlayService.requestSmsPermissions();
     final started = await OverlayService.startOverlay();
     if (!mounted) return;
     setState(() => _overlayOn = started);
@@ -274,7 +277,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
       SnackBar(
         content: Text(
           started
-              ? 'Drone on patrol — it is now floating over your other apps.'
+              ? 'Fleet on patrol over your apps — open Messages: new texts '
+                    'get scanned right on top of it. Tap the badge to scan '
+                    'your latest text.'
               : 'Overlay is only available on Android.',
         ),
       ),

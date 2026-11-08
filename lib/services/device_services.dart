@@ -8,11 +8,14 @@
 ///    (permission denied, not Android, empty store) falls back to the
 ///    synthetic demo inbox — the demo never hard-depends on it.
 ///
-///  * `swat/overlay` — the "over the Messages app" half: a Kotlin
-///    foreground service draws a floating Swat drone over other apps
-///    (Google Messages included) using the system alert window. Tapping
-///    the drone brings Swat forward. Android only — iOS has no equivalent,
-///    which is a platform limit, not an app limit.
+///  * `swat/overlay` — the "over the Messages app" half, and the primary
+///    surface: a Kotlin foreground service draws the fleet over other apps
+///    (Google Messages included) using the system alert window. When a
+///    text arrives, a native receiver wakes the service and the scan panel
+///    opens right over Messages — the Kotlin port of the engine
+///    (`KotlinScamAnalyzer.kt`) runs it there. Tapping the floating badge
+///    scans the latest text on demand. Android only — iOS has no
+///    equivalent, which is a platform limit, not an app limit.
 ///
 /// Message content never leaves the device: analysis is on-device Dart.
 library;
@@ -133,6 +136,41 @@ class OverlayService {
       // Already stopped / non-Android.
     } on MissingPluginException {
       // Already stopped / non-Android.
+    }
+  }
+
+  /// Asks for READ_SMS + RECEIVE_SMS — the pair the overlay patrol needs
+  /// (receive triggers the over-Messages scan; read powers badge-tap
+  /// scans of the store). Fire-and-forget: the OS dialog is the answer.
+  static Future<void> requestSmsPermissions() async {
+    try {
+      await _channel.invokeMethod<void>('requestSmsPermissions');
+    } on PlatformException {
+      // Non-Android.
+    } on MissingPluginException {
+      // Non-Android.
+    }
+  }
+
+  /// Senders blocked from the overlay's Block & Report button, written
+  /// natively to SharedPreferences so the Blocked tab can show them.
+  /// Each map: sender, snippet, risk, at (epoch millis as string).
+  static Future<List<Map<String, String>>> nativeBlocks() async {
+    try {
+      final raw = await _channel.invokeListMethod<dynamic>('getNativeBlocks');
+      if (raw == null) return const [];
+      return [
+        for (final item in raw)
+          Map<String, String>.from(
+            (item as Map).map(
+              (k, v) => MapEntry(k.toString(), v?.toString() ?? ''),
+            ),
+          ),
+      ];
+    } on PlatformException {
+      return const [];
+    } on MissingPluginException {
+      return const [];
     }
   }
 }

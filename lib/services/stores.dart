@@ -11,6 +11,7 @@ import 'dart:async';
 
 import '../models/family_and_blocked.dart';
 import '../models/message.dart';
+import 'scam_analyzer.dart';
 import 'walkthrough.dart';
 
 class BlocklistStore {
@@ -92,6 +93,43 @@ class BlocklistStore {
     _entries.insert(0, entry);
     _changes.add(null);
     return entry;
+  }
+
+  /// Merge in senders blocked from the Android overlay panel (written
+  /// natively to SharedPreferences). Categories are recovered by running
+  /// the analyzer over the stored snippet; the risk score is the one the
+  /// overlay computed over the full message.
+  static void mergeNativeBlocks(List<Map<String, String>> blocks) {
+    var added = false;
+    for (final b in blocks) {
+      final sender = b['sender'] ?? '';
+      final at = b['at'] ?? '0';
+      if (sender.isEmpty) continue;
+      final id = 'native-$at-$sender';
+      if (_entries.any((e) => e.id == id)) continue;
+      final snippet = b['snippet'] ?? '';
+      final analysis = const ScamAnalyzer().analyze(
+        ChatMessage(id: id, sender: sender, body: snippet, timeLabel: ''),
+      );
+      _entries.insert(
+        0,
+        BlockedEntry(
+          id: id,
+          sender: sender,
+          snippet: snippet.length <= 90
+              ? snippet
+              : '${snippet.substring(0, 90)}…',
+          whenLabel: 'Via overlay',
+          riskScore: int.tryParse(b['risk'] ?? '') ?? analysis.riskScore,
+          categories: analysis.flaggingDrones,
+          status: BlockStatus.reported,
+          blockedBy: 'You (overlay)',
+          incidentId: buildReport(analysis).incidentId,
+        ),
+      );
+      added = true;
+    }
+    if (added) _changes.add(null);
   }
 
   /// Undo a block (false positives happen; a block list you can't correct
