@@ -23,6 +23,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 
@@ -288,13 +289,39 @@ class OverlayService : Service() {
                 gravity = Gravity.CENTER_HORIZONTAL
                 layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
             }
-            val orb = View(this).apply {
-                layoutParams = LinearLayout.LayoutParams(dp(34), dp(34))
-                background = GradientDrawable().apply {
-                    shape = GradientDrawable.OVAL
-                    setColor(drone.color)
-                }
+            // Orb with a specialty monogram, mirroring the in-app drones'
+            // icon-in-lens identity: readable by shape, not just color.
+            val symbol = when (drone) {
+                Drone.ANGLER -> "A"
+                Drone.LINK -> "L"
+                Drone.SCANNER -> "QR"
+                Drone.PRESSURE -> "!"
+                Drone.IMPERSONATOR -> "ID"
+                Drone.SWAP -> "SIM"
+            }
+            val orb = FrameLayout(this).apply {
+                layoutParams = LinearLayout.LayoutParams(dp(36), dp(36))
                 alpha = 0.3f
+                addView(View(this@OverlayService).apply {
+                    layoutParams = FrameLayout.LayoutParams(dp(36), dp(36))
+                    background = GradientDrawable().apply {
+                        shape = GradientDrawable.OVAL
+                        setColor(drone.color)
+                        setStroke(2, 0x66FFFFFF)
+                    }
+                    elevation = 4f
+                })
+                addView(TextView(this@OverlayService).apply {
+                    text = symbol
+                    setTextColor(0xFFFFFFFF.toInt())
+                    textSize = if (symbol.length > 1) 10f else 14f
+                    typeface = Typeface.DEFAULT_BOLD
+                    gravity = Gravity.CENTER
+                    layoutParams = FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                    )
+                })
             }
             val label = TextView(this).apply {
                 text = drone.label

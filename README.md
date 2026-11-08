@@ -243,3 +243,16 @@ and restored on the next launch. The native overlay panel over Google
 Messages keeps its dark styling in both modes — it is an alert surface
 that floats over other apps, where the high-contrast dark panel reads
 best.
+
+## The drones
+
+Each specialist is drawn as a top-down quadcopter (custom painter: four
+rotor pods, gradient body, camera lens) and wears its specialty as an
+icon in the lens — hook for Angler, link chain for Link, QR for Scanner,
+bolt for Pressure, person-search for Impersonator, swap arrows for Swap —
+so the fleet reads by shape as well as color. Name pills use the theme's
+primary text color with a colored dot, staying legible in both modes.
+Scanning adds a radar sweep, a stronger glow, and a hover bob; risk
+badges are white-ringed pills. Rotor spin and bob honor the system's
+reduced-motion setting. The native overlay chips mirror the identity
+with specialty monograms (A / L / QR / ! / ID / SIM).
