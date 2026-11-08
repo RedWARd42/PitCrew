@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="swarm_service_description">Signal Swarm reads only Google Messages on screen so its drones can point at suspicious texts. Text is checked on your phone first; only redacted text is ever sent for analysis.</string>
-</resources>

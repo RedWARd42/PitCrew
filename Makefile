@@ -6,4 +6,4 @@ inject:
 	python scripts/inject.py $(S)
 check:
 	python -m pytest -q contracts backend
-	cd app && flutter test
+	flutter test

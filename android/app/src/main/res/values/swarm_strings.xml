@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="swarm_service_description">Swat reads visible conversations in Google Messages and Gmail so its drones can point at scam evidence. Names, card numbers and codes are redacted on your phone before backend analysis. Other apps are not read.</string>
+</resources>

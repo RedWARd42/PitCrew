@@ -19,6 +19,43 @@ extension DroneVisuals on DroneId {
   };
 }
 
+/// Shared artwork for the in-app fleet and the accessibility overlay.
+/// The caller owns timing, so transparent overlays need no extra ticker.
+class DroneArtwork extends StatelessWidget {
+  const DroneArtwork({
+    super.key,
+    required this.color,
+    required this.icon,
+    this.size = 40,
+    this.progress = 0,
+    this.scanning = false,
+  });
+
+  final Color color;
+  final IconData icon;
+  final double size, progress;
+  final bool scanning;
+
+  @override
+  Widget build(BuildContext context) => SizedBox.square(
+    dimension: size,
+    child: Stack(
+      alignment: Alignment.center,
+      children: [
+        CustomPaint(
+          size: Size.square(size),
+          painter: _DronePainter(
+            color: color,
+            progress: progress,
+            scanning: scanning,
+          ),
+        ),
+        Icon(icon, size: math.max(11.0, size * .27), color: Colors.white),
+      ],
+    ),
+  );
+}
+
 /// One specialist drone, drawn as a small top-down quadcopter: four
 /// rotor pods on arms around a colored body, a camera lens in the middle
 /// wearing the drone's specialty icon, and its name in a pill below.

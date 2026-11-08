@@ -1,23 +1,6 @@
-/// Bridges to the Android side of Swat.
-///
-/// Two platform channels, both implemented in `MainActivity.kt`:
-///
-///  * `swat/sms` — reads the device's real SMS inbox
-///    (`content://sms/inbox`) after the user grants READ_SMS, so the fleet
-///    can analyze genuine texts on an Android phone/emulator. Any failure
-///    (permission denied, not Android, empty store) falls back to the
-///    synthetic demo inbox — the demo never hard-depends on it.
-///
-///  * `swat/overlay` — the "over the Messages app" half, and the primary
-///    surface: a Kotlin foreground service draws the fleet over other apps
-///    (Google Messages included) using the system alert window. When a
-///    text arrives, a native receiver wakes the service and the scan panel
-///    opens right over Messages — the Kotlin port of the engine
-///    (`KotlinScamAnalyzer.kt`) runs it there. Tapping the floating badge
-///    scans the latest text on demand. Android only — iOS has no
-///    equivalent, which is a platform limit, not an app limit.
-///
-/// Message content never leaves the device: analysis is on-device Dart.
+/// Android channels for Swat's inbox, communication intents, and accessibility
+/// protection. In-app demo scans stay on-device; the overlay redacts visible
+/// Google Messages/Gmail text before calling the scan backend.
 library;
 
 import 'package:flutter/services.dart';
@@ -107,8 +90,7 @@ class OverlayService {
     }
   }
 
-  /// Opens the system settings page where the user grants
-  /// "display over other apps" to Swat.
+  /// Opens Android Accessibility settings for the Swat service.
   static Future<void> openPermissionSettings() async {
     try {
       await _channel.invokeMethod<void>('openOverlaySettings');
@@ -139,9 +121,7 @@ class OverlayService {
     }
   }
 
-  /// Asks for READ_SMS + RECEIVE_SMS — the pair the overlay patrol needs
-  /// (receive triggers the over-Messages scan; read powers badge-tap
-  /// scans of the store). Fire-and-forget: the OS dialog is the answer.
+  /// Requests SMS inbox permission, separately from Accessibility consent.
   static Future<void> requestSmsPermissions() async {
     try {
       await _channel.invokeMethod<void>('requestSmsPermissions');

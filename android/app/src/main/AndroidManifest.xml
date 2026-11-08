@@ -1,19 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Swat permissions:
-         READ_SMS lets the fleet analyze the device's real inbox (user-granted,
-         on-device only). SYSTEM_ALERT_WINDOW powers the floating drone that
-         hovers over the stock Messages app. The FOREGROUND_SERVICE pair is
-         required for that overlay service on modern Android. -->
+    <!-- Inbox access remains on-device. The accessibility overlay reads only
+         visible Google Messages/Gmail screens and redacts before backend scans. -->
     <uses-permission android:name="android.permission.READ_SMS"/>
-    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
     <!-- RECORD_AUDIO powers voice dictation in the drone conversations
          (tap the mic, ask the drone a question out loud). -->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <application
+        android:networkSecurityConfig="@xml/network_security_config"
         android:label="Swat"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
@@ -39,26 +33,19 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <!-- Fleet overlay: badge + full scan panel drawn over other apps
-             (Messages included); the scan runs in the service itself. -->
+        <!-- Android owns the service lifecycle; Flutter renders the fleet. -->
         <service
-            android:name=".OverlayService"
-            android:exported="false"
-            android:foregroundServiceType="specialUse">
-            <property
-                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="Floating scam-protection drone over the messages app"/>
-        </service>
-        <!-- Incoming-text trigger: when a text arrives and the patrol is
-             armed, the overlay service scans it over the current app. -->
-        <receiver
-            android:name=".SmsReceiver"
+            android:name=".SwarmAccessibilityService"
             android:exported="true"
-            android:permission="android.permission.BROADCAST_SMS">
-            <intent-filter android:priority="999">
-                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+            android:label="Swat"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService"/>
             </intent-filter>
-        </receiver>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config"/>
+        </service>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

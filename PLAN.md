@@ -1,3 +1,5 @@
+> Integration note: Swat is the primary app. Flutter sources now live at repository-root `lib/`, native code at `android/`, and tests at `test/`. Historical `app/` paths below refer to these root directories. Swat's existing shell and visual system take precedence for the integrated frontend.
+
 # Signal Swarm — Build Plan (HackUTD 2026)
 
 > **For the coding agent reading this:** you are the **Orchestrator**. This file is the source of truth. Read it fully, then execute the waves in order. Within each wave, launch every listed workstream **in parallel** (Claude Code: launch all Task/Agent calls in a single message, each with worktree isolation; Codex: one task per workstream, each on its own branch). Do not do a workstream's work yourself unless its agent fails twice.
