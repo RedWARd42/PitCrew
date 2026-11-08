@@ -62,6 +62,7 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
   final List<_Turn> _turns = [];
   bool _listening = false;
   bool _voiceOn = true;
+  bool _speaking = false;
   bool _micUnavailable = false;
 
   DroneId get _drone => widget.drone;
@@ -78,28 +79,51 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
   Future<void> _initTts(String greeting) async {
     try {
       await _tts.setLanguage('en-US');
-      await _tts.setSpeechRate(0.52);
       await _tts.setVolume(1.0);
+      // This drone's own device-TTS personality (used whenever the
+      // ElevenLabs voice isn't) — distinct pitch and rate per drone.
+      final profile = kDroneVoiceProfiles[_drone]!;
+      await _tts.setSpeechRate(profile.rate);
+      await _tts.setPitch(profile.pitch);
+      _tts.setCompletionHandler(() => _setSpeaking(false));
+      _tts.setCancelHandler(() => _setSpeaking(false));
       if (_voiceOn) await _speak(greeting);
     } catch (_) {
       // No TTS engine (tests, some emulators): text answers still work.
     }
   }
 
+  void _setSpeaking(bool value) {
+    if (mounted && _speaking != value) setState(() => _speaking = value);
+  }
+
+  Future<void> _stopSpeaking() async {
+    await _eleven.stop();
+    try {
+      await _tts.stop();
+    } catch (_) {}
+    _setSpeaking(false);
+  }
+
   Future<void> _speak(String text) async {
     if (!_voiceOn) return;
-    // ElevenLabs first when configured: this drone's own streaming
-    // voice. Any failure (bad key, no quota, offline) falls back to
-    // the device engine so the answer is still spoken.
+    // ElevenLabs first when configured: this drone's own voice. Any
+    // failure (bad key, no quota, offline) falls back to the device
+    // engine so the answer is still spoken.
     if (_eleven.isConfigured) {
       await _tts.stop();
+      _setSpeaking(true);
       final ok = await _eleven.speak(text, _drone);
+      _setSpeaking(false);
       if (ok || !_voiceOn) return;
     }
     try {
       await _tts.stop();
+      _setSpeaking(true);
       await _tts.speak(text);
+      // The completion handler clears _speaking when it finishes.
     } catch (_) {
+      _setSpeaking(false);
       // Speaking is an enhancement, never a blocker.
     }
   }
@@ -244,10 +268,7 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
             ),
             onPressed: () {
               setState(() => _voiceOn = !_voiceOn);
-              if (!_voiceOn) {
-                _tts.stop();
-                _eleven.stop();
-              }
+              if (!_voiceOn) _stopSpeaking();
             },
           ),
         ],
@@ -264,6 +285,8 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
           ),
           _buildSuggestions(),
           if (_listening) _buildListeningStrip(),
+          if (_speaking) _buildSpeakingStrip(),
+          _buildVoiceBar(),
           _buildComposer(),
         ],
       ),
@@ -347,7 +370,7 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
           SizedBox(width: 8),
           Expanded(
             child: Text(
-              'Listening… speak now. Tap the microphone to stop.',
+              'Listening… speak now. Tap the voice button to stop.',
               style: TextStyle(
                 color: context.palette.primaryText,
                 fontSize: 15.5,
@@ -355,6 +378,84 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  /// Squeek-style speaking status: while the drone talks, a status
+  /// strip with a progress shimmer says so — and offers a stop.
+  Widget _buildSpeakingStrip() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(14, 6, 6, 6),
+      color: _droneColor.withValues(alpha: 0.16),
+      child: Row(
+        children: [
+          Icon(Icons.volume_up, color: _droneColor, size: 22),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${_drone.label} is speaking…',
+                  style: TextStyle(
+                    color: context.palette.primaryText,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                LinearProgressIndicator(
+                  minHeight: 4,
+                  color: _droneColor,
+                  backgroundColor: _droneColor.withValues(alpha: 0.25),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            tooltip: 'Stop speaking',
+            icon: Icon(Icons.stop_circle, color: _droneColor, size: 30),
+            onPressed: _stopSpeaking,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// The communication choice, Squeek-style: one big voice button —
+  /// or type in the box below it. Tapping starts dictation; your
+  /// words land in the text box so you can check them before sending.
+  Widget _buildVoiceBar() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 6, 12, 0),
+      child: SizedBox(
+        height: 60,
+        width: double.infinity,
+        child: ElevatedButton.icon(
+          onPressed: _micUnavailable ? null : _toggleMic,
+          icon: Icon(_listening ? Icons.stop : Icons.mic, size: 28),
+          label: Text(
+            _micUnavailable
+                ? 'Voice is not available on this device'
+                : _listening
+                ? 'Listening… tap to stop'
+                : 'Ask ${_drone.label} by voice',
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: _listening
+                ? const Color(0xFFDC2626)
+                : _droneColor,
+            foregroundColor: Colors.white,
+            disabledBackgroundColor: context.palette.bubble,
+            disabledForegroundColor: context.palette.faintText,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -379,9 +480,7 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
                   fontSize: 17,
                 ),
                 decoration: InputDecoration(
-                  hintText: _micUnavailable
-                      ? 'Type a question for ${_drone.label}…'
-                      : 'Ask ${_drone.label}, or tap the mic…',
+                  hintText: 'Type a question for ${_drone.label}…',
                   hintStyle: TextStyle(
                     color: context.palette.faintText,
                     fontSize: 16,
@@ -398,13 +497,6 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
                   ),
                 ),
               ),
-            ),
-            const SizedBox(width: 8),
-            _roundButton(
-              icon: _listening ? Icons.mic_off : Icons.mic,
-              color: _listening ? const Color(0xFFDC2626) : _droneColor,
-              tooltip: _listening ? 'Stop dictation' : 'Ask by voice',
-              onPressed: _toggleMic,
             ),
             const SizedBox(width: 8),
             _roundButton(

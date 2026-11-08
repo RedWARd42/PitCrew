@@ -213,18 +213,27 @@ Each drone holds a real conversation about the message it just checked:
   with a speaker toggle in the corner.
 - **ElevenLabs voices (optional):** run with
   `--dart-define=ELEVENLABS_API_KEY=sk_...` and every drone speaks in
-  its **own ElevenLabs voice** — streaming TTS on `eleven_flash_v2_5`
-  (POST to the `/stream` endpoint, `optimize_streaming_latency=3`,
-  played progressively through just_audio, answers chunked by
-  sentence so the first words land fast). This is the pattern from
-  Squeek's ElevenLabs streaming implementation, ported from its
-  Express proxy + `<audio>` client to direct in-app streaming. The
-  chat header shows "· ElevenLabs voice" when it's live. Without a
-  key — or if ElevenLabs is unreachable — answers fall back to the
-  device TTS engine. Honest caveat: shipping a key inside an app is a
-  demo shortcut; a production build should proxy ElevenLabs through
-  a small server (as Squeek does) so the key never leaves the
-  backend.
+  its **own ElevenLabs voice** — TTS on `eleven_flash_v2_5`
+  (POST to the `/stream` endpoint, `optimize_streaming_latency=3`),
+  answers chunked by sentence so the first words land fast, each
+  sentence played through just_audio as a complete buffered file
+  (an earlier live-streamed version could restart a chunk when the
+  player re-requested it — the replay loop; buffering fixed it).
+  This is the pattern from Squeek's ElevenLabs streaming
+  implementation, ported from its Express proxy + `<audio>` client
+  to in-app playback. The chat header shows "· ElevenLabs voice"
+  when it's live. Without a key — or if ElevenLabs is unreachable —
+  answers fall back to the device TTS engine, where each drone still
+  sounds distinct via its own pitch/rate profile (Angler low and
+  slow, Scanner bright and quick, Pressure fastest). Honest caveat:
+  shipping a key inside an app is a demo shortcut; a production
+  build should proxy ElevenLabs through a small server (as Squeek
+  does) so the key never leaves the backend.
+- **Voice or text, Squeek-style:** the chat's communication panel
+  offers one big **"Ask <drone> by voice"** button (dictation lands
+  in the text box so it can be checked before sending) or plain
+  typing below it; while the drone talks, a status strip shows
+  "<drone> is speaking…" with a stop button.
 - **Grounded, on-device answers:** replies are composed on the phone
   from that drone's actual findings — its points, its evidence quotes,
   the fleet's verdict and confidence — plus a small built-in base of

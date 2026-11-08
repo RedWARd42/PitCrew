@@ -72,5 +72,15 @@ void main() {
       expect(kElevenLabsApiKey, isEmpty);
       expect(elevenLabsConfigured, isFalse);
     });
+
+    test('every drone also has a distinct device-TTS personality', () {
+      expect(kDroneVoiceProfiles.length, DroneId.values.length);
+      final pitches = kDroneVoiceProfiles.values.map((p) => p.pitch).toSet();
+      expect(pitches.length, DroneId.values.length);
+      for (final p in kDroneVoiceProfiles.values) {
+        expect(p.pitch, inInclusiveRange(0.5, 2.0));
+        expect(p.rate, inInclusiveRange(0.0, 1.0));
+      }
+    });
   });
 }

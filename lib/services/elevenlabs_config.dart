@@ -35,3 +35,24 @@ const Map<DroneId, String> kElevenLabsVoices = {
 };
 
 String elevenLabsVoiceFor(DroneId drone) => kElevenLabsVoices[drone]!;
+
+/// Device-TTS personality per drone, used when no ElevenLabs key is
+/// configured (or ElevenLabs is unreachable): the platform engine has
+/// one voice, so each drone gets its own pitch and rate instead —
+/// Angler low and slow, Scanner bright and quick, Pressure fast,
+/// Swap the slowest and warmest. Pitch 0.5–2.0 (1.0 = the engine's
+/// natural voice); rate follows flutter_tts' 0.0–1.0 scale.
+class DroneVoiceProfile {
+  const DroneVoiceProfile({required this.pitch, required this.rate});
+  final double pitch;
+  final double rate;
+}
+
+const Map<DroneId, DroneVoiceProfile> kDroneVoiceProfiles = {
+  DroneId.angler: DroneVoiceProfile(pitch: 0.70, rate: 0.47),
+  DroneId.link: DroneVoiceProfile(pitch: 1.00, rate: 0.52),
+  DroneId.scanner: DroneVoiceProfile(pitch: 1.35, rate: 0.57),
+  DroneId.pressure: DroneVoiceProfile(pitch: 0.90, rate: 0.60),
+  DroneId.impersonator: DroneVoiceProfile(pitch: 1.15, rate: 0.50),
+  DroneId.swap: DroneVoiceProfile(pitch: 0.80, rate: 0.45),
+};

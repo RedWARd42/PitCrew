@@ -74,11 +74,16 @@ List<String> splitForSpeech(String text, {int maxChars = 240}) {
   return chunks;
 }
 
-/// Streaming ElevenLabs speech for the drone conversations.
+/// ElevenLabs speech for the drone conversations.
 ///
-/// Answers play through just_audio from a stream audio source fed by
-/// the live HTTP response, so audio starts as soon as ElevenLabs sends
-/// the first MP3 bytes instead of after the whole answer renders.
+/// Answers are chunked by sentence (see [splitForSpeech]); each chunk
+/// is fetched from the streaming endpoint as one MP3 and played in
+/// sequence through just_audio. The flash model renders a sentence
+/// fast, so the first words land quickly — and serving the player a
+/// complete, known-length file per chunk is deliberate: the first
+/// version fed it the raw live stream, the player kept re-requesting
+/// it, every re-request restarted the MP3 from byte zero, and the
+/// answer replayed itself. Buffering the chunk kills that loop.
 /// [speak] returns false when ElevenLabs is unreachable or rejects the
 /// request (bad/expired key, no quota) so the caller can fall back to
 /// the device TTS for that answer instead of going silent.
@@ -137,11 +142,17 @@ class ElevenLabsTts {
   }
 }
 
-/// A just_audio source that POSTs to ElevenLabs and streams the MP3
-/// response straight into the player.
+/// A just_audio source that POSTs to ElevenLabs for one chunk, buffers
+/// the MP3, then serves it with correct lengths and range offsets.
+///
+/// The player may call [request] more than once (preroll, buffering,
+/// seek); every call must serve the SAME bytes at the requested
+/// offset. The first version streamed the live response and ignored
+/// offsets, so a re-request restarted the chunk — the replay loop.
+/// Buffering once and slicing by offset makes re-requests harmless.
 ///
 /// (just_audio still marks its stream-source API "experimental"; it
-//  is the package's supported route for custom streamed audio and
+//  is the package's supported route for custom audio sources and
 //  has been stable across the 0.9/0.10 lines.)
 // ignore: experimental_member_use
 class _ElevenLabsSource extends StreamAudioSource {
@@ -154,10 +165,11 @@ class _ElevenLabsSource extends StreamAudioSource {
   final String text;
   final String voiceId;
   final http.Client client;
+  List<int>? _bytes;
 
-  @override
-  // ignore: experimental_member_use
-  Future<StreamAudioResponse> request([int? start, int? end]) async {
+  Future<List<int>> _load() async {
+    final cached = _bytes;
+    if (cached != null) return cached;
     final request = http.Request('POST', elevenLabsStreamUri(voiceId))
       ..headers['xi-api-key'] = kElevenLabsApiKey
       ..headers['Content-Type'] = 'application/json'
@@ -169,12 +181,26 @@ class _ElevenLabsSource extends StreamAudioSource {
       await response.stream.drain<void>().catchError((_) {});
       throw Exception('ElevenLabs TTS failed: ${response.statusCode}');
     }
+    final bytes = await response.stream.fold<List<int>>(
+      <int>[],
+      (acc, chunk) => acc..addAll(chunk),
+    );
+    _bytes = bytes;
+    return bytes;
+  }
+
+  @override
+  // ignore: experimental_member_use
+  Future<StreamAudioResponse> request([int? start, int? end]) async {
+    final bytes = await _load();
+    final s = start ?? 0;
+    final e = end ?? bytes.length;
     // ignore: experimental_member_use
     return StreamAudioResponse(
-      sourceLength: null,
-      contentLength: null,
-      offset: null,
-      stream: response.stream,
+      sourceLength: bytes.length,
+      contentLength: e - s,
+      offset: s,
+      stream: Stream<List<int>>.value(bytes.sublist(s, e)),
       contentType: 'audio/mpeg',
     );
   }
