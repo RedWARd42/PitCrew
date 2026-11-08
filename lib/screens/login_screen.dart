@@ -100,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 'scams — and explains what it finds in plain words.',
                 style: TextStyle(
                   color: Colors.white70,
-                  fontSize: 17,
+                  fontSize: 18,
                   height: 1.45,
                 ),
               ),
@@ -109,7 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 'Your email',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 17,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -118,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _email,
                 keyboardType: TextInputType.emailAddress,
                 autofillHints: const [AutofillHints.email],
-                style: const TextStyle(color: Colors.white, fontSize: 18),
+                style: const TextStyle(color: Colors.white, fontSize: 20),
                 decoration: _fieldDecoration('name@example.com'),
               ),
               const SizedBox(height: 22),
@@ -126,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 'Your name (optional)',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 17,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -135,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _name,
                 keyboardType: TextInputType.name,
                 autofillHints: const [AutofillHints.name],
-                style: const TextStyle(color: Colors.white, fontSize: 18),
+                style: const TextStyle(color: Colors.white, fontSize: 20),
                 decoration: _fieldDecoration('e.g. Maya Reyes'),
               ),
               const SizedBox(height: 8),
@@ -144,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 'email — maya.reyes@… becomes "Maya Reyes".',
                 style: TextStyle(
                   color: Colors.white54,
-                  fontSize: 15,
+                  fontSize: 17,
                   height: 1.4,
                 ),
               ),
@@ -154,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   _error!,
                   style: const TextStyle(
                     color: Color(0xFFF87171),
-                    fontSize: 16,
+                    fontSize: 17.5,
                     height: 1.4,
                   ),
                 ),
@@ -180,8 +180,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 'Demo build: your account stays on this phone. No '
                 'password, and nothing you type here leaves the device.',
                 style: TextStyle(
-                  color: Colors.white38,
-                  fontSize: 14,
+                  color: Colors.white54,
+                  fontSize: 16,
                   height: 1.4,
                 ),
               ),
@@ -195,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
   InputDecoration _fieldDecoration(String hint) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: Colors.white30, fontSize: 17),
+      hintStyle: const TextStyle(color: Colors.white38, fontSize: 18),
       filled: true,
       fillColor: const Color(0xFF17171F),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),

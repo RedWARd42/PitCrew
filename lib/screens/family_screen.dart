@@ -148,13 +148,13 @@ class _FamilyScreenState extends State<FamilyScreen> {
                 Text(
                   contact.name,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 17.5,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
                   contact.relation,
-                  style: const TextStyle(fontSize: 11, color: Colors.white54),
+                  style: const TextStyle(fontSize: 13.5, color: Colors.white54),
                 ),
               ],
             ),
@@ -211,7 +211,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
                     'first.',
                     style: const TextStyle(
                       color: Colors.white70,
-                      fontSize: 12,
+                      fontSize: 14.5,
                       height: 1.4,
                     ),
                   ),
@@ -274,7 +274,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       hintText: 'Message ${contact.name}…',
-                      hintStyle: const TextStyle(color: Colors.white38),
+                      hintStyle: const TextStyle(color: Colors.white54),
                       filled: true,
                       fillColor: const Color(0xFF1C1C26),
                       border: OutlineInputBorder(
@@ -329,7 +329,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 12.5,
+                          fontSize: 15,
                         ),
                       ),
                     ],
@@ -340,7 +340,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
-                      fontSize: 12.5,
+                      fontSize: 15,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -348,14 +348,14 @@ class _FamilyScreenState extends State<FamilyScreen> {
                     msg.scanDetail,
                     style: const TextStyle(
                       color: Colors.white70,
-                      fontSize: 11.5,
+                      fontSize: 14,
                       height: 1.4,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     msg.timeLabel,
-                    style: const TextStyle(color: Colors.white54, fontSize: 10),
+                    style: const TextStyle(color: Colors.white54, fontSize: 12.5),
                   ),
                 ],
               )
@@ -369,7 +369,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
                   const SizedBox(height: 3),
                   Text(
                     msg.timeLabel,
-                    style: const TextStyle(color: Colors.white54, fontSize: 10),
+                    style: const TextStyle(color: Colors.white54, fontSize: 12.5),
                   ),
                 ],
               ),

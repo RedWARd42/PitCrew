@@ -128,10 +128,13 @@ class _MessagesScreenState extends State<MessagesScreen> {
       _walkSteps = null;
     });
     // All drones launch at once; each "lands" in turn as its scan finishes.
+    // Reduce-motion (elderly skill): if the system asks for no animation,
+    // the fleet lands instantly — same result, no flight to follow.
+    final stepMs = MediaQuery.of(context).disableAnimations ? 0 : 260;
     for (var i = 0; i < DroneId.values.length; i++) {
       if (!mounted || _phase != FleetPhase.scanning) return;
       setState(() => _scanningIdx = i);
-      await Future<void>.delayed(const Duration(milliseconds: 260));
+      await Future<void>.delayed(Duration(milliseconds: stepMs));
       if (!mounted || _phase != FleetPhase.scanning) return;
       setState(() {
         _revealedCount = i + 1;
@@ -169,7 +172,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
           children: [
             Row(
               children: [
-                DroneWidget(drone: drone, size: 40, showLabel: false),
+                DroneWidget(drone: drone, size: 44, showLabel: false),
                 const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,7 +181,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       drone.label,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 17,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -186,7 +189,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       drone.specialty,
                       style: const TextStyle(
                         color: Colors.white60,
-                        fontSize: 12,
+                        fontSize: 14.5,
                       ),
                     ),
                   ],
@@ -272,15 +275,15 @@ class _MessagesScreenState extends State<MessagesScreen> {
               const SizedBox(height: 4),
               Text(
                 account?.email ?? '',
-                style: const TextStyle(color: Colors.white54, fontSize: 15),
+                style: const TextStyle(color: Colors.white54, fontSize: 17),
               ),
               const SizedBox(height: 8),
               const Text(
                 'Swat protects this account on this phone. Reports and '
                 'blocks are filed under this name.',
                 style: TextStyle(
-                  color: Colors.white38,
-                  fontSize: 13.5,
+                  color: Colors.white54,
+                  fontSize: 16,
                   height: 1.4,
                 ),
               ),
@@ -295,7 +298,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                   },
                   child: const Text(
                     'Sign out',
-                    style: TextStyle(fontSize: 17),
+                    style: TextStyle(fontSize: 18),
                   ),
                 ),
               ),
@@ -356,11 +359,11 @@ class _MessagesScreenState extends State<MessagesScreen> {
           children: [
             const Text(
               'Messages',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
               'Protecting ${AccountStore.firstName}',
-              style: const TextStyle(fontSize: 11, color: kMagenta),
+              style: const TextStyle(fontSize: 13.5, color: kMagenta),
             ),
           ],
         ),
@@ -402,7 +405,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                         'happens on-device.'
                   : 'Demo inbox — synthetic messages only. On Android, grant '
                         'SMS permission and the fleet reads your real inbox.',
-              style: const TextStyle(color: Colors.white54, fontSize: 11.5),
+              style: const TextStyle(color: Colors.white54, fontSize: 14),
             ),
           ),
           Expanded(
@@ -473,7 +476,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
               backgroundColor: const Color(0xFF2A2A3A),
               child: Text(
                 _avatarInitial(m.sender),
-                style: const TextStyle(color: Colors.white70, fontSize: 14),
+                style: const TextStyle(color: Colors.white70, fontSize: 16),
               ),
             ),
             const SizedBox(width: 9),
@@ -488,15 +491,15 @@ class _MessagesScreenState extends State<MessagesScreen> {
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
-                          fontSize: 13,
+                          fontSize: 15.5,
                         ),
                       ),
                       const SizedBox(width: 8),
                       Text(
                         m.timeLabel,
                         style: const TextStyle(
-                          color: Colors.white38,
-                          fontSize: 11,
+                          color: Colors.white54,
+                          fontSize: 13.5,
                         ),
                       ),
                       if (m.hasQr) ...[
@@ -527,7 +530,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       TextSpan(
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 14.5,
+                          fontSize: 16.5,
                           height: 1.4,
                         ),
                         children: _highlightedSpans(m.body, activeFindings),
@@ -604,7 +607,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
           top: landed ? landTop : dockTop,
           child: DroneWidget(
             drone: drone,
-            size: landed ? 46 : 44,
+            size: landed ? 56 : 52,
             scanning: scanningThis,
             badgePoints:
                 (_phase == FleetPhase.revealed ||
@@ -648,38 +651,35 @@ class _MessagesScreenState extends State<MessagesScreen> {
     switch (_phase) {
       case FleetPhase.idle:
         return _panelShell(
-          child: Row(
+          // Stacked, not side-by-side: at senior type sizes the button
+          // needs the full width (a Row here overflowed by 33px).
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      'Drone Bay',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      _selected == null
-                          ? 'Pick a message'
-                          : '6 specialists ready — tap a message, then '
-                                'release the fleet.',
-                      style: const TextStyle(
-                        color: Colors.white54,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
+              const Text(
+                'Drone Bay',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              FilledButton.icon(
-                style: FilledButton.styleFrom(backgroundColor: kMagenta),
-                onPressed: _selected == null ? null : _releaseFleet,
-                icon: const Icon(Icons.radar),
-                label: const Text('Release the Fleet'),
+              Text(
+                _selected == null
+                    ? 'Pick a message above, then release the fleet.'
+                    : '6 specialists ready — tap a message, then '
+                          'release the fleet.',
+                style: const TextStyle(color: Colors.white54, fontSize: 14.5),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  style: FilledButton.styleFrom(backgroundColor: kMagenta),
+                  onPressed: _selected == null ? null : _releaseFleet,
+                  icon: const Icon(Icons.radar),
+                  label: const Text('Release the Fleet'),
+                ),
               ),
             ],
           ),
@@ -767,7 +767,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       style: TextStyle(
                         color: color,
                         fontWeight: FontWeight.bold,
-                        fontSize: 15,
+                        fontSize: 17,
                       ),
                     ),
                     Text(
@@ -776,7 +776,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       'something. Tap a drone to hear its case.',
                       style: const TextStyle(
                         color: Colors.white54,
-                        fontSize: 12,
+                        fontSize: 14.5,
                       ),
                     ),
                   ],
@@ -843,7 +843,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                 style: TextStyle(
                   color: Color(0xFF22C55E),
                   fontWeight: FontWeight.w900,
-                  fontSize: 16,
+                  fontSize: 17.5,
                 ),
               ),
             ],
@@ -852,7 +852,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
           Text(
             'Sender blocked. Report ${report.incidentId} filed with '
             'T-Mobile — written automatically from the fleet\'s findings:',
-            style: const TextStyle(color: Colors.white70, fontSize: 12.5),
+            style: const TextStyle(color: Colors.white70, fontSize: 15),
           ),
           const SizedBox(height: 6),
           Container(
@@ -867,7 +867,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
               report.lines.join('\n'),
               style: const TextStyle(
                 color: Colors.white60,
-                fontSize: 11.5,
+                fontSize: 14,
                 height: 1.45,
               ),
             ),
@@ -933,7 +933,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
       contentPadding: EdgeInsets.zero,
       title: Text(
         label,
-        style: const TextStyle(color: Colors.white70, fontSize: 13),
+        style: const TextStyle(color: Colors.white70, fontSize: 15.5),
       ),
       value: value,
       onChanged: onChanged,
@@ -962,7 +962,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
               ),
               Text(
                 'Step ${_walkIndex + 1} of ${steps.length}',
-                style: const TextStyle(color: Colors.white38, fontSize: 11),
+                style: const TextStyle(color: Colors.white54, fontSize: 13.5),
               ),
             ],
           ),

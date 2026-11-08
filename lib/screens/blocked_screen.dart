@@ -52,7 +52,7 @@ class _BlockedScreenState extends State<BlockedScreen> {
         backgroundColor: const Color(0xFF12121C),
         title: const Text(
           'Blocked & Reported',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
       body: Column(
@@ -81,7 +81,7 @@ class _BlockedScreenState extends State<BlockedScreen> {
                 'Your block list is shared with your trusted contact — '
                 'when either of you blocks a scammer, both phones are '
                 'protected.',
-                style: TextStyle(color: Colors.white54, fontSize: 12),
+                style: TextStyle(color: Colors.white54, fontSize: 14.5),
               ),
             ),
           ),
@@ -129,7 +129,7 @@ class _BlockedScreenState extends State<BlockedScreen> {
             Text(
               label,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white54, fontSize: 10.5),
+              style: const TextStyle(color: Colors.white54, fontSize: 13),
             ),
           ],
         ),
@@ -159,7 +159,7 @@ class _BlockedScreenState extends State<BlockedScreen> {
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                    fontSize: 16,
                   ),
                 ),
               ),
@@ -174,7 +174,7 @@ class _BlockedScreenState extends State<BlockedScreen> {
                   style: const TextStyle(
                     color: Color(0xFFF87171),
                     fontWeight: FontWeight.bold,
-                    fontSize: 12,
+                    fontSize: 14.5,
                   ),
                 ),
               ),
@@ -199,7 +199,7 @@ class _BlockedScreenState extends State<BlockedScreen> {
                   ),
                   label: Text(
                     d.label,
-                    style: TextStyle(color: Color(d.colorValue), fontSize: 11),
+                    style: TextStyle(color: Color(d.colorValue), fontSize: 13.5),
                   ),
                 ),
             ],
@@ -212,14 +212,14 @@ class _BlockedScreenState extends State<BlockedScreen> {
                     ? Icons.outgoing_mail
                     : Icons.shield_outlined,
                 size: 13,
-                color: Colors.white38,
+                color: Colors.white54,
               ),
               const SizedBox(width: 5),
               Expanded(
                 child: Text(
                   '${e.status == BlockStatus.reported ? 'Blocked + reported' : 'Blocked'} '
                   '· ${e.incidentId} · by ${e.blockedBy} · ${e.whenLabel}',
-                  style: const TextStyle(color: Colors.white38, fontSize: 11.5),
+                  style: const TextStyle(color: Colors.white54, fontSize: 14),
                 ),
               ),
               TextButton(

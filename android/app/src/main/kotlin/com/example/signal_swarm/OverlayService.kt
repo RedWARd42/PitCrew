@@ -105,7 +105,7 @@ class OverlayService : Service() {
         val drone = TextView(this).apply {
             text = "SWAT"
             setTextColor(0xFFFFFFFF.toInt())
-            textSize = 11f
+            textSize = 12.5f
             gravity = Gravity.CENTER
             background = badge
             elevation = 8f
@@ -233,7 +233,7 @@ class OverlayService : Service() {
         val verdictChip = TextView(this).apply {
             text = "${analysis.riskScore}/100 · ${analysis.verdict.label}"
             setTextColor(0xFFFFFFFF.toInt())
-            textSize = 11.5f
+            textSize = 13.5f
             typeface = Typeface.DEFAULT_BOLD
             setPadding(dp(9), dp(4), dp(9), dp(4))
             background = GradientDrawable().apply {
@@ -248,7 +248,7 @@ class OverlayService : Service() {
             addView(TextView(this@OverlayService).apply {
                 text = "SWAT FLEET SCAN"
                 setTextColor(MAGENTA)
-                textSize = 13f
+                textSize = 15.5f
                 typeface = Typeface.DEFAULT_BOLD
             })
             addView(View(this@OverlayService).apply {
@@ -261,14 +261,14 @@ class OverlayService : Service() {
         root.addView(TextView(this).apply {
             text = "From ${analysis.sender}"
             setTextColor(0xB3FFFFFF.toInt())
-            textSize = 12f
+            textSize = 14.5f
             setPadding(0, dp(6), 0, 0)
         })
 
         val messageText = TextView(this).apply {
             text = analysis.body
             setTextColor(0xFFFFFFFF.toInt())
-            textSize = 14.5f
+            textSize = 17f
             setPadding(0, dp(8), 0, 0)
             setLineSpacing(0f, 1.25f)
         }
@@ -289,7 +289,7 @@ class OverlayService : Service() {
                 layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
             }
             val orb = View(this).apply {
-                layoutParams = LinearLayout.LayoutParams(dp(30), dp(30))
+                layoutParams = LinearLayout.LayoutParams(dp(34), dp(34))
                 background = GradientDrawable().apply {
                     shape = GradientDrawable.OVAL
                     setColor(drone.color)
@@ -299,7 +299,7 @@ class OverlayService : Service() {
             val label = TextView(this).apply {
                 text = drone.label
                 setTextColor(drone.color)
-                textSize = 9.5f
+                textSize = 12f
                 gravity = Gravity.CENTER
                 alpha = 0.3f
                 setPadding(0, dp(3), 0, 0)
@@ -314,7 +314,7 @@ class OverlayService : Service() {
 
         val findingsText = TextView(this).apply {
             setTextColor(0xB3FFFFFF.toInt())
-            textSize = 12f
+            textSize = 14.5f
             setPadding(0, dp(10), 0, 0)
             visibility = View.GONE
         }
@@ -446,13 +446,13 @@ class OverlayService : Service() {
         root.addView(TextView(this).apply {
             text = title
             setTextColor(0xFFFFFFFF.toInt())
-            textSize = 15f
+            textSize = 17f
             typeface = Typeface.DEFAULT_BOLD
         })
         root.addView(TextView(this).apply {
             text = message
             setTextColor(0xB3FFFFFF.toInt())
-            textSize = 12.5f
+            textSize = 15f
             setPadding(0, dp(6), 0, 0)
         })
         val row = LinearLayout(this).apply {

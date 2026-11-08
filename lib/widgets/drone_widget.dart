@@ -155,7 +155,7 @@ class _DroneWidgetState extends State<DroneWidget>
                               : '✓',
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 9,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -165,12 +165,18 @@ class _DroneWidgetState extends State<DroneWidget>
               ),
             ),
             if (widget.showLabel)
-              Text(
-                widget.drone.label,
-                style: TextStyle(
-                  color: color,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
+              // The longest name ("Impersonator") is wider than the
+              // drone's column on narrow phones — scale it down to fit
+              // rather than letting it collide with its neighbours.
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  widget.drone.label,
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
           ],

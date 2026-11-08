@@ -35,6 +35,53 @@ class SwatApp extends StatelessWidget {
           brightness: Brightness.dark,
         ),
         useMaterial3: true,
+        // Senior-first scale (elderly_mobile_ui skill): body text lives
+        // at 17-18sp, nothing meaningful below 14sp, primary actions are
+        // at least 56dp tall, and secondary text stays at white70 —
+        // gray-on-dark "elegance" is the most common senior-hostile
+        // choice in dark UIs.
+        textTheme: const TextTheme(
+          headlineMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+          titleLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          titleMedium: TextStyle(fontSize: 19, fontWeight: FontWeight.w600),
+          bodyLarge: TextStyle(fontSize: 18, height: 1.45),
+          bodyMedium: TextStyle(fontSize: 17, height: 1.45),
+          bodySmall: TextStyle(fontSize: 15, height: 1.4),
+          labelLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          labelMedium: TextStyle(fontSize: 14.5),
+          labelSmall: TextStyle(fontSize: 13.5),
+        ),
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            minimumSize: const Size(64, 58),
+            textStyle: const TextStyle(
+              fontSize: 17.5,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size(64, 56),
+            textStyle: const TextStyle(fontSize: 17),
+          ),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            minimumSize: const Size(48, 52),
+            textStyle: const TextStyle(fontSize: 16),
+          ),
+        ),
+        navigationBarTheme: const NavigationBarThemeData(
+          height: 76,
+          labelTextStyle: WidgetStatePropertyAll(
+            TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          ),
+        ),
+        chipTheme: const ChipThemeData(
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          labelStyle: TextStyle(fontSize: 15.5),
+        ),
       ),
       home: const AccountGate(),
     );

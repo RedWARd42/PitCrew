@@ -35,11 +35,11 @@ class EmailsScreen extends StatelessWidget {
           children: [
             Text(
               'Inbox',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
               'protected by Swat',
-              style: TextStyle(fontSize: 11, color: _kMagenta),
+              style: TextStyle(fontSize: 13.5, color: _kMagenta),
             ),
           ],
         ),
@@ -54,7 +54,7 @@ class EmailsScreen extends StatelessWidget {
               'Same fleet, second beat. Open an email, release the drones, '
               'then tap one — it teaches you the tell right here in the '
               'mail app. Demo mailbox: synthetic mail only.',
-              style: TextStyle(color: Colors.white54, fontSize: 11.5),
+              style: TextStyle(color: Colors.white54, fontSize: 14),
             ),
           ),
           Expanded(
@@ -105,15 +105,15 @@ class EmailsScreen extends StatelessWidget {
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
-                            fontSize: 14,
+                            fontSize: 16,
                           ),
                         ),
                       ),
                       Text(
                         email.timeLabel,
                         style: const TextStyle(
-                          color: Colors.white38,
-                          fontSize: 11,
+                          color: Colors.white54,
+                          fontSize: 13.5,
                         ),
                       ),
                     ],
@@ -123,7 +123,7 @@ class EmailsScreen extends StatelessWidget {
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
-                      fontSize: 13.5,
+                      fontSize: 16,
                     ),
                   ),
                   Row(
@@ -135,7 +135,7 @@ class EmailsScreen extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             color: Colors.white54,
-                            fontSize: 12.5,
+                            fontSize: 15,
                           ),
                         ),
                       ),
@@ -143,7 +143,7 @@ class EmailsScreen extends StatelessWidget {
                         const Icon(
                           Icons.attach_file,
                           size: 14,
-                          color: Colors.white38,
+                          color: Colors.white54,
                         ),
                       if (email.qrPayload != null)
                         const Icon(
@@ -198,10 +198,12 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
       _revealed = 0;
       _walk = null;
     });
+    // Reduce-motion: land instantly when the system asks for no animation.
+    final stepMs = MediaQuery.of(context).disableAnimations ? 0 : 260;
     for (var i = 0; i < DroneId.values.length; i++) {
       if (!mounted || _phase != _Phase.scanning) return;
       setState(() => _scanningIdx = i);
-      await Future<void>.delayed(const Duration(milliseconds: 260));
+      await Future<void>.delayed(Duration(milliseconds: stepMs));
       if (!mounted || _phase != _Phase.scanning) return;
       setState(() {
         _revealed = i + 1;
@@ -230,7 +232,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
       backgroundColor: _kBackground,
       appBar: AppBar(
         backgroundColor: const Color(0xFF12121C),
-        title: const Text('Email', style: TextStyle(fontSize: 17)),
+        title: const Text('Email', style: TextStyle(fontSize: 18)),
       ),
       body: Column(
         children: [
@@ -272,7 +274,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
             email.subject,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 17,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
               height: 1.3,
             ),
@@ -285,7 +287,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
                 backgroundColor: const Color(0xFF2A2A3A),
                 child: Text(
                   email.fromName.substring(0, 1).toUpperCase(),
-                  style: const TextStyle(color: Colors.white70, fontSize: 12),
+                  style: const TextStyle(color: Colors.white70, fontSize: 14.5),
                 ),
               ),
               const SizedBox(width: 9),
@@ -298,22 +300,22 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
-                        fontSize: 13,
+                        fontSize: 15.5,
                       ),
                     ),
                     Text(
                       email.fromAddress,
                       style: const TextStyle(
                         color: Colors.white54,
-                        fontSize: 12,
+                        fontSize: 14.5,
                       ),
                     ),
                     if (email.replyTo != null)
                       Text(
                         'Reply-To: ${email.replyTo}',
                         style: const TextStyle(
-                          color: Colors.white38,
-                          fontSize: 11.5,
+                          color: Colors.white54,
+                          fontSize: 14,
                         ),
                       ),
                   ],
@@ -321,7 +323,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
               ),
               Text(
                 email.timeLabel,
-                style: const TextStyle(color: Colors.white38, fontSize: 11),
+                style: const TextStyle(color: Colors.white54, fontSize: 13.5),
               ),
             ],
           ),
@@ -330,7 +332,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
             TextSpan(
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 14.5,
+                fontSize: 16.5,
                 height: 1.45,
               ),
               children: _highlightedBody(email.body, _activeFindings),
@@ -358,7 +360,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
                     email.attachmentName!,
                     style: const TextStyle(
                       color: Colors.white70,
-                      fontSize: 12.5,
+                      fontSize: 15,
                     ),
                   ),
                 ],
@@ -383,7 +385,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
                   SizedBox(width: 6),
                   Text(
                     'QR code in this email',
-                    style: TextStyle(color: Colors.white70, fontSize: 12.5),
+                    style: TextStyle(color: Colors.white70, fontSize: 15),
                   ),
                 ],
               ),
@@ -456,7 +458,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
           top: landed ? top : constraints.maxHeight - 78,
           child: DroneWidget(
             drone: drone,
-            size: landed ? 46 : 44,
+            size: landed ? 56 : 52,
             scanning: _phase == _Phase.scanning && i == _scanningIdx,
             badgePoints: _phase == _Phase.revealed || _phase == _Phase.protected
                 ? _analysis.pointsFor(drone)
@@ -485,7 +487,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
           children: [
             Row(
               children: [
-                DroneWidget(drone: drone, size: 40, showLabel: false),
+                DroneWidget(drone: drone, size: 44, showLabel: false),
                 const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -494,7 +496,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
                       drone.label,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 17,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -502,7 +504,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
                       drone.specialty,
                       style: const TextStyle(
                         color: Colors.white60,
-                        fontSize: 12,
+                        fontSize: 14.5,
                       ),
                     ),
                   ],
@@ -594,7 +596,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
                 ),
                 Text(
                   'Step ${_walkIndex + 1} of ${steps.length}',
-                  style: const TextStyle(color: Colors.white38, fontSize: 11),
+                  style: const TextStyle(color: Colors.white54, fontSize: 13.5),
                 ),
               ],
             ),
@@ -635,33 +637,33 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
     switch (_phase) {
       case _Phase.idle:
         return _panelShell(
-          Row(
+          // Stacked like the Messages bay: full-width action at senior
+          // type sizes (a side-by-side Row overflows).
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Drone Bay',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'Six specialists, email edition — domains, Reply-To '
-                      'tricks, attachments, links, pressure.',
-                      style: TextStyle(color: Colors.white54, fontSize: 12),
-                    ),
-                  ],
+              const Text(
+                'Drone Bay',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              FilledButton.icon(
-                style: FilledButton.styleFrom(backgroundColor: _kMagenta),
-                onPressed: _release,
-                icon: const Icon(Icons.radar),
-                label: const Text('Release the Fleet'),
+              const Text(
+                'Six specialists, email edition — domains, Reply-To '
+                'tricks, attachments, links, pressure.',
+                style: TextStyle(color: Colors.white54, fontSize: 14.5),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  style: FilledButton.styleFrom(backgroundColor: _kMagenta),
+                  onPressed: _release,
+                  icon: const Icon(Icons.radar),
+                  label: const Text('Release the Fleet'),
+                ),
               ),
             ],
           ),
@@ -725,7 +727,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
                           style: TextStyle(
                             color: color,
                             fontWeight: FontWeight.bold,
-                            fontSize: 15,
+                            fontSize: 17,
                           ),
                         ),
                         Text(
@@ -733,7 +735,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
                           'the learning happens.',
                           style: const TextStyle(
                             color: Colors.white54,
-                            fontSize: 12,
+                            fontSize: 14.5,
                           ),
                         ),
                       ],
@@ -798,7 +800,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
                     style: TextStyle(
                       color: Color(0xFF22C55E),
                       fontWeight: FontWeight.w900,
-                      fontSize: 16,
+                      fontSize: 17.5,
                     ),
                   ),
                 ],
@@ -807,7 +809,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
               Text(
                 'Sender blocked. Report ${report.incidentId} filed — find '
                 'it any time in the Blocked tab.',
-                style: const TextStyle(color: Colors.white70, fontSize: 12.5),
+                style: const TextStyle(color: Colors.white70, fontSize: 15),
               ),
               const SizedBox(height: 10),
               SizedBox(
