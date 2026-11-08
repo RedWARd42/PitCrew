@@ -7,6 +7,8 @@ import 'package:speech_to_text/speech_to_text.dart';
 
 import '../models/message.dart';
 import '../services/drone_brain.dart';
+import '../services/elevenlabs_config.dart';
+import '../services/elevenlabs_tts.dart';
 import '../widgets/drone_widget.dart';
 
 const Color _kMagenta = Color(0xFFE20074);
@@ -22,7 +24,11 @@ class _Turn {
 ///
 /// The user can type, or tap the microphone and dictate a question
 /// (speech-to-text via the platform recognizer); the drone answers out
-/// loud (text-to-speech) as well as in text. Answers come from
+/// loud as well as in text. When an ElevenLabs API key is supplied at
+/// run time (--dart-define=ELEVENLABS_API_KEY=...), answers stream in
+/// this drone's own ElevenLabs voice (eleven_flash_v2_5, the pattern
+/// borrowed from Squeek); otherwise — or if ElevenLabs is unreachable —
+/// the device text-to-speech engine speaks them. Answers come from
 /// [DroneBrain] — composed on-device from this drone's actual findings
 /// plus its built-in specialty knowledge, never from a cloud chatbot, so
 /// everything it says can be checked against the scan.
@@ -51,6 +57,7 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
   final ScrollController _scroll = ScrollController();
   final SpeechToText _speech = SpeechToText();
   final FlutterTts _tts = FlutterTts();
+  final ElevenLabsTts _eleven = ElevenLabsTts();
 
   final List<_Turn> _turns = [];
   bool _listening = false;
@@ -81,6 +88,14 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
 
   Future<void> _speak(String text) async {
     if (!_voiceOn) return;
+    // ElevenLabs first when configured: this drone's own streaming
+    // voice. Any failure (bad key, no quota, offline) falls back to
+    // the device engine so the answer is still spoken.
+    if (_eleven.isConfigured) {
+      await _tts.stop();
+      final ok = await _eleven.speak(text, _drone);
+      if (ok || !_voiceOn) return;
+    }
     try {
       await _tts.stop();
       await _tts.speak(text);
@@ -93,6 +108,7 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
   void dispose() {
     _speech.stop();
     _tts.stop();
+    _eleven.dispose();
     _input.dispose();
     _scroll.dispose();
     super.dispose();
@@ -207,7 +223,9 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
                     ),
                   ),
                   Text(
-                    _drone.specialty,
+                    elevenLabsConfigured
+                        ? '${_drone.specialty} · ElevenLabs voice'
+                        : _drone.specialty,
                     style: TextStyle(fontSize: 14, color: _droneColor),
                   ),
                 ],
@@ -226,7 +244,10 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
             ),
             onPressed: () {
               setState(() => _voiceOn = !_voiceOn);
-              if (!_voiceOn) _tts.stop();
+              if (!_voiceOn) {
+                _tts.stop();
+                _eleven.stop();
+              }
             },
           ),
         ],

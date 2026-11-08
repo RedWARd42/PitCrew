@@ -13,6 +13,10 @@
     <!-- RECORD_AUDIO powers voice dictation in the drone conversations
          (tap the mic, ask the drone a question out loud). -->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <!-- INTERNET powers the drones' ElevenLabs streaming voices (only
+         used when an API key is supplied via --dart-define; the scan
+         engine itself never leaves the device). -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="Swat"
         android:name="${applicationName}"

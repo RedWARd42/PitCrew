@@ -209,8 +209,22 @@ Each drone holds a real conversation about the message it just checked:
 
 - **Dictation:** tap the microphone and ask out loud; your words are
   transcribed into the question box live (platform speech recognizer).
-- **Spoken answers:** the drone replies in text and out loud
-  (text-to-speech), with a speaker toggle in the corner.
+- **Spoken answers:** the drone replies in text and out loud,
+  with a speaker toggle in the corner.
+- **ElevenLabs voices (optional):** run with
+  `--dart-define=ELEVENLABS_API_KEY=sk_...` and every drone speaks in
+  its **own ElevenLabs voice** — streaming TTS on `eleven_flash_v2_5`
+  (POST to the `/stream` endpoint, `optimize_streaming_latency=3`,
+  played progressively through just_audio, answers chunked by
+  sentence so the first words land fast). This is the pattern from
+  Squeek's ElevenLabs streaming implementation, ported from its
+  Express proxy + `<audio>` client to direct in-app streaming. The
+  chat header shows "· ElevenLabs voice" when it's live. Without a
+  key — or if ElevenLabs is unreachable — answers fall back to the
+  device TTS engine. Honest caveat: shipping a key inside an app is a
+  demo shortcut; a production build should proxy ElevenLabs through
+  a small server (as Squeek does) so the key never leaves the
+  backend.
 - **Grounded, on-device answers:** replies are composed on the phone
   from that drone's actual findings — its points, its evidence quotes,
   the fleet's verdict and confidence — plus a small built-in base of

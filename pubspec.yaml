@@ -41,6 +41,13 @@ dependencies:
   speech_to_text: ^7.0.0
   flutter_tts: ^4.2.0
 
+  # ElevenLabs streaming voices for the drones: http sends the TTS
+  # request, just_audio plays the MP3 stream progressively as it
+  # arrives (the Squeek pattern, ported to Flutter). The device TTS
+  # above remains the no-key fallback.
+  http: ^1.2.0
+  just_audio: ^0.10.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
