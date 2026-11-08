@@ -63,7 +63,6 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
   bool _listening = false;
   bool _voiceOn = true;
   bool _speaking = false;
-  bool _micUnavailable = false;
 
   DroneId get _drone => widget.drone;
   Color get _droneColor => Color(_drone.colorValue);
@@ -156,6 +155,9 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
       if (mounted) setState(() => _listening = false);
       return;
     }
+    // Never compete with the drone's own voice: on the emulator the
+    // recognizer errors out (or hears the TTS) if playback is live.
+    await _stopSpeaking();
     try {
       final ready = await _speech.initialize(
         onStatus: (status) {
@@ -193,12 +195,19 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
   }
 
   void _showMicUnavailable() {
-    setState(() => _micUnavailable = true);
+    // Deliberately NOT latching a disabled state: the usual causes
+    // (permission not yet granted, emulator mic passthrough off) are
+    // fixable mid-session, and a permanently dead button strands the
+    // user. Explain, and let the button be tapped again to retry.
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
+        duration: Duration(seconds: 8),
         content: Text(
-          'Voice dictation is not available on this device — you can '
-          'still type your question.',
+          'The microphone did not start. On the emulator, turn on '
+          'Extended Controls → Microphone → "Virtual microphone uses '
+          'host audio input", and allow Swat microphone permission '
+          '(Settings → Apps → Swat → Permissions). Then tap Voice '
+          'again — typing always works too.',
         ),
       ),
     );
@@ -434,12 +443,10 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
         height: 60,
         width: double.infinity,
         child: ElevatedButton.icon(
-          onPressed: _micUnavailable ? null : _toggleMic,
+          onPressed: _toggleMic,
           icon: Icon(_listening ? Icons.stop : Icons.mic, size: 28),
           label: Text(
-            _micUnavailable
-                ? 'Voice is not available on this device'
-                : _listening
+            _listening
                 ? 'Listening… tap to stop'
                 : 'Ask ${_drone.label} by voice',
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
