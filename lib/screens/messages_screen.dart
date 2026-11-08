@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/message.dart';
 import '../services/account_store.dart';
 import '../services/device_services.dart';
+import '../services/message_sorting.dart';
 import '../services/scam_analyzer.dart';
 import '../services/stores.dart';
 import '../services/walkthrough.dart';
@@ -52,6 +53,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
   List<ChatMessage> _messages = const [];
   bool _fromRealStore = false;
   bool _loading = true;
+  MessageSort _sort = MessageSort.newestFirst;
 
   String? _selectedId;
   FleetPhase _phase = FleetPhase.idle;
@@ -106,6 +108,120 @@ class _MessagesScreenState extends State<MessagesScreen> {
     final m = _selected;
     if (m == null) return null;
     return _analysisCache.putIfAbsent(m.id, () => _analyzer.analyze(m));
+  }
+
+  int _riskFor(ChatMessage message) => _analysisCache
+      .putIfAbsent(message.id, () => _analyzer.analyze(message))
+      .riskScore;
+
+  List<ChatMessage> _visibleMessages() =>
+      sortChatMessages(_messages, _sort, riskScore: _riskFor);
+
+  void _showSortSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: const Color(0xFF15151F),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 18, 12, 18),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    'Sort messages',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                for (final option in MessageSort.values)
+                  ListTile(
+                    minTileHeight: 64,
+                    leading: Icon(
+                      _sortIcon(option),
+                      color: option == _sort ? kMagenta : Colors.white70,
+                    ),
+                    title: Text(
+                      option.label,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    subtitle: Text(
+                      option.description,
+                      style: const TextStyle(
+                        color: Colors.white54,
+                        fontSize: 14.5,
+                      ),
+                    ),
+                    trailing: Icon(
+                      option == _sort
+                          ? Icons.check_circle
+                          : Icons.circle_outlined,
+                      color: option == _sort ? kMagenta : Colors.white38,
+                    ),
+                    onTap: () {
+                      Navigator.of(sheetContext).pop();
+                      setState(() => _sort = option);
+                    },
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  IconData _sortIcon(MessageSort sort) => switch (sort) {
+    MessageSort.newestFirst => Icons.schedule,
+    MessageSort.oldestFirst => Icons.history,
+    MessageSort.highestRiskFirst => Icons.warning_amber,
+    MessageSort.senderAZ => Icons.sort_by_alpha,
+  };
+
+  Widget _buildSortBar() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+      decoration: const BoxDecoration(
+        color: Color(0xFF10101A),
+        border: Border(bottom: BorderSide(color: Colors.white10)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.sort, color: Colors.white70, size: 22),
+          const SizedBox(width: 9),
+          const Expanded(
+            child: Text(
+              'Sort messages',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16.5,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          OutlinedButton.icon(
+            onPressed: _loading || _messages.isEmpty ? null : _showSortSheet,
+            icon: const Icon(Icons.expand_more, size: 21),
+            label: Text(_sort.label),
+          ),
+        ],
+      ),
+    );
   }
 
   void _selectMessage(String id) {
@@ -296,10 +412,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     Navigator.of(sheetContext).pop();
                     await AccountStore.signOut();
                   },
-                  child: const Text(
-                    'Sign out',
-                    style: TextStyle(fontSize: 18),
-                  ),
+                  child: const Text('Sign out', style: TextStyle(fontSize: 18)),
                 ),
               ),
             ],
@@ -350,6 +463,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
   @override
   Widget build(BuildContext context) {
     final analysis = _analysis;
+    final visibleMessages = _loading
+        ? const <ChatMessage>[]
+        : _visibleMessages();
     return Scaffold(
       backgroundColor: kBackground,
       appBar: AppBar(
@@ -408,6 +524,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
               style: const TextStyle(color: Colors.white54, fontSize: 14),
             ),
           ),
+          _buildSortBar(),
           Expanded(
             child: _loading
                 ? const Center(child: CircularProgressIndicator())
@@ -417,9 +534,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       children: [
                         ListView.builder(
                           padding: const EdgeInsets.fromLTRB(12, 12, 96, 90),
-                          itemCount: _messages.length,
+                          itemCount: visibleMessages.length,
                           itemBuilder: (context, i) =>
-                              _buildBubble(_messages[i]),
+                              _buildBubble(visibleMessages[i]),
                         ),
                         ..._buildFlyingDrones(constraints, analysis),
                       ],
@@ -825,10 +942,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
   }
 
   Widget _buildProtectedPanel(MessageAnalysis analysis) {
-    final report = buildReport(
-      analysis,
-      accountName: AccountStore.displayName,
-    );
+    final report = buildReport(analysis, accountName: AccountStore.displayName);
     return _panelShell(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

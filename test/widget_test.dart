@@ -2,6 +2,7 @@
 // to the synthetic demo inbox when no SMS platform channel answers, and
 // offers the Release the Fleet action.
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -42,5 +43,35 @@ void main() {
     expect(find.text('Family'), findsOneWidget);
     // The headline synthetic smishing scenario is in the demo inbox.
     expect(find.textContaining('872-555-0147'), findsWidgets);
+  });
+
+  testWidgets('Messages can be re-sorted from the sort control', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const SwatApp());
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.text('Sort messages'), findsOneWidget);
+    expect(find.text('Newest first'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Newest first'));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.text('Highest risk first'), findsOneWidget);
+    final oldestTile = find.ancestor(
+      of: find.text('Oldest first'),
+      matching: find.byType(ListTile),
+    );
+    tester.widget<ListTile>(oldestTile).onTap!();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    // The control now reflects the selected ordering, and the two oldest
+    // demo senders now lead the list in oldest-first order.
+    expect(find.widgetWithText(OutlinedButton, 'Oldest first'), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.text('+1 214-555-0176')).dy,
+      lessThan(tester.getTopLeft(find.text('Mom')).dy),
+    );
   });
 }
