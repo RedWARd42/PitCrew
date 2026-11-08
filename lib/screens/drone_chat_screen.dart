@@ -381,11 +381,14 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
   }
 
   Widget _buildListeningStrip() {
-    // Live level meter: if this bar never moves while you talk, no
-    // audio is reaching the app at all (the emulator is recording
-    // silence) — a recognizer problem looks different (bar moves,
-    // words still wrong/missing). The strip says which one it is.
-    final fraction = ((_soundLevel + 2) / 12).clamp(0.0, 1.0);
+    // Live level meter with a noise-floor dead zone: the recognizer
+    // reports tiny fluctuating levels even for digital silence (the
+    // emulator's virtual mic + automatic gain), so the scale starts
+    // above that floor — the bar only moves for real sound pressure,
+    // and a bar that never moves while you talk means no audio is
+    // reaching the app (emulator records silence), which is a
+    // different problem from a recognizer error.
+    final fraction = ((_soundLevel - 0.5) / 9.5).clamp(0.0, 1.0);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),

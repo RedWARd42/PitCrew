@@ -88,9 +88,29 @@ List<String> splitForSpeech(String text, {int maxChars = 240}) {
 /// request (bad/expired key, no quota) so the caller can fall back to
 /// the device TTS for that answer instead of going silent.
 class ElevenLabsTts {
-  ElevenLabsTts({AudioPlayer? player}) : _player = player ?? AudioPlayer();
+  factory ElevenLabsTts({AudioPlayer? player}) {
+    final loudness = AndroidLoudnessEnhancer();
+    return ElevenLabsTts._(
+      player:
+          player ??
+          AudioPlayer(
+            audioPipeline: AudioPipeline(androidAudioEffects: [loudness]),
+          ),
+      loudness: loudness,
+    );
+  }
+
+  ElevenLabsTts._({required AudioPlayer player, required this._loudness})
+    : _player = player;
 
   final AudioPlayer _player;
+
+  /// Loudness boost for the drone voices: ElevenLabs MP3s are
+  /// mastered conservatively and emulator speakers are quiet, so the
+  /// Android loudness enhancer adds gain on top of full volume.
+  final AndroidLoudnessEnhancer _loudness;
+  bool _boostApplied = false;
+
   http.Client? _client;
   int _session = 0;
 
@@ -102,6 +122,16 @@ class ElevenLabsTts {
     _client?.close();
     final client = http.Client();
     _client = client;
+    if (!_boostApplied) {
+      _boostApplied = true;
+      try {
+        await _loudness.setEnabled(true);
+        await _loudness.setTargetGain(8); // +8 dB over the source
+        await _player.setVolume(1.0);
+      } catch (_) {
+        // Non-Android or effect unavailable: plain full volume.
+      }
+    }
     try {
       await _player.stop();
     } catch (_) {}
