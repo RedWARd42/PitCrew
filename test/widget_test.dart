@@ -1,30 +1,38 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// Smoke test for the Swat app shell: the Messages screen loads, falls back
+// to the synthetic demo inbox when no SMS platform channel answers, and
+// offers the Release the Fleet action.
 
-import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:signal_swarm/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  TestWidgetsFlutterBinding.ensureInitialized();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  setUp(() {
+    // No native side in a widget test: answer the SMS channel with null so
+    // SmsService takes its documented demo-inbox fallback right away.
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+          const MethodChannel('swat/sms'),
+          (call) async => null,
+        );
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+  testWidgets('Messages screen loads with the drone bay', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const SwatApp());
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 300));
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('Messages'), findsWidgets);
+    expect(find.text('Release the Fleet'), findsOneWidget);
+    // Shell tabs for the blocked list and the trusted contact.
+    expect(find.text('Blocked'), findsOneWidget);
+    expect(find.text('Family'), findsOneWidget);
+    // The headline synthetic smishing scenario is in the demo inbox.
+    expect(find.textContaining('872-555-0147'), findsWidgets);
   });
 }
