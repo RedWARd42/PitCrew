@@ -1,0 +1,43 @@
+From: Priya Nair <priya.nair@example.com>
+To: you@example.com
+Subject: Invitation: Sprint planning @ Tue 10:00
+Date: Sun, 08 Nov 2026 05:50:41 -0600
+Message-ID: <179413864112.44492.17978435419053437993@swarm-test.invalid>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============5916544959171451122=="
+
+--===============5916544959171451122==
+Content-Type: multipart/alternative;
+ boundary="===============0808721954575276514=="
+
+--===============0808721954575276514==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+Hi team, sprint planning is Tuesday at 10:00 in Room 4B.
+
+Join with Google Meet
+
+Agenda attached.
+
+--===============0808721954575276514==
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+<html><body><p>Hi team, sprint planning is Tuesday at 10:00 in Room 4B.</p><p=
+><a href=3D"https://meet.google.com/abc-defg-hij">Join with Google Meet</a></=
+p><p>Agenda attached.</p></body></html>
+
+--===============0808721954575276514==--
+
+--===============5916544959171451122==
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="agenda.pdf"
+MIME-Version: 1.0
+
+SGFybWxlc3MgZHVtbXkgYXR0YWNobWVudCBmb3IgU2lnbmFsIFN3YXJtIHRlc3Rpbmc6IGFnZW5k
+YS5wZGYNCg==
+
+--===============5916544959171451122==--

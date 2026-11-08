@@ -1,0 +1,19 @@
+id: legit_meeting_invite
+desc: Internal meeting invite
+from_name: Priya Nair
+from_address: priya.nair@example.com
+reply_to: null
+to: you@example.com
+subject: 'Invitation: Sprint planning @ Tue 10:00'
+body: 'Hi team, sprint planning is Tuesday at 10:00 in Room 4B.
+
+
+  [Join with Google Meet](https://meet.google.com/abc-defg-hij)
+
+
+  Agenda attached.'
+attachments:
+- agenda.pdf
+expect:
+  verdict: safe
+  drones: []

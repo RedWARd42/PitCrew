@@ -3,7 +3,9 @@ export type DroneId = "angler"|"link"|"pressure"|"impersonator"|"warden"|"drift"
 export type ActionId = "report_7726"|"call_official"|"alert_guardian"|"block_sender"|"delete"|"mark_safe"|"dont_send"|"send_anyway";
 export interface Sender { raw: string; kind: "long_code"|"short_code"|"toll_free"|"email"|"alphanumeric"|"unknown"; e164?: string; isContact: boolean }
 export interface MessageIn { id: string; direction: "in"|"out"; text: string; ts?: string; hasAttachment?: boolean }
+export interface EmailInfo { subject: string; fromName: string; fromAddress: string; replyTo?: string; links: { text: string; href: string }[]; attachments: { name: string }[] }
 export interface ScanRequest {
+  channel?: "sms"|"email"; email?: EmailInfo;
   requestId: string; client: "android"|"photon"|"web"; mode: "incoming"|"outgoing_draft";
   sender: Sender; messages: MessageIn[]; targetMessageId: string; locale: string;
   redactions: { type: string; count: number }[];

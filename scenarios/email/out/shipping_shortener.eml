@@ -1,0 +1,28 @@
+From: UPS Delivery <tracking@ups-parcel-notice.top>
+To: you@example.com
+Subject: Package on hold - address confirmation needed
+Date: Sun, 08 Nov 2026 05:50:41 -0600
+Message-ID: <179413864116.44492.5748627172347904759@swarm-test.invalid>
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="===============0940111338121601577=="
+
+--===============0940111338121601577==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+Your parcel could not be delivered. Confirm your address and pay a $1.99 rede=
+livery fee:
+
+https://bit.ly/3xK9fakeUPS
+
+--===============0940111338121601577==
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+<html><body><p>Your parcel could not be delivered. Confirm your address and p=
+ay a $1.99 redelivery fee:</p><p><a href=3D"https://bit.ly/3xK9fakeUPS">https=
+://bit.ly/3xK9fakeUPS</a></p></body></html>
+
+--===============0940111338121601577==--

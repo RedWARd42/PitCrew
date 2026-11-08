@@ -1,0 +1,12 @@
+id: bank_fraud_alert_callback
+desc: ''
+sender: '8335550188'
+steps:
+- delay: 0
+  text: 'Chase Fraud Dept: suspicious charge of $829 at ELECTRO-MART. Reply YES if you made it or call 1-833-555-0188 now.'
+expect:
+  verdict: scam
+  drones:
+  - angler
+  - impersonator
+  - pressure

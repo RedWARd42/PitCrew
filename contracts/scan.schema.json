@@ -1,6 +1,89 @@
 {
  "ScanRequest": {
   "$defs": {
+   "EmailAttachment": {
+    "properties": {
+     "name": {
+      "title": "Name",
+      "type": "string"
+     }
+    },
+    "required": [
+     "name"
+    ],
+    "title": "EmailAttachment",
+    "type": "object"
+   },
+   "EmailInfo": {
+    "description": "Present when channel == \"email\". Body goes in messages[0].text (redacted on device).",
+    "properties": {
+     "subject": {
+      "title": "Subject",
+      "type": "string"
+     },
+     "fromName": {
+      "title": "Fromname",
+      "type": "string"
+     },
+     "fromAddress": {
+      "title": "Fromaddress",
+      "type": "string"
+     },
+     "replyTo": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Replyto"
+     },
+     "links": {
+      "default": [],
+      "items": {
+       "$ref": "#/$defs/EmailLink"
+      },
+      "title": "Links",
+      "type": "array"
+     },
+     "attachments": {
+      "default": [],
+      "items": {
+       "$ref": "#/$defs/EmailAttachment"
+      },
+      "title": "Attachments",
+      "type": "array"
+     }
+    },
+    "required": [
+     "subject",
+     "fromName",
+     "fromAddress"
+    ],
+    "title": "EmailInfo",
+    "type": "object"
+   },
+   "EmailLink": {
+    "properties": {
+     "text": {
+      "title": "Text",
+      "type": "string"
+     },
+     "href": {
+      "title": "Href",
+      "type": "string"
+     }
+    },
+    "required": [
+     "text",
+     "href"
+    ],
+    "title": "EmailLink",
+    "type": "object"
+   },
    "MessageIn": {
     "properties": {
      "id": {
@@ -115,6 +198,26 @@
    }
   },
   "properties": {
+   "channel": {
+    "default": "sms",
+    "enum": [
+     "sms",
+     "email"
+    ],
+    "title": "Channel",
+    "type": "string"
+   },
+   "email": {
+    "anyOf": [
+     {
+      "$ref": "#/$defs/EmailInfo"
+     },
+     {
+      "type": "null"
+     }
+    ],
+    "default": null
+   },
    "requestId": {
     "title": "Requestid",
     "type": "string"

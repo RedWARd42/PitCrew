@@ -1,0 +1,279 @@
+{
+ "generated": "2026-11-08 02:22",
+ "url": "http://127.0.0.1:8000",
+ "n": 265,
+ "systems": {
+  "baseline_tfidf_lr": {
+   "n": 265,
+   "accuracy": 1.0,
+   "overall": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "legit_false_positive_rate": 0.0,
+   "ece": 0.091,
+   "reliability": [
+    [
+     0.06566344432966048,
+     0.0,
+     74
+    ],
+    [
+     0.1316695021308529,
+     0.0,
+     42
+    ],
+    [
+     0.21899157485403972,
+     0.0,
+     6
+    ],
+    [
+     0.8827450664454283,
+     1.0,
+     30
+    ],
+    [
+     0.9222109818550541,
+     1.0,
+     113
+    ]
+   ],
+   "per_category": {
+    "account_suspension": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "n": 12
+    },
+    "appointment": {
+     "false_positive_rate": 0.0,
+     "n": 26
+    },
+    "bank_alert": {
+     "false_positive_rate": 0.0,
+     "n": 18
+    },
+    "bank_fraud": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "n": 9
+    },
+    "delivery_notice": {
+     "false_positive_rate": 0.0,
+     "n": 16
+    },
+    "friend": {
+     "false_positive_rate": 0.0,
+     "n": 28
+    },
+    "giftcard_grandkid": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "n": 11
+    },
+    "irs_gov": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "n": 11
+    },
+    "job_offer": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "n": 14
+    },
+    "otp_harvest": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "n": 16
+    },
+    "package_delivery": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "n": 19
+    },
+    "pharmacy": {
+     "false_positive_rate": 0.0,
+     "n": 16
+    },
+    "prize": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "n": 11
+    },
+    "romance": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "n": 15
+    },
+    "toll_ezpass": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "n": 16
+    },
+    "twofa": {
+     "false_positive_rate": 0.0,
+     "n": 18
+    },
+    "wrong_number_crypto": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "n": 9
+    }
+   },
+   "worst_errors": [],
+   "latency_ms": {
+    "p50": 0.04,
+    "p95": 0.04
+   }
+  },
+  "swarm": {
+   "n": 265,
+   "accuracy": 0.479,
+   "overall": {
+    "precision": 0.553,
+    "recall": 0.182,
+    "f1": 0.274
+   },
+   "legit_false_positive_rate": 0.172,
+   "ece": 0.452,
+   "reliability": [
+    [
+     0.06,
+     0.536697247706422,
+     218
+    ],
+    [
+     0.8799999999999999,
+     0.5263157894736842,
+     38
+    ],
+    [
+     0.94,
+     0.6666666666666666,
+     9
+    ]
+   ],
+   "per_category": {
+    "account_suspension": {
+     "precision": 0.16,
+     "recall": 0.333,
+     "f1": 0.216,
+     "n": 12
+    },
+    "appointment": {
+     "false_positive_rate": 0.0,
+     "n": 26
+    },
+    "bank_alert": {
+     "false_positive_rate": 0.167,
+     "n": 18
+    },
+    "bank_fraud": {
+     "precision": 0.045,
+     "recall": 0.111,
+     "f1": 0.065,
+     "n": 9
+    },
+    "delivery_notice": {
+     "false_positive_rate": 0.0,
+     "n": 16
+    },
+    "friend": {
+     "false_positive_rate": 0.0,
+     "n": 28
+    },
+    "giftcard_grandkid": {
+     "precision": 0.192,
+     "recall": 0.455,
+     "f1": 0.27,
+     "n": 11
+    },
+    "irs_gov": {
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0,
+     "n": 11
+    },
+    "job_offer": {
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0,
+     "n": 14
+    },
+    "otp_harvest": {
+     "precision": 0.432,
+     "recall": 1.0,
+     "f1": 0.604,
+     "n": 16
+    },
+    "package_delivery": {
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0,
+     "n": 19
+    },
+    "pharmacy": {
+     "false_positive_rate": 0.0,
+     "n": 16
+    },
+    "prize": {
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0,
+     "n": 11
+    },
+    "romance": {
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0,
+     "n": 15
+    },
+    "toll_ezpass": {
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0,
+     "n": 16
+    },
+    "twofa": {
+     "false_positive_rate": 1.0,
+     "n": 18
+    },
+    "wrong_number_crypto": {
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0,
+     "n": 9
+    }
+   },
+   "worst_errors": [
+    "s92c1a33ee0",
+    "s92698593f6",
+    "s9cd9742a0a",
+    "sf97e9e1ad0",
+    "s4a2eb8c334",
+    "sa5369d2fb8",
+    "s8d7a900fa3",
+    "s1b63eb795b",
+    "s3845a31ba6",
+    "s8fa54a2147"
+   ],
+   "latency_ms": {
+    "p50": 7.7,
+    "p95": 19.7
+   }
+  }
+ },
+ "reliability_png": true
+}

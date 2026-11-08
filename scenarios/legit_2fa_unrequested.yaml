@@ -1,0 +1,9 @@
+id: legit_2fa_unrequested
+desc: ''
+sender: '33733'
+steps:
+- delay: 0
+  text: Your verification code is 905512. Do not share this code with anyone.
+expect:
+  verdict: safe
+  drones: []

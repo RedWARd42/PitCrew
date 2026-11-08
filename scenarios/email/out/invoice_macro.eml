@@ -1,0 +1,40 @@
+From: Accounts Receivable <billing@northwind-invoices.xyz>
+To: you@example.com
+Subject: Overdue invoice INV-20877 - payment required
+Date: Sun, 08 Nov 2026 05:50:41 -0600
+Message-ID: <179413864109.44492.4327152419192180549@swarm-test.invalid>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============3501084735805990520=="
+
+--===============3501084735805990520==
+Content-Type: multipart/alternative;
+ boundary="===============3272256686367369796=="
+
+--===============3272256686367369796==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+Please find the overdue invoice attached. Enable editing and content to view =
+it. Payment is required today to avoid a late fee.
+
+--===============3272256686367369796==
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+<html><body><p>Please find the overdue invoice attached. Enable editing and c=
+ontent to view it. Payment is required today to avoid a late fee.</p></body><=
+/html>
+
+--===============3272256686367369796==--
+
+--===============3501084735805990520==
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="INV-20877.docm"
+MIME-Version: 1.0
+
+SGFybWxlc3MgZHVtbXkgYXR0YWNobWVudCBmb3IgU2lnbmFsIFN3YXJtIHRlc3Rpbmc6IElOVi0y
+MDg3Ny5kb2NtDQo=
+
+--===============3501084735805990520==--

@@ -27,7 +27,28 @@ class Redaction(BaseModel):
     count: int
 
 
+class EmailLink(BaseModel):
+    text: str  # visible link text
+    href: str  # real destination
+
+
+class EmailAttachment(BaseModel):
+    name: str
+
+
+class EmailInfo(BaseModel):
+    """Present when channel == "email". Body goes in messages[0].text (redacted on device)."""
+    subject: str
+    fromName: str
+    fromAddress: str
+    replyTo: Optional[str] = None
+    links: list[EmailLink] = []
+    attachments: list[EmailAttachment] = []
+
+
 class ScanRequest(BaseModel):
+    channel: Literal["sms", "email"] = "sms"
+    email: Optional[EmailInfo] = None
     requestId: str
     client: Literal["android", "photon", "web"]
     mode: Literal["incoming", "outgoing_draft"]

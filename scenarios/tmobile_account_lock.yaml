@@ -1,0 +1,13 @@
+id: tmobile_account_lock
+desc: Hero smish
+sender: '4695550182'
+steps:
+- delay: 0
+  text: 'T-Mobile: your line will be suspended in 2 hrs. Verify: t-mobi1e-acct-verify.co/a8f'
+expect:
+  verdict: scam
+  drones:
+  - angler
+  - link
+  - pressure
+  - impersonator

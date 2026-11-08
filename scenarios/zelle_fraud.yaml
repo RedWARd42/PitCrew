@@ -1,0 +1,12 @@
+id: zelle_fraud
+desc: ''
+sender: '4695550177'
+steps:
+- delay: 0
+  text: 'Wells Fargo: Zelle transfer of $950 pending. If this wasn''t you, reply CANCEL or secure your account: wellsfarg0-secure-id77.co/q2'
+expect:
+  verdict: scam
+  drones:
+  - angler
+  - link
+  - impersonator

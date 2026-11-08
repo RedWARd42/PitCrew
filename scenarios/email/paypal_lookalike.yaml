@@ -1,0 +1,28 @@
+id: paypal_lookalike
+desc: PayPal lookalike, reply-to mismatch, html attachment
+from_name: PayPal Support
+from_address: security@paypa1-support.com
+reply_to: help@mailbox-relay.biz
+to: you@example.com
+subject: Your account is limited - verify within 24 hours
+body: 'Dear customer,
+
+
+  We noticed unusual activity. Verify your account within 24 hours or it will be permanently
+  limited.
+
+
+  [https://paypa1-support.com/verify](https://paypa1-support.com/verify)
+
+
+  See attached form.'
+attachments:
+- invoice_4491.html
+expect:
+  verdict: scam
+  drones:
+  - angler
+  - link
+  - pressure
+  - impersonator
+  - carrier

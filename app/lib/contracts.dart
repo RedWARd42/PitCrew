@@ -24,17 +24,48 @@ class MessageIn {
   Map<String, dynamic> toJson() => {'id': id, 'direction': direction, 'text': text, if (ts != null) 'ts': ts, if (hasAttachment != null) 'hasAttachment': hasAttachment};
 }
 
+class EmailLink {
+  final String text, href;
+  final Rect? rect; // screen px, Kotlin -> Dart only
+  const EmailLink({required this.text, required this.href, this.rect});
+  factory EmailLink.fromJson(Map j) => EmailLink(text: j['text'] ?? '', href: j['href'] ?? '', rect: j['rect'] == null ? null : Rect.fromJson(j['rect']));
+  Map<String, dynamic> toJson() => {'text': text, 'href': href}; // rect never leaves the device
+}
+
+class EmailAttachment {
+  final String name;
+  final Rect? rect;
+  const EmailAttachment({required this.name, this.rect});
+  factory EmailAttachment.fromJson(Map j) => EmailAttachment(name: j['name'] ?? '', rect: j['rect'] == null ? null : Rect.fromJson(j['rect']));
+  Map<String, dynamic> toJson() => {'name': name};
+}
+
+class EmailInfo {
+  final String subject, fromName, fromAddress;
+  final String? replyTo;
+  final List<EmailLink> links;
+  final List<EmailAttachment> attachments;
+  const EmailInfo({this.subject = '', this.fromName = '', this.fromAddress = '', this.replyTo, this.links = const [], this.attachments = const []});
+  factory EmailInfo.fromJson(Map j) => EmailInfo(
+      subject: j['subject'] ?? '', fromName: j['fromName'] ?? '', fromAddress: j['fromAddress'] ?? '', replyTo: j['replyTo'],
+      links: [for (final l in j['links'] ?? []) EmailLink.fromJson(l)], attachments: [for (final a in j['attachments'] ?? []) EmailAttachment.fromJson(a)]);
+  Map<String, dynamic> toJson() => {'subject': subject, 'fromName': fromName, 'fromAddress': fromAddress, if (replyTo != null) 'replyTo': replyTo, 'links': [for (final l in links) l.toJson()], 'attachments': [for (final a in attachments) a.toJson()]};
+}
+
 class ScanRequest {
   final String requestId, client, mode, targetMessageId, locale;
   final Sender sender;
   final List<MessageIn> messages;
   final List<Map<String, dynamic>> redactions; // {type,count}
-  const ScanRequest({required this.requestId, this.client = 'android', required this.mode, required this.sender, required this.messages, required this.targetMessageId, this.locale = 'en-US', this.redactions = const []});
+  final String channel; // sms|email
+  final EmailInfo? email;
+  const ScanRequest({required this.requestId, this.client = 'android', required this.mode, required this.sender, required this.messages, required this.targetMessageId, this.locale = 'en-US', this.redactions = const [], this.channel = 'sms', this.email});
   factory ScanRequest.fromJson(Map j) => ScanRequest(
       requestId: j['requestId'], client: j['client'], mode: j['mode'], sender: Sender.fromJson(j['sender']),
       messages: [for (final m in j['messages']) MessageIn.fromJson(m)], targetMessageId: j['targetMessageId'],
-      locale: j['locale'] ?? 'en-US', redactions: [for (final r in j['redactions'] ?? []) Map<String, dynamic>.from(r)]);
-  Map<String, dynamic> toJson() => {'requestId': requestId, 'client': client, 'mode': mode, 'sender': sender.toJson(), 'messages': [for (final m in messages) m.toJson()], 'targetMessageId': targetMessageId, 'locale': locale, 'redactions': redactions};
+      locale: j['locale'] ?? 'en-US', redactions: [for (final r in j['redactions'] ?? []) Map<String, dynamic>.from(r)],
+      channel: j['channel'] ?? 'sms', email: j['email'] == null ? null : EmailInfo.fromJson(j['email']));
+  Map<String, dynamic> toJson() => {'requestId': requestId, 'client': client, 'mode': mode, 'sender': sender.toJson(), 'messages': [for (final m in messages) m.toJson()], 'targetMessageId': targetMessageId, 'locale': locale, 'redactions': redactions, 'channel': channel, if (email != null) 'email': email!.toJson()};
 }
 
 class Evidence {
@@ -103,9 +134,12 @@ class ScreenModel {
   final String? threadKey, senderRaw, draftText;
   final Rect? header, compose, send;
   final List<Bubble> bubbles;
-  const ScreenModel({this.visible = true, this.threadKey, this.senderRaw, this.draftText, this.header, this.compose, this.send, this.bubbles = const []});
+  final String channel; // sms|email
+  final EmailInfo? email;
+  const ScreenModel({this.channel = 'sms', this.email, this.visible = true, this.threadKey, this.senderRaw, this.draftText, this.header, this.compose, this.send, this.bubbles = const []});
   factory ScreenModel.fromJson(Map j) => ScreenModel(
       visible: j['visible'] ?? true, threadKey: j['threadKey'], senderRaw: j['senderRaw'], draftText: j['draftText'],
       header: j['header'] == null ? null : Rect.fromJson(j['header']), compose: j['compose'] == null ? null : Rect.fromJson(j['compose']),
-      send: j['send'] == null ? null : Rect.fromJson(j['send']), bubbles: [for (final b in j['bubbles'] ?? []) Bubble.fromJson(b)]);
+      send: j['send'] == null ? null : Rect.fromJson(j['send']), bubbles: [for (final b in j['bubbles'] ?? []) Bubble.fromJson(b)],
+      channel: j['channel'] ?? 'sms', email: j['email'] == null ? null : EmailInfo.fromJson(j['email']));
 }

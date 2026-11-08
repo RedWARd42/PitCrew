@@ -1,0 +1,9 @@
+id: legit_friend_link
+desc: ''
+sender: '4695550100'
+steps:
+- delay: 0
+  text: Hey, check this out https://www.youtube.com/watch?v=dQw4w9WgXcQ  also still on for dinner at 7?
+expect:
+  verdict: safe
+  drones: []

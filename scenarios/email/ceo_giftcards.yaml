@@ -1,0 +1,20 @@
+id: ceo_giftcards
+desc: CEO gift-card request from free-mail
+from_name: Jordan Reyes (CEO)
+from_address: jordan.reyes.ceo@gmail.com
+reply_to: jreyes.office@outlook-mailer.cc
+to: you@example.com
+subject: Quick favor - urgent
+body: 'Are you at your desk? I am in a meeting and cannot talk. I need 4 x $100 Apple
+  gift cards for clients today. Buy them and send me the codes. I will reimburse you.
+  Keep this between us.
+
+
+  Jordan'
+attachments: []
+expect:
+  verdict: scam
+  drones:
+  - angler
+  - pressure
+  - impersonator

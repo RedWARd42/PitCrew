@@ -1,0 +1,48 @@
+From: PayPal Support <security@paypa1-support.com>
+To: you@example.com
+Reply-To: help@mailbox-relay.biz
+Subject: Your account is limited - verify within 24 hours
+Date: Sun, 08 Nov 2026 05:50:41 -0600
+Message-ID: <179413864114.44492.16064808527673426463@swarm-test.invalid>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============7779945826134499547=="
+
+--===============7779945826134499547==
+Content-Type: multipart/alternative;
+ boundary="===============0171938693092589274=="
+
+--===============0171938693092589274==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+Dear customer,
+
+We noticed unusual activity. Verify your account within 24 hours or it will b=
+e permanently limited.
+
+https://paypa1-support.com/verify
+
+See attached form.
+
+--===============0171938693092589274==
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+<html><body><p>Dear customer,</p><p>We noticed unusual activity. Verify your =
+account within 24 hours or it will be permanently limited.</p><p><a href=3D"h=
+ttps://paypa1-support.com/verify">https://paypa1-support.com/verify</a></p><p=
+>See attached form.</p></body></html>
+
+--===============0171938693092589274==--
+
+--===============7779945826134499547==
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="invoice_4491.html"
+MIME-Version: 1.0
+
+SGFybWxlc3MgZHVtbXkgYXR0YWNobWVudCBmb3IgU2lnbmFsIFN3YXJtIHRlc3Rpbmc6IGludm9p
+Y2VfNDQ5MS5odG1sDQo=
+
+--===============7779945826134499547==--

@@ -1,0 +1,9 @@
+id: legit_pharmacy
+desc: ''
+sender: '22000'
+steps:
+- delay: 0
+  text: 'CVS Pharmacy: your prescription is ready for pickup at Main St. Reply STOP to opt out.'
+expect:
+  verdict: safe
+  drones: []

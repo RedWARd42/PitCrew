@@ -1,0 +1,30 @@
+From: Chase Alerts <alerts@chase-secure-login.info>
+To: you@example.com
+Subject: Your account has been limited
+Date: Sun, 08 Nov 2026 05:50:41 -0600
+Message-ID: <179413864106.44492.3449615166068746882@swarm-test.invalid>
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="===============4724345001110637282=="
+
+--===============4724345001110637282==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+We limited your account after suspicious sign-in attempts. Restore access now:
+
+https://chase-secure-login.info/restore?s=77
+
+Failure to act within 12 hours will result in closure.
+
+--===============4724345001110637282==
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+<html><body><p>We limited your account after suspicious sign-in attempts. Res=
+tore access now:</p><p><a href=3D"https://chase-secure-login.info/restore?s=
+=3D77">https://chase-secure-login.info/restore?s=3D77</a></p><p>Failure to ac=
+t within 12 hours will result in closure.</p></body></html>
+
+--===============4724345001110637282==--

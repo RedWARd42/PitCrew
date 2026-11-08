@@ -1,0 +1,8 @@
+e164,label,complaints,robocall,source,first_seen
++14695550182,t-mobile-lock scenario,41,false,synthetic,2026-10-30
++14695550143,toll scam scenario,63,true,synthetic,2026-10-28
++12145550177,package scam scenario,28,true,synthetic,2026-11-01
++13125550166,wrong-number crypto scenario,17,false,synthetic,2026-10-25
++18885550101,fake bank callback scenario,52,true,synthetic,2026-10-20
++12025550188,irs refund scenario,35,false,synthetic,2026-11-02
++19725550133,prize scam scenario,22,true,synthetic,2026-10-29

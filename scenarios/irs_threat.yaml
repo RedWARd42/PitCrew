@@ -1,0 +1,13 @@
+id: irs_threat
+desc: ''
+sender: '3465550121'
+steps:
+- delay: 0
+  text: 'IRS: you owe $2,340 in back taxes. A warrant will be issued unless you pay today: irs-taxpay-claim63.info/77d'
+expect:
+  verdict: scam
+  drones:
+  - angler
+  - link
+  - pressure
+  - impersonator

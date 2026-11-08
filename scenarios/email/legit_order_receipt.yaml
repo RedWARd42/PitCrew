@@ -1,0 +1,18 @@
+id: legit_order_receipt
+desc: Real order receipt
+from_name: Amazon.com
+from_address: auto-confirm@amazon.com
+reply_to: null
+to: you@example.com
+subject: 'Your order #112-5550123-4412 has shipped'
+body: 'Your package will arrive Thursday.
+
+
+  [Track package](https://www.amazon.com/progress-tracker/package/112-5550123)
+
+
+  Thanks for shopping with us.'
+attachments: []
+expect:
+  verdict: safe
+  drones: []

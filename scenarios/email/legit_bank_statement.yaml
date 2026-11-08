@@ -1,0 +1,13 @@
+id: legit_bank_statement
+desc: Real bank statement notice
+from_name: Chase
+from_address: no-reply@alerts.chase.com
+reply_to: null
+to: you@example.com
+subject: Your statement is ready
+body: Your October statement is available. Sign in at chase.com to view it. We never
+  ask for your password by email.
+attachments: []
+expect:
+  verdict: safe
+  drones: []

@@ -1,0 +1,12 @@
+id: robocall
+desc: Incoming robocall via adb emu gsm call
+sender: '8005550142'
+steps:
+- delay: 0
+  call: '8005550142'
+  note: Incoming call claiming to be T-Mobile fraud dept
+expect:
+  verdict: scam
+  drones:
+  - impersonator
+  - angler

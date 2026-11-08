@@ -1,0 +1,22 @@
+id: bank_limited
+desc: Bank account limited
+from_name: Chase Alerts
+from_address: alerts@chase-secure-login.info
+reply_to: null
+to: you@example.com
+subject: Your account has been limited
+body: 'We limited your account after suspicious sign-in attempts. Restore access now:
+
+
+  [https://chase-secure-login.info/restore?s=77](https://chase-secure-login.info/restore?s=77)
+
+
+  Failure to act within 12 hours will result in closure.'
+attachments: []
+expect:
+  verdict: scam
+  drones:
+  - angler
+  - link
+  - pressure
+  - impersonator

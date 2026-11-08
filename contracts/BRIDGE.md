@@ -11,3 +11,8 @@ Kotlin parses text on-device and sends it only to the in-process Dart engine; Da
 Dart->Kotlin channel methods: ready, hitTargets({targets:[{id,rect}]}), panel({open}), action({id,payload,requestId}), log.
 Kotlin->Dart channel methods: init({density,screenW,screenH,insets}), screen(json), hide, tap({id}).
 Dart classes: app/lib/contracts.dart.
+
+## Email channel (Gmail)
+ScanRequest gains `channel: "sms"|"email"` and optional `email {subject, fromName, fromAddress, replyTo?, links[{text,href}], attachments[{name}]}`; body text is messages[0].text (redacted on device). Fixture: fixtures/scan_request_email_phish.json.
+Screen model for an open email (Kotlin -> Dart `screen`): add `channel:"email"`, `email:{subject,fromName,fromAddress,replyTo,links:[{text,href,rect}],attachments:[{name,rect}]}`, header rect = sender row, one bubble (direction "in", messageId stable per email) whose rect = body area. Anchors: field "sender"->header rect, "body"->body rect, "link"->the matching link rect (span index = link index) else body.
+Drones reused: angler (sender spoofing, reply-to), link (text vs href mismatch, lookalike), pressure, impersonator, carrier (attachments).

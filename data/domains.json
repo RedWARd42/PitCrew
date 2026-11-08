@@ -1,0 +1,204 @@
+{
+ "_note": "Synthetic WHOIS ages are fabricated for demo; brand domains/shorteners/TLDs are public knowledge.",
+ "brandDomains": [
+  "a.co",
+  "amazon.ca",
+  "amazon.co.uk",
+  "amazon.com",
+  "amzn.com",
+  "apple.com",
+  "bankofamerica.com",
+  "bofa.com",
+  "chase.com",
+  "ezpass.com",
+  "fedex.com",
+  "icloud.com",
+  "irs.gov",
+  "jpmorgan.com",
+  "metrobyt-mobile.com",
+  "netflix.com",
+  "ntta.org",
+  "paypal.com",
+  "paypal.me",
+  "sunpass.com",
+  "t-mobile.com",
+  "t-mobile.net",
+  "tmobile.com",
+  "txtag.org",
+  "ups.com",
+  "usps.com",
+  "usps.gov",
+  "venmo.com",
+  "wellsfargo.com",
+  "zellepay.com"
+ ],
+ "shorteners": [
+  "bit.ly",
+  "tinyurl.com",
+  "t.co",
+  "goo.gl",
+  "ow.ly",
+  "is.gd",
+  "buff.ly",
+  "cutt.ly",
+  "rb.gy",
+  "shorturl.at",
+  "tiny.cc",
+  "rebrand.ly",
+  "t.ly"
+ ],
+ "riskyTlds": [
+  "co",
+  "top",
+  "xyz",
+  "icu",
+  "click",
+  "link",
+  "cfd",
+  "sbs",
+  "live",
+  "online",
+  "site",
+  "vip",
+  "shop",
+  "cc",
+  "ru",
+  "tk",
+  "ml",
+  "ga",
+  "buzz",
+  "club",
+  "info",
+  "support",
+  "help",
+  "life",
+  "lol"
+ ],
+ "commonTlds": [
+  "com",
+  "net",
+  "org",
+  "gov",
+  "edu",
+  "us",
+  "io",
+  "me",
+  "ca",
+  "uk",
+  "app",
+  "dev",
+  "ly"
+ ],
+ "pathKeywords": [
+  "verify",
+  "login",
+  "signin",
+  "secure",
+  "account",
+  "update",
+  "confirm",
+  "pay",
+  "billing",
+  "unlock",
+  "redeliver",
+  "reschedule"
+ ],
+ "whois": [
+  {
+   "domain": "t-mobi1e-acct-verify.co",
+   "createdDaysAgo": 3
+  },
+  {
+   "domain": "tmobile-bill-update.top",
+   "createdDaysAgo": 2
+  },
+  {
+   "domain": "usps-redelivery-pkg.top",
+   "createdDaysAgo": 4
+  },
+  {
+   "domain": "ezpass-tollpay.xyz",
+   "createdDaysAgo": 5
+  },
+  {
+   "domain": "ntta-tollbalance.click",
+   "createdDaysAgo": 3
+  },
+  {
+   "domain": "chase-secure-verify.top",
+   "createdDaysAgo": 2
+  },
+  {
+   "domain": "amazon-order-hold.icu",
+   "createdDaysAgo": 6
+  },
+  {
+   "domain": "irs-refund-claim.xyz",
+   "createdDaysAgo": 7
+  },
+  {
+   "domain": "paypa1-resolution.co",
+   "createdDaysAgo": 1
+  },
+  {
+   "domain": "apple-id-locked.live",
+   "createdDaysAgo": 4
+  },
+  {
+   "domain": "fedex-parcel-fee.cfd",
+   "createdDaysAgo": 2
+  },
+  {
+   "domain": "crypto-yield-pro.online",
+   "createdDaysAgo": 9
+  },
+  {
+   "domain": "wf-secure-login.top",
+   "createdDaysAgo": 3
+  },
+  {
+   "domain": "example-clinic.org",
+   "createdDaysAgo": 4100
+  },
+  {
+   "domain": "bit.ly",
+   "createdDaysAgo": 5000
+  }
+ ],
+ "espDomains": [
+  "sendgrid.net",
+  "mailchimp.com",
+  "list-manage.com",
+  "mandrillapp.com",
+  "mailgun.org",
+  "mailgun.net",
+  "constantcontact.com",
+  "hubspotlinks.com",
+  "hs-sites.com",
+  "klclick.com",
+  "klaviyomail.com",
+  "customeriomail.com",
+  "sparkpostmail.com",
+  "amazonses.com",
+  "substack.com",
+  "beehiiv.com",
+  "convertkit.com",
+  "campaign-archive.com",
+  "rs6.net",
+  "exacttarget.com",
+  "salesforce.com"
+ ],
+ "freeMail": [
+  "gmail.com",
+  "outlook.com",
+  "hotmail.com",
+  "yahoo.com",
+  "aol.com",
+  "icloud.com",
+  "proton.me",
+  "protonmail.com",
+  "live.com",
+  "mail.com",
+  "gmx.com"
+ ]
+}
