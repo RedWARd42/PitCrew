@@ -299,3 +299,7 @@ identical calibration. The Drone Bay carries a Fleet Line card: run
 the app with `--dart-define=PHOTON_FLEET_NUMBER=+1…` and it gains
 Text / Call buttons for the fleet number; without it, the card shows
 the setup steps. Full guide: `photon/README.md`.
+
+## HackUTD prize tracks (mlh-tracks branch)
+
+This branch wires Swat into the HackUTD 2026 Devpost's [MLH] tracks — MongoDB Atlas backend, Gemini second opinion, Tiger Data telemetry, Vultr deploy pack, Solana blocklist anchor, plus the restored Photon Fleet Line. The full map, with the one activation step each track needs, lives in [TRACKS.md](TRACKS.md).
