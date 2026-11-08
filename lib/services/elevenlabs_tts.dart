@@ -104,9 +104,9 @@ class ElevenLabsTts {
 
   final AudioPlayer _player;
 
-  /// Loudness boost for the drone voices: ElevenLabs MP3s are
-  /// mastered conservatively and emulator speakers are quiet, so the
-  /// Android loudness enhancer adds gain on top of full volume.
+  /// Playback level for the drone voices (Ryan tuned this by ear:
+  /// +8 dB at full volume was too hot once the emulator volume came
+  /// up; now a mild +2 dB enhancer lift at 0.7 player volume).
   final AndroidLoudnessEnhancer _loudness;
   bool _boostApplied = false;
 
@@ -125,8 +125,8 @@ class ElevenLabsTts {
       _boostApplied = true;
       try {
         await _loudness.setEnabled(true);
-        await _loudness.setTargetGain(8); // +8 dB over the source
-        await _player.setVolume(1.0);
+        await _loudness.setTargetGain(2); // mild +2 dB lift
+        await _player.setVolume(0.7);
       } catch (_) {
         // Non-Android or effect unavailable: plain full volume.
       }
