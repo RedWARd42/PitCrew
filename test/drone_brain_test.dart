@@ -70,6 +70,27 @@ void main() {
     expect(a.toLowerCase(), contains('lookalike'));
   });
 
+  test('answers stay short and to the point', () {
+    int words(String s) => s.split(RegExp(r'\s+')).length;
+    expect(words(brain.greeting(DroneId.link, smish)), lessThanOrEqualTo(30));
+    expect(
+      words(ask(DroneId.link, smish, 'Why did you flag this?')),
+      lessThanOrEqualTo(80),
+    );
+    expect(
+      words(ask(DroneId.swap, smish, 'What should I do?')),
+      lessThanOrEqualTo(45),
+    );
+    expect(
+      words(ask(DroneId.angler, smish, 'Is this message safe?')),
+      lessThanOrEqualTo(35),
+    );
+    expect(
+      words(ask(DroneId.scanner, smish, 'How do QR codes trick people?')),
+      lessThanOrEqualTo(40),
+    );
+  });
+
   test('suggestions lead with the finding question when flags exist', () {
     expect(
       brain.suggestions(DroneId.link, smish).first,

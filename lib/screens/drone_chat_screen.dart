@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../theme/app_palette.dart';
@@ -60,6 +62,13 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
   final ElevenLabsTts _eleven = ElevenLabsTts();
 
   final List<_Turn> _turns = [];
+
+  /// Word-by-word reveal for the drone's latest turn: which turn is
+  /// still appearing, and how many of its words are on screen.
+  Timer? _revealTimer;
+  int _revealIndex = -1;
+  int _revealWords = 0;
+
   bool _listening = false;
   double _soundLevel = 0;
   bool _heardSound = false;
@@ -74,7 +83,58 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
     super.initState();
     final greeting = _brain.greeting(_drone, widget.analysis);
     _turns.add(_Turn(fromDrone: true, text: greeting));
+    _startReveal(0, greeting);
     _initTts(greeting);
+  }
+
+  /// Types [text] into its bubble one word at a time (two at a time
+  /// for long answers), like the drone is composing as it speaks.
+  /// Tapping the bubble completes it instantly; reduced-motion
+  /// devices get the whole answer at once.
+  void _startReveal(int index, String text) {
+    _revealTimer?.cancel();
+    var instant = false;
+    try {
+      instant = MediaQueryData.fromView(View.of(context)).disableAnimations;
+    } catch (_) {
+      // No view yet (cannot happen after first frame): animate.
+    }
+    if (instant) {
+      _revealIndex = -1;
+      return;
+    }
+    final total = text.split(' ').length;
+    final step = total > 60 ? 2 : 1;
+    setState(() {
+      _revealIndex = index;
+      _revealWords = 1;
+    });
+    _revealTimer = Timer.periodic(const Duration(milliseconds: 40), (t) {
+      if (!mounted) {
+        t.cancel();
+        return;
+      }
+      setState(() {
+        _revealWords += step;
+        if (_revealWords >= total) {
+          _revealIndex = -1;
+          t.cancel();
+        }
+      });
+      _scrollToBottom();
+    });
+  }
+
+  void _finishReveal() {
+    _revealTimer?.cancel();
+    if (_revealIndex != -1) setState(() => _revealIndex = -1);
+  }
+
+  String _displayText(int index, _Turn turn) {
+    if (index != _revealIndex) return turn.text;
+    final words = turn.text.split(' ');
+    if (_revealWords >= words.length) return turn.text;
+    return words.take(_revealWords).join(' ');
   }
 
   Future<void> _initTts(String greeting) async {
@@ -131,6 +191,7 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
 
   @override
   void dispose() {
+    _revealTimer?.cancel();
     _speech.stop();
     _tts.stop();
     _eleven.dispose();
@@ -232,6 +293,7 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
       _speech.stop();
       _listening = false;
     }
+    _finishReveal();
     _input.clear();
     final reply = _brain.answer(
       drone: _drone,
@@ -242,6 +304,7 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
       _turns.add(_Turn(fromDrone: false, text: text));
       _turns.add(_Turn(fromDrone: true, text: reply));
     });
+    _startReveal(_turns.length - 1, reply);
     _scrollToBottom();
     _speak(reply);
   }
@@ -301,7 +364,7 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
               controller: _scroll,
               padding: const EdgeInsets.fromLTRB(14, 14, 14, 8),
               itemCount: _turns.length,
-              itemBuilder: (context, i) => _buildTurn(_turns[i]),
+              itemBuilder: (context, i) => _buildTurn(i, _turns[i]),
             ),
           ),
           _buildSuggestions(),
@@ -314,7 +377,7 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
     );
   }
 
-  Widget _buildTurn(_Turn turn) {
+  Widget _buildTurn(int index, _Turn turn) {
     final bubble = Container(
       constraints: BoxConstraints(
         maxWidth: MediaQuery.of(context).size.width * 0.82,
@@ -330,7 +393,7 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
             : null,
       ),
       child: Text(
-        turn.text,
+        _displayText(index, turn),
         style: TextStyle(
           // The user's bubble is magenta in both modes — its text stays
           // white; the drone's neutral bubble follows the palette.
@@ -342,18 +405,22 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
     );
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: turn.fromDrone
-            ? MainAxisAlignment.start
-            : MainAxisAlignment.end,
-        children: [
-          if (turn.fromDrone) ...[
-            DroneWidget(drone: _drone, size: 30, showLabel: false),
-            const SizedBox(width: 8),
+      child: GestureDetector(
+        // Tapping a still-typing answer shows it in full.
+        onTap: index == _revealIndex ? _finishReveal : null,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: turn.fromDrone
+              ? MainAxisAlignment.start
+              : MainAxisAlignment.end,
+          children: [
+            if (turn.fromDrone) ...[
+              DroneWidget(drone: _drone, size: 30, showLabel: false),
+              const SizedBox(width: 8),
+            ],
+            Flexible(child: bubble),
           ],
-          Flexible(child: bubble),
-        ],
+        ),
       ),
     );
   }

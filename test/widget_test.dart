@@ -182,7 +182,8 @@ void main() {
 
     await tester.enterText(find.byType(TextField), 'Why did you flag this?');
     await tester.tap(find.byIcon(Icons.send));
-    await tester.pump(const Duration(milliseconds: 300));
+    // Answers type in word by word — give the reveal time to finish.
+    await tester.pump(const Duration(seconds: 3));
 
     // The answer quotes the drone's actual evidence from the message.
     expect(find.textContaining('t-mobile-verify-secure.com'), findsWidgets);
