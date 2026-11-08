@@ -123,6 +123,10 @@ void main() {
     // Inside the thread: back button, the fleet, and only this contact.
     expect(find.byIcon(Icons.arrow_back), findsOneWidget);
     expect(find.text('Release the Fleet'), findsOneWidget);
+    // The Twilio Fleet Line row is present; with no number configured
+    // in tests it offers setup rather than dial buttons.
+    expect(find.text('Fleet Line · Twilio'), findsOneWidget);
+    expect(find.text('Set up'), findsOneWidget);
     expect(find.textContaining('URGENT'), findsWidgets);
     expect(find.text('Mom'), findsNothing);
   });

@@ -9,6 +9,7 @@ import '../services/account_store.dart';
 import '../services/device_services.dart';
 import '../services/conversations.dart';
 import '../services/scam_analyzer.dart';
+import '../services/twilio_config.dart';
 import '../services/stores.dart';
 import '../services/walkthrough.dart';
 import '../widgets/drone_widget.dart';
@@ -995,6 +996,115 @@ class _MessagesScreenState extends State<MessagesScreen> {
   }
 
   // -------------------------------------------------------- bottom panel
+  /// The Fleet Line row (Twilio): the fleet's own phone number.
+  /// Configured, it shows the number with Call/Text actions; unset,
+  /// it offers the honest setup steps — never a fake number.
+  Widget _buildFleetLineRow() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.phone_in_talk, color: kMagenta, size: 22),
+            const SizedBox(width: 8),
+            Text(
+              'Fleet Line · Twilio',
+              style: TextStyle(
+                color: context.palette.primaryText,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          twilioConfigured
+              ? '$kTwilioFleetNumber — blocked callers are rejected '
+                    'before it rings, and you get a spoken alert call.'
+              : 'Give the fleet a phone number: blocked callers get '
+                    'rejected, and you get a spoken alert call.',
+          style: TextStyle(
+            color: context.palette.tertiaryText,
+            fontSize: 14.5,
+          ),
+        ),
+        const SizedBox(height: 8),
+        if (twilioConfigured)
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () =>
+                      CommsService.openSmsComposer(kTwilioFleetNumber, ''),
+                  icon: const Icon(Icons.sms_outlined, size: 19),
+                  label: const Text('Text'),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => CommsService.openDialer(kTwilioFleetNumber),
+                  icon: const Icon(Icons.call_outlined, size: 19),
+                  label: const Text('Call'),
+                ),
+              ),
+            ],
+          )
+        else
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: _showFleetLineSetup,
+              child: const Text('Set up'),
+            ),
+          ),
+      ],
+    );
+  }
+
+  void _showFleetLineSetup() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: context.palette.sheet,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.fromLTRB(20, 18, 20, 26),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Put the fleet on Twilio',
+              style: TextStyle(
+                color: context.palette.primaryText,
+                fontSize: 19,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '1. Buy a Voice number in Twilio.\n'
+              '2. Create the swat-call-block Function from the twilio/ '
+              'folder in the repo (env: USER_PHONE, BLOCKED_NUMBERS) '
+              'and deploy it.\n'
+              '3. Point the number\'s Voice configuration at that '
+              'Function.\n'
+              '4. Relaunch with '
+              '--dart-define=TWILIO_FLEET_NUMBER=<the number>.',
+              style: TextStyle(
+                color: context.palette.secondaryText,
+                fontSize: 16,
+                height: 1.45,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildBottomPanel(MessageAnalysis? analysis) {
     if (_walkSteps != null && analysis != null) {
       return _buildWalkthroughCard();
@@ -1035,6 +1145,10 @@ class _MessagesScreenState extends State<MessagesScreen> {
                   label: const Text('Release the Fleet'),
                 ),
               ),
+              const SizedBox(height: 14),
+              Divider(color: context.palette.divider, height: 1),
+              const SizedBox(height: 10),
+              _buildFleetLineRow(),
             ],
           ),
         );
