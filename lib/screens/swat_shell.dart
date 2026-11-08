@@ -1,20 +1,17 @@
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 
 import '../theme/app_palette.dart';
 import '../services/stores.dart';
+
 import 'blocked_screen.dart';
+import 'call_screen.dart';
 import 'emails_screen.dart';
 import 'family_screen.dart';
 import 'messages_screen.dart';
 
-/// App shell: three tabs, one protection loop.
-///
-///  * Messages — the inbox and the fleet.
-///  * Blocked — what Swat stopped (incidents + shared block list).
-///  * Family — the trusted contact: scan-sharing, safe word, real
-///    call/text hand-offs.
 class SwatShell extends StatefulWidget {
   const SwatShell({super.key});
 
@@ -29,8 +26,11 @@ class _SwatShellState extends State<SwatShell> {
   @override
   void initState() {
     super.initState();
+
     _sub = BlocklistStore.changes.listen((_) {
-      if (mounted) setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
   }
 
@@ -46,7 +46,10 @@ class _SwatShellState extends State<SwatShell> {
       body: IndexedStack(
         index: _index,
         children: [
-          MessagesScreen(onOpenFamily: () => setState(() => _index = 3)),
+          const CallScreen(),
+          MessagesScreen(
+            onOpenFamily: () => setState(() => _index = 4),
+          ),
           const EmailsScreen(),
           const BlockedScreen(),
           const FamilyScreen(),
@@ -54,9 +57,17 @@ class _SwatShellState extends State<SwatShell> {
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
-        onDestinationSelected: (i) => setState(() => _index = i),
+        onDestinationSelected: (i) {
+          setState(() => _index = i);
+        },
         backgroundColor: context.palette.panel,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         destinations: [
+          const NavigationDestination(
+            icon: Icon(Icons.phone_outlined),
+            selectedIcon: Icon(Icons.phone),
+            label: 'Calls',
+          ),
           const NavigationDestination(
             icon: Icon(Icons.message_outlined),
             selectedIcon: Icon(Icons.message),
