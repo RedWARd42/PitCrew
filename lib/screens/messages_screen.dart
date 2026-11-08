@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../theme/app_palette.dart';
@@ -944,29 +946,46 @@ class _MessagesScreenState extends State<MessagesScreen> {
     final width = constraints.maxWidth;
     final height = constraints.maxHeight;
     final widgets = <Widget>[];
+    // Deployment rule: only drones that found evidence in the text take
+    // a post on the right side. A drone flies to a post while its own
+    // scan runs; if it found nothing, it heads back to its dock slot at
+    // the bottom when its turn ends. Side posts pack from the top in
+    // fleet order, so the side shows exactly who flagged something.
+    final evidence = [
+      for (final d in DroneId.values) analysis.pointsFor(d) > 0,
+    ];
+    final evidenceCount = evidence.where((e) => e).length;
+    // Side-post spacing: the full-fleet spread, capped so a short
+    // deployment packs beside the message instead of scattering.
+    final sideGap = math.min((height - 88) / math.max(1, evidenceCount), 120.0);
     for (var i = 0; i < DroneId.values.length; i++) {
       final drone = DroneId.values[i];
-      final landed =
-          _phase == FleetPhase.revealed ||
-          _phase == FleetPhase.protected ||
-          (_phase == FleetPhase.scanning && i < _revealedCount);
+      final hasEvidence = evidence[i];
+      // This drone's post index: its rank among the evidence drones
+      // (for a no-evidence drone mid-scan, the next free post).
+      final sideSlot = evidence.take(i).where((e) => e).length;
       final scanningThis = _phase == FleetPhase.scanning && i == _scanningIdx;
-      // Docked: spread along the bottom edge-to-edge. Landed: spread down
-      // the right side of the message area, in fleet order. Sizes shrink
-      // a touch so six drones fit a phone-width screen without clipping.
+      final onSide =
+          scanningThis ||
+          (hasEvidence &&
+              (_phase == FleetPhase.revealed ||
+                  _phase == FleetPhase.protected ||
+                  (_phase == FleetPhase.scanning && i < _revealedCount)));
+      // Docked: spread along the bottom edge-to-edge, each drone keeping
+      // its own bay slot. On a post: down the right side of the message.
       final dockLeft = 8.0 + i * ((width - 68) / (DroneId.values.length - 1));
       final dockTop = height - 78;
       final landLeft = width - 70;
-      final landTop = 8.0 + i * ((height - 88) / DroneId.values.length);
+      final landTop = 8.0 + sideSlot * sideGap;
       widgets.add(
         AnimatedPositioned(
           duration: const Duration(milliseconds: 650),
           curve: Curves.easeOutCubic,
-          left: landed ? landLeft : dockLeft,
-          top: landed ? landTop : dockTop,
+          left: onSide ? landLeft : dockLeft,
+          top: onSide ? landTop : dockTop,
           child: DroneWidget(
             drone: drone,
-            size: landed ? 56 : 52,
+            size: onSide ? 56 : 52,
             scanning: scanningThis,
             badgePoints:
                 (_phase == FleetPhase.revealed ||

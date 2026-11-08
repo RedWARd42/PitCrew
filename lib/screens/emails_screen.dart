@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../theme/app_palette.dart';
@@ -458,22 +460,39 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
   List<Widget> _drones(BoxConstraints constraints) {
     if (_phase == _Phase.idle) return const [];
     final widgets = <Widget>[];
+    // Same deployment rule as Messages: only evidence drones hold a
+    // post on the right side; the rest return to their dock slots.
+    final evidence = [
+      for (final d in DroneId.values) _analysis.pointsFor(d) > 0,
+    ];
+    final evidenceCount = evidence.where((e) => e).length;
+    final sideGap = math.min(
+      (constraints.maxHeight - 88) / math.max(1, evidenceCount),
+      120.0,
+    );
     for (var i = 0; i < DroneId.values.length; i++) {
       final drone = DroneId.values[i];
-      final landed = _phase != _Phase.scanning || i < _revealed;
-      final top =
-          8.0 + i * ((constraints.maxHeight - 88) / DroneId.values.length);
+      final hasEvidence = evidence[i];
+      final sideSlot = evidence.take(i).where((e) => e).length;
+      final scanningThis = _phase == _Phase.scanning && i == _scanningIdx;
+      final onSide =
+          scanningThis ||
+          (hasEvidence &&
+              (_phase == _Phase.revealed ||
+                  _phase == _Phase.protected ||
+                  (_phase == _Phase.scanning && i < _revealed)));
+      final top = 8.0 + sideSlot * sideGap;
       final dockLeft =
           8.0 + i * ((constraints.maxWidth - 68) / (DroneId.values.length - 1));
       widgets.add(
         AnimatedPositioned(
           duration: const Duration(milliseconds: 650),
           curve: Curves.easeOutCubic,
-          left: landed ? constraints.maxWidth - 70 : dockLeft,
-          top: landed ? top : constraints.maxHeight - 78,
+          left: onSide ? constraints.maxWidth - 70 : dockLeft,
+          top: onSide ? top : constraints.maxHeight - 78,
           child: DroneWidget(
             drone: drone,
-            size: landed ? 56 : 52,
+            size: onSide ? 56 : 52,
             scanning: _phase == _Phase.scanning && i == _scanningIdx,
             badgePoints: _phase == _Phase.revealed || _phase == _Phase.protected
                 ? _analysis.pointsFor(drone)

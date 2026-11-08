@@ -256,3 +256,10 @@ Scanning adds a radar sweep, a stronger glow, and a hover bob; risk
 badges are white-ringed pills. Rotor spin and bob honor the system's
 reduced-motion setting. The native overlay chips mirror the identity
 with specialty monograms (A / L / QR / ! / ID / SIM).
+
+Deployment follows the evidence: during a scan each drone flies to a
+post on the right side while its check runs, but only drones that
+actually found something keep their post. Drones that checked and found
+nothing fly back to their dock slots along the bottom, wearing a green
+check badge — so after a scan, the side of the screen shows exactly who
+flagged the message, and a clean message leaves the whole fleet docked.
