@@ -31,6 +31,8 @@ class MainActivity : FlutterActivity() {
         private const val COMMS_CHANNEL = "swat/comms"
         private const val ACCOUNT_CHANNEL = "swat/account"
         private const val ACCOUNT_PREFS = "swat_account"
+        private const val THEME_CHANNEL = "swat/theme"
+        private const val SETTINGS_PREFS = "swat_settings"
         private const val SMS_PERMISSION_REQUEST = 4101
         private const val MAX_MESSAGES = 30
     }
@@ -86,6 +88,21 @@ class MainActivity : FlutterActivity() {
                     }
                     "clearAccount" -> {
                         prefs.edit().clear().apply()
+                        result.success(null)
+                    }
+                    else -> result.notImplemented()
+                }
+            }
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, THEME_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                val prefs = getSharedPreferences(SETTINGS_PREFS, MODE_PRIVATE)
+                when (call.method) {
+                    "getThemeMode" -> result.success(prefs.getString("theme_mode", null))
+                    "setThemeMode" -> {
+                        prefs.edit()
+                            .putString("theme_mode", call.argument<String>("mode") ?: "dark")
+                            .apply()
                         result.success(null)
                     }
                     else -> result.notImplemented()

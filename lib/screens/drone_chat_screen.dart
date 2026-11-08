@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../theme/app_palette.dart';
+
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
@@ -7,7 +10,6 @@ import '../services/drone_brain.dart';
 import '../widgets/drone_widget.dart';
 
 const Color _kMagenta = Color(0xFFE20074);
-const Color _kBackground = Color(0xFF0B0B12);
 
 class _Turn {
   const _Turn({required this.fromDrone, required this.text});
@@ -186,9 +188,9 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _kBackground,
+      backgroundColor: context.palette.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF12121C),
+        backgroundColor: context.palette.panel,
         title: Row(
           children: [
             DroneWidget(drone: _drone, size: 36, showLabel: false),
@@ -220,7 +222,7 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
                 : 'Turn spoken answers on',
             icon: Icon(
               _voiceOn ? Icons.volume_up : Icons.volume_off,
-              color: _voiceOn ? _kMagenta : Colors.white70,
+              color: _voiceOn ? _kMagenta : context.palette.secondaryText,
             ),
             onPressed: () {
               setState(() => _voiceOn = !_voiceOn);
@@ -255,7 +257,7 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
       decoration: BoxDecoration(
         color: turn.fromDrone
-            ? const Color(0xFF1C1C26)
+            ? context.palette.bubble
             : _kMagenta.withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(16),
         border: turn.fromDrone
@@ -264,8 +266,10 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
       ),
       child: Text(
         turn.text,
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          // The user's bubble is magenta in both modes — its text stays
+          // white; the drone's neutral bubble follows the palette.
+          color: turn.fromDrone ? context.palette.primaryText : Colors.white,
           fontSize: 16.5,
           height: 1.4,
         ),
@@ -316,14 +320,17 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       color: const Color(0xFF3B0A24),
-      child: const Row(
+      child: Row(
         children: [
           Icon(Icons.mic, color: Color(0xFFF472B6), size: 20),
           SizedBox(width: 8),
           Expanded(
             child: Text(
               'Listening… speak now. Tap the microphone to stop.',
-              style: TextStyle(color: Colors.white, fontSize: 15.5),
+              style: TextStyle(
+                color: context.palette.primaryText,
+                fontSize: 15.5,
+              ),
             ),
           ),
         ],
@@ -346,17 +353,20 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
                 maxLines: 3,
                 textInputAction: TextInputAction.send,
                 onSubmitted: _send,
-                style: const TextStyle(color: Colors.white, fontSize: 17),
+                style: TextStyle(
+                  color: context.palette.primaryText,
+                  fontSize: 17,
+                ),
                 decoration: InputDecoration(
                   hintText: _micUnavailable
                       ? 'Type a question for ${_drone.label}…'
                       : 'Ask ${_drone.label}, or tap the mic…',
-                  hintStyle: const TextStyle(
-                    color: Colors.white38,
+                  hintStyle: TextStyle(
+                    color: context.palette.faintText,
                     fontSize: 16,
                   ),
                   filled: true,
-                  fillColor: const Color(0xFF1C1C26),
+                  fillColor: context.palette.bubble,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24),
                     borderSide: BorderSide.none,

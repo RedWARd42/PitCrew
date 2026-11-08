@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../theme/app_palette.dart';
 import '../models/family_and_blocked.dart';
 import '../services/device_services.dart';
 import '../services/stores.dart';
@@ -125,9 +126,9 @@ class _FamilyScreenState extends State<FamilyScreen> {
   Widget build(BuildContext context) {
     final messages = FamilyStore.messages;
     return Scaffold(
-      backgroundColor: const Color(0xFF0B0B12),
+      backgroundColor: context.palette.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF12121C),
+        backgroundColor: context.palette.panel,
         title: Row(
           children: [
             CircleAvatar(
@@ -135,8 +136,8 @@ class _FamilyScreenState extends State<FamilyScreen> {
               backgroundColor: _kMagenta,
               child: Text(
                 contact.name.substring(0, 1),
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: context.palette.primaryText,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -154,13 +155,17 @@ class _FamilyScreenState extends State<FamilyScreen> {
                 ),
                 Text(
                   contact.relation,
-                  style: const TextStyle(fontSize: 13.5, color: Colors.white54),
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    color: context.palette.tertiaryText,
+                  ),
                 ),
               ],
             ),
           ],
         ),
         actions: [
+          const ThemeToggleButton(),
           IconButton(
             tooltip: 'Call ${contact.name} (real call)',
             icon: const Icon(Icons.call, color: Color(0xFF34D399)),
@@ -180,7 +185,10 @@ class _FamilyScreenState extends State<FamilyScreen> {
           ),
           IconButton(
             tooltip: 'Text ${contact.name} in your SMS app',
-            icon: const Icon(Icons.sms_outlined, color: Colors.white70),
+            icon: Icon(
+              Icons.sms_outlined,
+              color: context.palette.secondaryText,
+            ),
             onPressed: () => CommsService.openSmsComposer(
               contact.phone,
               'Hi ${contact.name}, checking in from Swat — ',
@@ -195,7 +203,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
             margin: const EdgeInsets.fromLTRB(14, 12, 14, 4),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFF15151F),
+              color: context.palette.sheet,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: _kMagenta.withValues(alpha: 0.4)),
             ),
@@ -209,8 +217,8 @@ class _FamilyScreenState extends State<FamilyScreen> {
                     'Anyone claiming a family emergency who can\'t say it '
                     'isn\'t family. Set in person — never sent by text '
                     'first.',
-                    style: const TextStyle(
-                      color: Colors.white70,
+                    style: TextStyle(
+                      color: context.palette.secondaryText,
                       fontSize: 14.5,
                       height: 1.4,
                     ),
@@ -271,12 +279,12 @@ class _FamilyScreenState extends State<FamilyScreen> {
                 Expanded(
                   child: TextField(
                     controller: _composer,
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: context.palette.primaryText),
                     decoration: InputDecoration(
                       hintText: 'Message ${contact.name}…',
-                      hintStyle: const TextStyle(color: Colors.white54),
+                      hintStyle: TextStyle(color: context.palette.tertiaryText),
                       filled: true,
-                      fillColor: const Color(0xFF1C1C26),
+                      fillColor: context.palette.bubble,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
                         borderSide: BorderSide.none,
@@ -305,7 +313,16 @@ class _FamilyScreenState extends State<FamilyScreen> {
 
   Widget _bubble(FamilyChatMessage msg) {
     final align = msg.fromMe ? Alignment.centerRight : Alignment.centerLeft;
-    final color = msg.fromMe ? _kMagenta : const Color(0xFF1C1C26);
+    final color = msg.fromMe ? _kMagenta : context.palette.bubble;
+    // Text sitting on the magenta (mine) bubbles stays white in both
+    // modes; on the neutral (theirs) bubbles it follows the palette.
+    final onColor = msg.fromMe ? Colors.white : context.palette.primaryText;
+    final onColorSoft = msg.fromMe
+        ? Colors.white70
+        : context.palette.secondaryText;
+    final onColorFaint = msg.fromMe
+        ? Colors.white60
+        : context.palette.tertiaryText;
     return Align(
       alignment: align,
       child: Container(
@@ -320,14 +337,14 @@ class _FamilyScreenState extends State<FamilyScreen> {
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
+                  Row(
                     children: [
-                      Icon(Icons.radar, size: 15, color: Colors.white),
+                      Icon(Icons.radar, size: 15, color: onColor),
                       SizedBox(width: 6),
                       Text(
                         'Shared fleet scan',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: onColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
                         ),
@@ -337,8 +354,8 @@ class _FamilyScreenState extends State<FamilyScreen> {
                   const SizedBox(height: 5),
                   Text(
                     msg.scanTitle,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: onColor,
                       fontWeight: FontWeight.w600,
                       fontSize: 15,
                     ),
@@ -346,8 +363,8 @@ class _FamilyScreenState extends State<FamilyScreen> {
                   const SizedBox(height: 4),
                   Text(
                     msg.scanDetail,
-                    style: const TextStyle(
-                      color: Colors.white70,
+                    style: TextStyle(
+                      color: onColorSoft,
                       fontSize: 14,
                       height: 1.4,
                     ),
@@ -355,7 +372,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
                   const SizedBox(height: 4),
                   Text(
                     msg.timeLabel,
-                    style: const TextStyle(color: Colors.white54, fontSize: 12.5),
+                    style: TextStyle(color: onColorFaint, fontSize: 12.5),
                   ),
                 ],
               )
@@ -364,12 +381,12 @@ class _FamilyScreenState extends State<FamilyScreen> {
                 children: [
                   Text(
                     msg.text,
-                    style: const TextStyle(color: Colors.white, height: 1.35),
+                    style: TextStyle(color: onColor, height: 1.35),
                   ),
                   const SizedBox(height: 3),
                   Text(
                     msg.timeLabel,
-                    style: const TextStyle(color: Colors.white54, fontSize: 12.5),
+                    style: TextStyle(color: onColorFaint, fontSize: 12.5),
                   ),
                 ],
               ),

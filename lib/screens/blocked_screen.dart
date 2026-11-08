@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../theme/app_palette.dart';
 import '../models/family_and_blocked.dart';
 import '../models/message.dart';
 import '../services/device_services.dart';
@@ -47,13 +48,14 @@ class _BlockedScreenState extends State<BlockedScreen> {
   Widget build(BuildContext context) {
     final entries = BlocklistStore.entries;
     return Scaffold(
-      backgroundColor: const Color(0xFF0B0B12),
+      backgroundColor: context.palette.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF12121C),
+        backgroundColor: context.palette.panel,
         title: const Text(
           'Blocked & Reported',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
+        actions: const [ThemeToggleButton()],
       ),
       body: Column(
         children: [
@@ -73,7 +75,7 @@ class _BlockedScreenState extends State<BlockedScreen> {
               ],
             ),
           ),
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Align(
               alignment: Alignment.centerLeft,
@@ -81,18 +83,21 @@ class _BlockedScreenState extends State<BlockedScreen> {
                 'Your block list is shared with your trusted contact — '
                 'when either of you blocks a scammer, both phones are '
                 'protected.',
-                style: TextStyle(color: Colors.white54, fontSize: 14.5),
+                style: TextStyle(
+                  color: context.palette.tertiaryText,
+                  fontSize: 14.5,
+                ),
               ),
             ),
           ),
           Expanded(
             child: entries.isEmpty
-                ? const Center(
+                ? Center(
                     child: Text(
                       'Nothing blocked yet.\nWhen the fleet convicts a '
                       'message and you tap Block & Report, it lands here.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white54),
+                      style: TextStyle(color: context.palette.tertiaryText),
                     ),
                   )
                 : ListView.builder(
@@ -112,16 +117,16 @@ class _BlockedScreenState extends State<BlockedScreen> {
         margin: const EdgeInsets.only(right: 8),
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: const Color(0xFF15151F),
+          color: context.palette.sheet,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white10),
+          border: Border.all(color: context.palette.divider),
         ),
         child: Column(
           children: [
             Text(
               value,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: context.palette.primaryText,
                 fontSize: 22,
                 fontWeight: FontWeight.w900,
               ),
@@ -129,7 +134,10 @@ class _BlockedScreenState extends State<BlockedScreen> {
             Text(
               label,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white54, fontSize: 13),
+              style: TextStyle(
+                color: context.palette.tertiaryText,
+                fontSize: 13,
+              ),
             ),
           ],
         ),
@@ -142,9 +150,9 @@ class _BlockedScreenState extends State<BlockedScreen> {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(13),
       decoration: BoxDecoration(
-        color: const Color(0xFF15151F),
+        color: context.palette.sheet,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white10),
+        border: Border.all(color: context.palette.divider),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,8 +164,8 @@ class _BlockedScreenState extends State<BlockedScreen> {
               Expanded(
                 child: Text(
                   e.sender,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: context.palette.primaryText,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
@@ -183,7 +191,10 @@ class _BlockedScreenState extends State<BlockedScreen> {
           const SizedBox(height: 6),
           Text(
             e.snippet,
-            style: const TextStyle(color: Colors.white70, height: 1.35),
+            style: TextStyle(
+              color: context.palette.secondaryText,
+              height: 1.35,
+            ),
           ),
           const SizedBox(height: 8),
           Wrap(
@@ -199,7 +210,10 @@ class _BlockedScreenState extends State<BlockedScreen> {
                   ),
                   label: Text(
                     d.label,
-                    style: TextStyle(color: Color(d.colorValue), fontSize: 13.5),
+                    style: TextStyle(
+                      color: Color(d.colorValue),
+                      fontSize: 13.5,
+                    ),
                   ),
                 ),
             ],
@@ -212,14 +226,17 @@ class _BlockedScreenState extends State<BlockedScreen> {
                     ? Icons.outgoing_mail
                     : Icons.shield_outlined,
                 size: 13,
-                color: Colors.white54,
+                color: context.palette.tertiaryText,
               ),
               const SizedBox(width: 5),
               Expanded(
                 child: Text(
                   '${e.status == BlockStatus.reported ? 'Blocked + reported' : 'Blocked'} '
                   '· ${e.incidentId} · by ${e.blockedBy} · ${e.whenLabel}',
-                  style: const TextStyle(color: Colors.white54, fontSize: 14),
+                  style: TextStyle(
+                    color: context.palette.tertiaryText,
+                    fontSize: 14,
+                  ),
                 ),
               ),
               TextButton(

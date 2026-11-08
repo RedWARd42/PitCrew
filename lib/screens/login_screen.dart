@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_palette.dart';
 import '../models/account.dart';
 import '../services/account_store.dart';
 
@@ -41,7 +42,8 @@ class _LoginScreenState extends State<LoginScreen> {
     final email = _email.text.trim();
     if (!email.contains('@') || email.startsWith('@') || email.endsWith('@')) {
       setState(
-        () => _error = 'That email doesn\'t look complete — '
+        () => _error =
+            'That email doesn\'t look complete — '
             'it should look like name@example.com.',
       );
       return;
@@ -61,13 +63,14 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     const magenta = Color(0xFFE20074);
     return Scaffold(
-      backgroundColor: const Color(0xFF0B0B12),
+      backgroundColor: context.palette.background,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const Row(children: [Spacer(), ThemeToggleButton()]),
               Container(
                 width: 64,
                 height: 64,
@@ -76,39 +79,39 @@ class _LoginScreenState extends State<LoginScreen> {
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
-                child: const Text(
+                child: Text(
                   'S',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: context.palette.primaryText,
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               const SizedBox(height: 22),
-              const Text(
+              Text(
                 'Welcome to Swat',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: context.palette.primaryText,
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'A fleet of drones that watches your texts and email for '
                 'scams — and explains what it finds in plain words.',
                 style: TextStyle(
-                  color: Colors.white70,
+                  color: context.palette.secondaryText,
                   fontSize: 18,
                   height: 1.45,
                 ),
               ),
               const SizedBox(height: 34),
-              const Text(
+              Text(
                 'Your email',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: context.palette.primaryText,
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
@@ -118,14 +121,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _email,
                 keyboardType: TextInputType.emailAddress,
                 autofillHints: const [AutofillHints.email],
-                style: const TextStyle(color: Colors.white, fontSize: 20),
+                style: TextStyle(
+                  color: context.palette.primaryText,
+                  fontSize: 20,
+                ),
                 decoration: _fieldDecoration('name@example.com'),
               ),
               const SizedBox(height: 22),
-              const Text(
+              Text(
                 'Your name (optional)',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: context.palette.primaryText,
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
@@ -135,15 +141,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _name,
                 keyboardType: TextInputType.name,
                 autofillHints: const [AutofillHints.name],
-                style: const TextStyle(color: Colors.white, fontSize: 20),
+                style: TextStyle(
+                  color: context.palette.primaryText,
+                  fontSize: 20,
+                ),
                 decoration: _fieldDecoration('e.g. Maya Reyes'),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'Leave it blank and Swat will make your name from your '
                 'email — maya.reyes@… becomes "Maya Reyes".',
                 style: TextStyle(
-                  color: Colors.white54,
+                  color: context.palette.tertiaryText,
                   fontSize: 17,
                   height: 1.4,
                 ),
@@ -176,11 +185,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 18),
-              const Text(
+              Text(
                 'Demo build: your account stays on this phone. No '
                 'password, and nothing you type here leaves the device.',
                 style: TextStyle(
-                  color: Colors.white54,
+                  color: context.palette.tertiaryText,
                   fontSize: 16,
                   height: 1.4,
                 ),
@@ -195,13 +204,13 @@ class _LoginScreenState extends State<LoginScreen> {
   InputDecoration _fieldDecoration(String hint) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: Colors.white38, fontSize: 18),
+      hintStyle: TextStyle(color: context.palette.faintText, fontSize: 18),
       filled: true,
       fillColor: const Color(0xFF17171F),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Colors.white24),
+        borderSide: BorderSide(color: context.palette.overlayBorder),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),

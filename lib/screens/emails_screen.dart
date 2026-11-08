@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_palette.dart';
 import '../data/demo_emails.dart';
 import '../models/email.dart';
 import '../models/message.dart';
@@ -11,7 +12,6 @@ import '../services/walkthrough.dart';
 import '../widgets/drone_widget.dart';
 
 const Color _kMagenta = Color(0xFFE20074);
-const Color _kBackground = Color(0xFF0B0B12);
 
 /// The mailbox beat: the same fleet, over email.
 ///
@@ -28,9 +28,10 @@ class EmailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _kBackground,
+      backgroundColor: context.palette.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF12121C),
+        backgroundColor: context.palette.panel,
+        actions: const [ThemeToggleButton()],
         title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -50,12 +51,15 @@ class EmailsScreen extends StatelessWidget {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-            color: const Color(0xFF15151F),
-            child: const Text(
+            color: context.palette.sheet,
+            child: Text(
               'Same fleet, second beat. Open an email, release the drones, '
               'then tap one — it teaches you the tell right here in the '
               'mail app. Demo mailbox: synthetic mail only.',
-              style: TextStyle(color: Colors.white54, fontSize: 14),
+              style: TextStyle(
+                color: context.palette.tertiaryText,
+                fontSize: 14,
+              ),
             ),
           ),
           Expanded(
@@ -79,18 +83,18 @@ class EmailsScreen extends StatelessWidget {
       ),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-        decoration: const BoxDecoration(
-          border: Border(bottom: BorderSide(color: Colors.white10)),
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: context.palette.divider)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CircleAvatar(
               radius: 19,
-              backgroundColor: const Color(0xFF2A2A3A),
+              backgroundColor: context.palette.avatarBg,
               child: Text(
                 email.fromName.substring(0, 1).toUpperCase(),
-                style: const TextStyle(color: Colors.white70),
+                style: TextStyle(color: context.palette.secondaryText),
               ),
             ),
             const SizedBox(width: 11),
@@ -103,8 +107,8 @@ class EmailsScreen extends StatelessWidget {
                       Expanded(
                         child: Text(
                           email.fromName,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: context.palette.primaryText,
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
                           ),
@@ -112,8 +116,8 @@ class EmailsScreen extends StatelessWidget {
                       ),
                       Text(
                         email.timeLabel,
-                        style: const TextStyle(
-                          color: Colors.white54,
+                        style: TextStyle(
+                          color: context.palette.tertiaryText,
                           fontSize: 13.5,
                         ),
                       ),
@@ -121,8 +125,8 @@ class EmailsScreen extends StatelessWidget {
                   ),
                   Text(
                     email.subject,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: context.palette.primaryText,
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
                     ),
@@ -134,17 +138,17 @@ class EmailsScreen extends StatelessWidget {
                           email.snippet,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Colors.white54,
+                          style: TextStyle(
+                            color: context.palette.tertiaryText,
                             fontSize: 15,
                           ),
                         ),
                       ),
                       if (email.hasAttachment)
-                        const Icon(
+                        Icon(
                           Icons.attach_file,
                           size: 14,
-                          color: Colors.white54,
+                          color: context.palette.tertiaryText,
                         ),
                       if (email.qrPayload != null)
                         const Icon(
@@ -230,10 +234,11 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
   Widget build(BuildContext context) {
     final email = widget.email;
     return Scaffold(
-      backgroundColor: _kBackground,
+      backgroundColor: context.palette.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF12121C),
+        backgroundColor: context.palette.panel,
         title: const Text('Email', style: TextStyle(fontSize: 18)),
+        actions: const [ThemeToggleButton()],
       ),
       body: Column(
         children: [
@@ -261,10 +266,10 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF15151F),
+        color: context.palette.sheet,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: _phase == _Phase.idle ? Colors.white10 : _kMagenta,
+          color: _phase == _Phase.idle ? context.palette.divider : _kMagenta,
           width: _phase == _Phase.idle ? 1 : 1.4,
         ),
       ),
@@ -273,8 +278,8 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
         children: [
           Text(
             email.subject,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: context.palette.primaryText,
               fontSize: 18,
               fontWeight: FontWeight.bold,
               height: 1.3,
@@ -285,10 +290,13 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
             children: [
               CircleAvatar(
                 radius: 15,
-                backgroundColor: const Color(0xFF2A2A3A),
+                backgroundColor: context.palette.avatarBg,
                 child: Text(
                   email.fromName.substring(0, 1).toUpperCase(),
-                  style: const TextStyle(color: Colors.white70, fontSize: 14.5),
+                  style: TextStyle(
+                    color: context.palette.secondaryText,
+                    fontSize: 14.5,
+                  ),
                 ),
               ),
               const SizedBox(width: 9),
@@ -298,24 +306,24 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
                   children: [
                     Text(
                       email.fromName,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: context.palette.primaryText,
                         fontWeight: FontWeight.w600,
                         fontSize: 15.5,
                       ),
                     ),
                     Text(
                       email.fromAddress,
-                      style: const TextStyle(
-                        color: Colors.white54,
+                      style: TextStyle(
+                        color: context.palette.tertiaryText,
                         fontSize: 14.5,
                       ),
                     ),
                     if (email.replyTo != null)
                       Text(
                         'Reply-To: ${email.replyTo}',
-                        style: const TextStyle(
-                          color: Colors.white54,
+                        style: TextStyle(
+                          color: context.palette.tertiaryText,
                           fontSize: 14,
                         ),
                       ),
@@ -324,15 +332,18 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
               ),
               Text(
                 email.timeLabel,
-                style: const TextStyle(color: Colors.white54, fontSize: 13.5),
+                style: TextStyle(
+                  color: context.palette.tertiaryText,
+                  fontSize: 13.5,
+                ),
               ),
             ],
           ),
-          const Divider(color: Colors.white10, height: 22),
+          Divider(color: context.palette.divider, height: 22),
           Text.rich(
             TextSpan(
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: context.palette.primaryText,
                 fontSize: 16.5,
                 height: 1.45,
               ),
@@ -344,22 +355,25 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
               decoration: BoxDecoration(
-                color: const Color(0xFF1C1C26),
+                color: context.palette.bubble,
                 borderRadius: BorderRadius.circular(9),
-                border: Border.all(color: Colors.white12),
+                border: Border.all(color: context.palette.divider),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.attach_file,
                     size: 15,
-                    color: Colors.white54,
+                    color: context.palette.tertiaryText,
                   ),
                   const SizedBox(width: 6),
                   Text(
                     email.attachmentName!,
-                    style: const TextStyle(color: Colors.white70, fontSize: 15),
+                    style: TextStyle(
+                      color: context.palette.secondaryText,
+                      fontSize: 15,
+                    ),
                   ),
                 ],
               ),
@@ -370,20 +384,23 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
               decoration: BoxDecoration(
-                color: const Color(0xFF1C1C26),
+                color: context.palette.bubble,
                 borderRadius: BorderRadius.circular(9),
                 border: Border.all(
                   color: const Color(0xFFA78BFA).withValues(alpha: 0.5),
                 ),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.qr_code_2, size: 15, color: Color(0xFFA78BFA)),
                   SizedBox(width: 6),
                   Text(
                     'QR code in this email',
-                    style: TextStyle(color: Colors.white70, fontSize: 15),
+                    style: TextStyle(
+                      color: context.palette.secondaryText,
+                      fontSize: 15,
+                    ),
                   ),
                 ],
               ),
@@ -473,7 +490,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
     final findings = _analysis.findingsFor(drone);
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: const Color(0xFF15151F),
+      backgroundColor: context.palette.sheet,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
       ),
@@ -492,16 +509,16 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
                   children: [
                     Text(
                       drone.label,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: context.palette.primaryText,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
                       drone.specialty,
-                      style: const TextStyle(
-                        color: Colors.white60,
+                      style: TextStyle(
+                        color: context.palette.secondaryText,
                         fontSize: 14.5,
                       ),
                     ),
@@ -527,8 +544,8 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
                     ),
                     Text(
                       f.detail,
-                      style: const TextStyle(
-                        color: Colors.white70,
+                      style: TextStyle(
+                        color: context.palette.secondaryText,
                         height: 1.35,
                       ),
                     ),
@@ -574,12 +591,12 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
 
   Widget _panelShell(Widget child) {
     return Material(
-      color: const Color(0xFF12121C),
+      color: context.palette.panel,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-        decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: Colors.white10)),
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: context.palette.divider)),
         ),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxHeight: 430),
@@ -611,14 +628,17 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
                 ),
                 Text(
                   'Step ${_walkIndex + 1} of ${steps.length}',
-                  style: const TextStyle(color: Colors.white54, fontSize: 13.5),
+                  style: TextStyle(
+                    color: context.palette.tertiaryText,
+                    fontSize: 13.5,
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 8),
             Text(
               step.narration,
-              style: const TextStyle(color: Colors.white, height: 1.4),
+              style: TextStyle(color: context.palette.primaryText, height: 1.4),
             ),
             const SizedBox(height: 10),
             Row(
@@ -658,17 +678,20 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 'Drone Bay',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: context.palette.primaryText,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const Text(
+              Text(
                 'Six specialists, email edition — domains, Reply-To '
                 'tricks, attachments, links, pressure.',
-                style: TextStyle(color: Colors.white54, fontSize: 14.5),
+                style: TextStyle(
+                  color: context.palette.tertiaryText,
+                  fontSize: 14.5,
+                ),
               ),
               const SizedBox(height: 12),
               SizedBox(
@@ -697,7 +720,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
                 _scanningIdx >= 0
                     ? '${DroneId.values[_scanningIdx].label} scanning…'
                     : 'Fleet airborne…',
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: context.palette.primaryText),
               ),
             ],
           ),
@@ -728,9 +751,9 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
                       ),
                     ),
                   ),
-                  const Text(
+                  Text(
                     '/100 risk',
-                    style: TextStyle(color: Colors.white54),
+                    style: TextStyle(color: context.palette.tertiaryText),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -748,8 +771,8 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
                         Text(
                           'Tap a drone and choose "Teach me" — that is where '
                           'the learning happens.',
-                          style: const TextStyle(
-                            color: Colors.white54,
+                          style: TextStyle(
+                            color: context.palette.tertiaryText,
                             fontSize: 14.5,
                           ),
                         ),
@@ -776,11 +799,11 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
                       ),
                     )
                   else
-                    const Expanded(
+                    Expanded(
                       child: Text(
                         'This one holds up — official domain, '
                         'official link, no pressure.',
-                        style: TextStyle(color: Colors.white70),
+                        style: TextStyle(color: context.palette.secondaryText),
                       ),
                     ),
                   const SizedBox(width: 10),
@@ -824,7 +847,10 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
               Text(
                 'Sender blocked. Report ${report.incidentId} filed — find '
                 'it any time in the Blocked tab.',
-                style: const TextStyle(color: Colors.white70, fontSize: 15),
+                style: TextStyle(
+                  color: context.palette.secondaryText,
+                  fontSize: 15,
+                ),
               ),
               const SizedBox(height: 10),
               SizedBox(

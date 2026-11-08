@@ -5,8 +5,12 @@ import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/swat_shell.dart';
 import 'services/account_store.dart';
+import 'services/theme_store.dart';
+import 'theme/app_palette.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await ThemeStore.load();
   runApp(const SwatApp());
 }
 
@@ -26,64 +30,73 @@ class SwatApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Swat — Signal Swarm',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFE20074),
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
-        // Senior-first scale (elderly_mobile_ui skill): body text lives
-        // at 17-18sp, nothing meaningful below 14sp, primary actions are
-        // at least 56dp tall, and secondary text stays at white70 —
-        // gray-on-dark "elegance" is the most common senior-hostile
-        // choice in dark UIs.
-        textTheme: const TextTheme(
-          headlineMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-          titleLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          titleMedium: TextStyle(fontSize: 19, fontWeight: FontWeight.w600),
-          bodyLarge: TextStyle(fontSize: 18, height: 1.45),
-          bodyMedium: TextStyle(fontSize: 17, height: 1.45),
-          bodySmall: TextStyle(fontSize: 15, height: 1.4),
-          labelLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          labelMedium: TextStyle(fontSize: 14.5),
-          labelSmall: TextStyle(fontSize: 13.5),
-        ),
-        filledButtonTheme: FilledButtonThemeData(
-          style: FilledButton.styleFrom(
-            minimumSize: const Size(64, 58),
-            textStyle: const TextStyle(
-              fontSize: 17.5,
-              fontWeight: FontWeight.bold,
-            ),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: ThemeStore.mode,
+      builder: (context, mode, _) => MaterialApp(
+        title: 'Swat — Signal Swarm',
+        debugShowCheckedModeBanner: false,
+        themeMode: mode,
+        theme: _buildTheme(Brightness.light),
+        darkTheme: _buildTheme(Brightness.dark),
+        home: const AccountGate(),
+      ),
+    );
+  }
+
+  ThemeData _buildTheme(Brightness brightness) {
+    return ThemeData(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: const Color(0xFFE20074),
+        brightness: brightness,
+      ),
+      useMaterial3: true,
+      // Senior-first scale (elderly_mobile_ui skill): body text lives
+      // at 17-18sp, nothing meaningful below 14sp, primary actions are
+      // at least 56dp tall, and secondary text stays at white70 —
+      // gray-on-dark "elegance" is the most common senior-hostile
+      // choice in dark UIs.
+      textTheme: const TextTheme(
+        headlineMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+        titleLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        titleMedium: TextStyle(fontSize: 19, fontWeight: FontWeight.w600),
+        bodyLarge: TextStyle(fontSize: 18, height: 1.45),
+        bodyMedium: TextStyle(fontSize: 17, height: 1.45),
+        bodySmall: TextStyle(fontSize: 15, height: 1.4),
+        labelLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        labelMedium: TextStyle(fontSize: 14.5),
+        labelSmall: TextStyle(fontSize: 13.5),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          minimumSize: const Size(64, 58),
+          textStyle: const TextStyle(
+            fontSize: 17.5,
+            fontWeight: FontWeight.bold,
           ),
-        ),
-        outlinedButtonTheme: OutlinedButtonThemeData(
-          style: OutlinedButton.styleFrom(
-            minimumSize: const Size(64, 56),
-            textStyle: const TextStyle(fontSize: 17),
-          ),
-        ),
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            minimumSize: const Size(48, 52),
-            textStyle: const TextStyle(fontSize: 16),
-          ),
-        ),
-        navigationBarTheme: const NavigationBarThemeData(
-          height: 76,
-          labelTextStyle: WidgetStatePropertyAll(
-            TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-          ),
-        ),
-        chipTheme: const ChipThemeData(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          labelStyle: TextStyle(fontSize: 15.5),
         ),
       ),
-      home: const AccountGate(),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size(64, 56),
+          textStyle: const TextStyle(fontSize: 17),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          minimumSize: const Size(48, 52),
+          textStyle: const TextStyle(fontSize: 16),
+        ),
+      ),
+      navigationBarTheme: const NavigationBarThemeData(
+        height: 76,
+        labelTextStyle: WidgetStatePropertyAll(
+          TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        ),
+      ),
+      chipTheme: const ChipThemeData(
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        labelStyle: TextStyle(fontSize: 15.5),
+      ),
     );
   }
 }
@@ -121,9 +134,9 @@ class _AccountGateState extends State<AccountGate> {
   @override
   Widget build(BuildContext context) {
     if (_loading && !AccountStore.isLoaded) {
-      return const Scaffold(
-        backgroundColor: Color(0xFF0B0B12),
-        body: Center(child: CircularProgressIndicator()),
+      return Scaffold(
+        backgroundColor: context.palette.background,
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
     return AccountStore.account == null

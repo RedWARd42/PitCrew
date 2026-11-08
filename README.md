@@ -231,3 +231,15 @@ The **Sort messages** bar orders the conversation list: Newest first,
 Oldest first, Highest risk first, or **By phone number** — numbers
 compared as numbers (short codes like 456 before full numbers), named
 contacts ("Mom") after the numbers.
+
+## Light and dark mode
+
+A sun/moon toggle in every app bar (and on the login screen) flips the
+whole app between the original dark theme and a light theme. All
+surfaces and text route through a brightness-aware palette
+(`lib/theme/app_palette.dart`); the drone colors and the T-Mobile
+magenta are the same in both modes. The choice is saved on the device
+and restored on the next launch. The native overlay panel over Google
+Messages keeps its dark styling in both modes — it is an alert surface
+that floats over other apps, where the high-contrast dark panel reads
+best.

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_palette.dart';
 import '../models/message.dart';
 import 'drone_chat_screen.dart';
 import '../services/account_store.dart';
@@ -11,9 +12,6 @@ import '../services/walkthrough.dart';
 import '../widgets/drone_widget.dart';
 
 const Color kMagenta = Color(0xFFE20074);
-const Color kBackground = Color(0xFF0B0B12);
-const Color kBubble = Color(0xFF1C1C26);
-const Color kBubbleSelected = Color(0xFF26202E);
 
 enum FleetPhase { idle, scanning, revealed, protected }
 
@@ -158,7 +156,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
   void _showSortSheet() {
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: const Color(0xFF15151F),
+      backgroundColor: context.palette.sheet,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
       ),
@@ -170,12 +168,12 @@ class _MessagesScreenState extends State<MessagesScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   child: Text(
                     'Sort messages',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: context.palette.primaryText,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -187,20 +185,22 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     minTileHeight: 64,
                     leading: Icon(
                       _sortIcon(option),
-                      color: option == _sort ? kMagenta : Colors.white70,
+                      color: option == _sort
+                          ? kMagenta
+                          : context.palette.secondaryText,
                     ),
                     title: Text(
                       option.label,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: context.palette.primaryText,
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     subtitle: Text(
                       option.description,
-                      style: const TextStyle(
-                        color: Colors.white54,
+                      style: TextStyle(
+                        color: context.palette.tertiaryText,
                         fontSize: 14.5,
                       ),
                     ),
@@ -208,7 +208,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       option == _sort
                           ? Icons.check_circle
                           : Icons.circle_outlined,
-                      color: option == _sort ? kMagenta : Colors.white38,
+                      color: option == _sort
+                          ? kMagenta
+                          : context.palette.faintText,
                     ),
                     onTap: () {
                       Navigator.of(sheetContext).pop();
@@ -234,19 +236,19 @@ class _MessagesScreenState extends State<MessagesScreen> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
-      decoration: const BoxDecoration(
-        color: Color(0xFF10101A),
-        border: Border(bottom: BorderSide(color: Colors.white10)),
+      decoration: BoxDecoration(
+        color: context.palette.panel,
+        border: Border(bottom: BorderSide(color: context.palette.divider)),
       ),
       child: Row(
         children: [
-          const Icon(Icons.sort, color: Colors.white70, size: 22),
+          Icon(Icons.sort, color: context.palette.secondaryText, size: 22),
           const SizedBox(width: 9),
-          const Expanded(
+          Expanded(
             child: Text(
               'Sort messages',
               style: TextStyle(
-                color: Colors.white,
+                color: context.palette.primaryText,
                 fontSize: 16.5,
                 fontWeight: FontWeight.w600,
               ),
@@ -314,7 +316,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
     final findings = analysis.findingsFor(drone);
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: const Color(0xFF15151F),
+      backgroundColor: context.palette.sheet,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
       ),
@@ -333,16 +335,16 @@ class _MessagesScreenState extends State<MessagesScreen> {
                   children: [
                     Text(
                       drone.label,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: context.palette.primaryText,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
                       drone.specialty,
-                      style: const TextStyle(
-                        color: Colors.white60,
+                      style: TextStyle(
+                        color: context.palette.secondaryText,
                         fontSize: 14.5,
                       ),
                     ),
@@ -380,8 +382,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     ),
                     Text(
                       f.detail,
-                      style: const TextStyle(
-                        color: Colors.white70,
+                      style: TextStyle(
+                        color: context.palette.secondaryText,
                         height: 1.35,
                       ),
                     ),
@@ -427,7 +429,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
     final account = AccountStore.account;
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: const Color(0xFF15151F),
+      backgroundColor: context.palette.sheet,
       builder: (sheetContext) => SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
@@ -437,8 +439,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
             children: [
               Text(
                 account?.displayName ?? 'Signed in',
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: context.palette.primaryText,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -446,14 +448,17 @@ class _MessagesScreenState extends State<MessagesScreen> {
               const SizedBox(height: 4),
               Text(
                 account?.email ?? '',
-                style: const TextStyle(color: Colors.white54, fontSize: 17),
+                style: TextStyle(
+                  color: context.palette.tertiaryText,
+                  fontSize: 17,
+                ),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'Swat protects this account on this phone. Reports and '
                 'blocks are filed under this name.',
                 style: TextStyle(
-                  color: Colors.white54,
+                  color: context.palette.tertiaryText,
                   fontSize: 16,
                   height: 1.4,
                 ),
@@ -524,13 +529,16 @@ class _MessagesScreenState extends State<MessagesScreen> {
     final openConv = _openConversation(conversations);
     final inThread = openConv != null;
     return Scaffold(
-      backgroundColor: kBackground,
+      backgroundColor: context.palette.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF12121C),
+        backgroundColor: context.palette.panel,
         leading: inThread
             ? IconButton(
                 tooltip: 'Back to conversations',
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: context.palette.primaryText,
+                ),
                 onPressed: _closeThread,
               )
             : null,
@@ -552,11 +560,12 @@ class _MessagesScreenState extends State<MessagesScreen> {
           ],
         ),
         actions: [
+          const ThemeToggleButton(),
           IconButton(
             tooltip: 'Account',
-            icon: const Icon(
+            icon: Icon(
               Icons.account_circle_outlined,
-              color: Colors.white70,
+              color: context.palette.secondaryText,
             ),
             onPressed: _showAccountSheet,
           ),
@@ -566,13 +575,13 @@ class _MessagesScreenState extends State<MessagesScreen> {
                 : 'Float a drone over the real Messages app (Android)',
             icon: Icon(
               _overlayOn ? Icons.layers : Icons.layers_outlined,
-              color: _overlayOn ? kMagenta : Colors.white70,
+              color: _overlayOn ? kMagenta : context.palette.secondaryText,
             ),
             onPressed: _toggleOverlay,
           ),
           IconButton(
             tooltip: 'Reload inbox',
-            icon: const Icon(Icons.refresh, color: Colors.white70),
+            icon: Icon(Icons.refresh, color: context.palette.secondaryText),
             onPressed: _loadInbox,
           ),
         ],
@@ -582,14 +591,17 @@ class _MessagesScreenState extends State<MessagesScreen> {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-            color: const Color(0xFF15151F),
+            color: context.palette.sheet,
             child: Text(
               _fromRealStore
                   ? 'Reading the real SMS inbox on this device — analysis '
                         'happens on-device.'
                   : 'Demo inbox — synthetic messages only. On Android, grant '
                         'SMS permission and the fleet reads your real inbox.',
-              style: const TextStyle(color: Colors.white54, fontSize: 14),
+              style: TextStyle(
+                color: context.palette.tertiaryText,
+                fontSize: 14,
+              ),
             ),
           ),
           if (!inThread) _buildSortBar(),
@@ -619,11 +631,14 @@ class _MessagesScreenState extends State<MessagesScreen> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
-              color: const Color(0xFF12121C),
-              child: const Text(
+              color: context.palette.panel,
+              child: Text(
                 'Tap a conversation to open it — the fleet scans the '
                 'messages inside.',
-                style: TextStyle(color: Colors.white54, fontSize: 14.5),
+                style: TextStyle(
+                  color: context.palette.tertiaryText,
+                  fontSize: 14.5,
+                ),
               ),
             ),
         ],
@@ -634,10 +649,10 @@ class _MessagesScreenState extends State<MessagesScreen> {
   // ------------------------------------------------------- conversations
   Widget _buildConversationList(List<Conversation> conversations) {
     if (conversations.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'No messages yet.',
-          style: TextStyle(color: Colors.white54, fontSize: 17),
+          style: TextStyle(color: context.palette.tertiaryText, fontSize: 17),
         ),
       );
     }
@@ -664,10 +679,13 @@ class _MessagesScreenState extends State<MessagesScreen> {
           children: [
             CircleAvatar(
               radius: 24,
-              backgroundColor: const Color(0xFF2A2A3A),
+              backgroundColor: context.palette.avatarBg,
               child: Text(
                 _avatarInitial(conversation.sender),
-                style: const TextStyle(color: Colors.white70, fontSize: 19),
+                style: TextStyle(
+                  color: context.palette.secondaryText,
+                  fontSize: 19,
+                ),
               ),
             ),
             const SizedBox(width: 12),
@@ -680,8 +698,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       Expanded(
                         child: Text(
                           conversation.sender,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: context.palette.primaryText,
                             fontSize: 17,
                             fontWeight: FontWeight.w600,
                           ),
@@ -691,8 +709,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       const SizedBox(width: 8),
                       Text(
                         conversation.latest.timeLabel,
-                        style: const TextStyle(
-                          color: Colors.white54,
+                        style: TextStyle(
+                          color: context.palette.tertiaryText,
                           fontSize: 13.5,
                         ),
                       ),
@@ -703,8 +721,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     conversation.latest.body,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Colors.white54,
+                    style: TextStyle(
+                      color: context.palette.tertiaryText,
                       fontSize: 15,
                       height: 1.35,
                     ),
@@ -722,13 +740,13 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       vertical: 3,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white10,
+                      color: context.palette.divider,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
                       '${conversation.count}',
-                      style: const TextStyle(
-                        color: Colors.white70,
+                      style: TextStyle(
+                        color: context.palette.secondaryText,
                         fontSize: 13,
                       ),
                     ),
@@ -804,10 +822,13 @@ class _MessagesScreenState extends State<MessagesScreen> {
           children: [
             CircleAvatar(
               radius: 17,
-              backgroundColor: const Color(0xFF2A2A3A),
+              backgroundColor: context.palette.avatarBg,
               child: Text(
                 _avatarInitial(m.sender),
-                style: const TextStyle(color: Colors.white70, fontSize: 16),
+                style: TextStyle(
+                  color: context.palette.secondaryText,
+                  fontSize: 16,
+                ),
               ),
             ),
             const SizedBox(width: 9),
@@ -822,8 +843,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       Expanded(
                         child: Text(
                           m.sender,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: context.palette.primaryText,
                             fontWeight: FontWeight.w600,
                             fontSize: 15.5,
                           ),
@@ -833,8 +854,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       const SizedBox(width: 8),
                       Text(
                         m.timeLabel,
-                        style: const TextStyle(
-                          color: Colors.white54,
+                        style: TextStyle(
+                          color: context.palette.tertiaryText,
                           fontSize: 13.5,
                         ),
                       ),
@@ -855,17 +876,19 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       vertical: 9,
                     ),
                     decoration: BoxDecoration(
-                      color: selected ? kBubbleSelected : kBubble,
+                      color: selected
+                          ? context.palette.bubbleSelected
+                          : context.palette.bubble,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: selected ? kMagenta : Colors.white10,
+                        color: selected ? kMagenta : context.palette.divider,
                         width: selected ? 1.4 : 1,
                       ),
                     ),
                     child: Text.rich(
                       TextSpan(
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: context.palette.primaryText,
                           fontSize: 16.5,
                           height: 1.4,
                         ),
@@ -993,10 +1016,10 @@ class _MessagesScreenState extends State<MessagesScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 'Drone Bay',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: context.palette.primaryText,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -1005,7 +1028,10 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     ? 'Pick a message above, then release the fleet.'
                     : '6 specialists ready — tap a message, then '
                           'release the fleet.',
-                style: const TextStyle(color: Colors.white54, fontSize: 14.5),
+                style: TextStyle(
+                  color: context.palette.tertiaryText,
+                  fontSize: 14.5,
+                ),
               ),
               const SizedBox(height: 12),
               SizedBox(
@@ -1034,7 +1060,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                 _scanningIdx >= 0
                     ? '${DroneId.values[_scanningIdx].label} scanning…'
                     : 'Fleet airborne…',
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: context.palette.primaryText),
               ),
             ],
           ),
@@ -1051,12 +1077,12 @@ class _MessagesScreenState extends State<MessagesScreen> {
     // have a proper ink ancestor, and a capped, scrollable height so the
     // tall PROTECTED panel never squeezes the message list away.
     return Material(
-      color: const Color(0xFF12121C),
+      color: context.palette.panel,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-        decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: Colors.white10)),
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: context.palette.divider)),
         ),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxHeight: 430),
@@ -1092,7 +1118,10 @@ class _MessagesScreenState extends State<MessagesScreen> {
                   ),
                 ),
               ),
-              const Text('/100 risk', style: TextStyle(color: Colors.white54)),
+              Text(
+                '/100 risk',
+                style: TextStyle(color: context.palette.tertiaryText),
+              ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
@@ -1110,8 +1139,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       'Confidence ${analysis.confidence}% · '
                       '${analysis.flaggingDrones.length} of 6 drones flagged '
                       'something. Tap a drone to hear its case.',
-                      style: const TextStyle(
-                        color: Colors.white54,
+                      style: TextStyle(
+                        color: context.palette.tertiaryText,
                         fontSize: 14.5,
                       ),
                     ),
@@ -1138,11 +1167,11 @@ class _MessagesScreenState extends State<MessagesScreen> {
                   ),
                 )
               else
-                const Expanded(
+                Expanded(
                   child: Text(
                     'No action needed — the fleet checked this one and it '
                     'holds up.',
-                    style: TextStyle(color: Colors.white70),
+                    style: TextStyle(color: context.palette.secondaryText),
                   ),
                 ),
               const SizedBox(width: 10),
@@ -1185,30 +1214,36 @@ class _MessagesScreenState extends State<MessagesScreen> {
           Text(
             'Sender blocked. Report ${report.incidentId} filed with '
             'T-Mobile — written automatically from the fleet\'s findings:',
-            style: const TextStyle(color: Colors.white70, fontSize: 15),
+            style: TextStyle(
+              color: context.palette.secondaryText,
+              fontSize: 15,
+            ),
           ),
           const SizedBox(height: 6),
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: const Color(0xFF0B0B12),
+              color: context.palette.background,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.white10),
+              border: Border.all(color: context.palette.divider),
             ),
             child: Text(
               report.lines.join('\n'),
-              style: const TextStyle(
-                color: Colors.white60,
+              style: TextStyle(
+                color: context.palette.secondaryText,
                 fontSize: 14,
                 height: 1.45,
               ),
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Finish the job (the "after" checklist):',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              color: context.palette.primaryText,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           _checklistTile(
             'Turn on SIM-swap / port-out lock',
@@ -1266,7 +1301,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
       contentPadding: EdgeInsets.zero,
       title: Text(
         label,
-        style: const TextStyle(color: Colors.white70, fontSize: 15.5),
+        style: TextStyle(color: context.palette.secondaryText, fontSize: 15.5),
       ),
       value: value,
       onChanged: onChanged,
@@ -1295,14 +1330,17 @@ class _MessagesScreenState extends State<MessagesScreen> {
               ),
               Text(
                 'Step ${_walkIndex + 1} of ${steps.length}',
-                style: const TextStyle(color: Colors.white54, fontSize: 13.5),
+                style: TextStyle(
+                  color: context.palette.tertiaryText,
+                  fontSize: 13.5,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 8),
           Text(
             step.narration,
-            style: const TextStyle(color: Colors.white, height: 1.4),
+            style: TextStyle(color: context.palette.primaryText, height: 1.4),
           ),
           const SizedBox(height: 10),
           Row(

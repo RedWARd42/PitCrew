@@ -11,6 +11,7 @@ import 'package:signal_swarm/main.dart';
 import 'package:signal_swarm/models/message.dart';
 import 'package:signal_swarm/screens/drone_chat_screen.dart';
 import 'package:signal_swarm/services/scam_analyzer.dart';
+import 'package:signal_swarm/services/theme_store.dart';
 
 /// A phone-tall surface (1080x2400 at the emulator's density), so the
 /// whole conversation list is built — the default 800x600 test surface
@@ -124,6 +125,39 @@ void main() {
     expect(find.text('Release the Fleet'), findsOneWidget);
     expect(find.textContaining('URGENT'), findsWidgets);
     expect(find.text('Mom'), findsNothing);
+  });
+
+  testWidgets('Light/dark toggle flips the app theme', (
+    WidgetTester tester,
+  ) async {
+    usePhoneSurface(tester);
+    addTearDown(() => ThemeStore.mode.value = ThemeMode.dark);
+    await tester.pumpWidget(const SwatApp());
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    // Dark by default: the app bar offers the sun (switch to light).
+    expect(ThemeStore.mode.value, ThemeMode.dark);
+    expect(find.byIcon(Icons.light_mode), findsOneWidget);
+    final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+    expect(app.themeMode, ThemeMode.dark);
+
+    await tester.tap(find.byIcon(Icons.light_mode));
+    // The theme cross-fades (AnimatedTheme) — give it several frames.
+    for (var i = 0; i < 5; i++) {
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+
+    // Light now: the same screens render, and the button offers the moon.
+    expect(ThemeStore.mode.value, ThemeMode.light);
+    expect(find.byIcon(Icons.dark_mode), findsOneWidget);
+    expect(find.text('+1 872-555-0147'), findsOneWidget);
+    final scaffolds = tester.widgetList<Scaffold>(find.byType(Scaffold));
+    expect(
+      scaffolds.any((s) => s.backgroundColor == const Color(0xFFF7F4FA)),
+      isTrue,
+      reason: 'a screen scaffold should use the light background',
+    );
   });
 
   testWidgets('Drone chat greets, then answers from the scan', (

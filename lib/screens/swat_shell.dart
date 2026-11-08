@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../theme/app_palette.dart';
 import '../services/stores.dart';
 import 'blocked_screen.dart';
 import 'emails_screen.dart';
@@ -54,7 +55,7 @@ class _SwatShellState extends State<SwatShell> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
-        backgroundColor: const Color(0xFF12121C),
+        backgroundColor: context.palette.panel,
         destinations: [
           const NavigationDestination(
             icon: Icon(Icons.message_outlined),
