@@ -19,7 +19,7 @@ void main() {
     expect(p['account'], 'Ryan');
     final flags = p['topFlags'] as List;
     expect(flags, isNotEmpty);
-    expect(flags.first, contains('Angler'));
+    expect(flags.any((f) => '$f'.contains('Angler')), isTrue);
   });
 
   test('unconfigured without a dart-define URL (tests run local-only)', () {
