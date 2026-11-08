@@ -8,6 +8,7 @@ import 'drone_chat_screen.dart';
 import '../services/account_store.dart';
 import '../services/device_services.dart';
 import '../services/conversations.dart';
+import '../services/gemini_service.dart';
 import '../services/photon_config.dart';
 import '../services/scam_analyzer.dart';
 import '../services/stores.dart';
@@ -66,6 +67,12 @@ class _MessagesScreenState extends State<MessagesScreen> {
   int _revealedCount = 0;
   int _scanningIdx = -1;
   bool _overlayOn = false;
+
+  // Gemini second-opinion state, keyed to the message it answers so
+  // switching messages never shows a stale opinion.
+  String? _geminiForId;
+  String? _geminiText;
+  bool _geminiBusy = false;
 
   // Walkthrough state
   List<WalkthroughStep>? _walkSteps;
@@ -1339,7 +1346,126 @@ class _MessagesScreenState extends State<MessagesScreen> {
               ),
             ],
           ),
+          const SizedBox(height: 10),
+          _buildGeminiRow(analysis),
         ],
+      ),
+    );
+  }
+
+  /// The Gemini second-opinion row in the verdict panel ([MLH] Best
+  /// Use of Gemini API): optional, clearly labeled cloud AI — the
+  /// fleet's on-device verdict above it never depends on this.
+  Widget _buildGeminiRow(MessageAnalysis analysis) {
+    final showResult =
+        _geminiForId == analysis.message.id && _geminiText != null;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: _geminiBusy ? null : () => _askGemini(analysis),
+            icon: const Icon(Icons.auto_awesome, size: 20),
+            label: Text(
+              _geminiBusy ? 'Asking Gemini…' : 'Gemini second opinion',
+            ),
+          ),
+        ),
+        if (showResult) ...[
+          const SizedBox(height: 8),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: context.palette.insetBox,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'GEMINI · CLOUD AI — a second opinion, not the verdict',
+                  style: TextStyle(
+                    color: context.palette.tertiaryText,
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _geminiText!,
+                  style: TextStyle(
+                    color: context.palette.primaryText,
+                    fontSize: 15,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Future<void> _askGemini(MessageAnalysis analysis) async {
+    if (!geminiConfigured) {
+      _showGeminiSetup();
+      return;
+    }
+    setState(() {
+      _geminiBusy = true;
+      _geminiForId = analysis.message.id;
+      _geminiText = null;
+    });
+    final text = await GeminiService.secondOpinion(analysis);
+    if (!mounted) return;
+    setState(() {
+      _geminiBusy = false;
+      _geminiText =
+          text ??
+          'Gemini did not answer — check the key and the connection, '
+              'then try again. The fleet verdict above stands either way.';
+    });
+  }
+
+  void _showGeminiSetup() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: context.palette.sheet,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.fromLTRB(20, 18, 20, 26),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Add a Gemini second opinion',
+              style: TextStyle(
+                color: context.palette.primaryText,
+                fontSize: 19,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Optional: Google Gemini reads the fleet\'s findings and '
+              'gives a plain-language second opinion. The fleet\'s own '
+              'verdict is on-device and never needs this.\n\n'
+              '1. Get a free API key in Google AI Studio.\n'
+              '2. Relaunch with --dart-define=GEMINI_API_KEY=<key>.\n'
+              '3. Scan a message, then tap "Gemini second opinion".',
+              style: TextStyle(
+                color: context.palette.secondaryText,
+                fontSize: 16,
+                height: 1.45,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
