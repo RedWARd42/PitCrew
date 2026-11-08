@@ -1,0 +1,20 @@
+{
+ "requestId": "11111111-1111-4111-8111-111111111111",
+ "verdict": "safe",
+ "riskScore": 6,
+ "confidence": 0.95,
+ "category": null,
+ "summary": "Looks like a normal bank alert from a known short code.",
+ "findings": [],
+ "actions": [],
+ "privacy": {
+  "fieldsReceived": [
+   "sender",
+   "messages[].text"
+  ],
+  "retained": false,
+  "llmUsed": false
+ },
+ "latencyMs": 42,
+ "modelVersion": "mock-1"
+}

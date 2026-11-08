@@ -1,0 +1,72 @@
+{
+ "requestId": "11111111-1111-4111-8111-111111111111",
+ "verdict": "suspicious",
+ "riskScore": 71,
+ "confidence": 0.74,
+ "category": {
+  "id": "account_suspension",
+  "label": "Account-Suspension Smishing",
+  "source": "fallback"
+ },
+ "summary": "This chat is drifting from small talk toward money.",
+ "findings": [
+  {
+   "drone": "drift",
+   "severity": "medium",
+   "confidence": 0.74,
+   "title": "Chat is moving toward money",
+   "explanation": "It began as a wrong number, became friendly, then mentioned a trading app.",
+   "evidence": [
+    {
+     "kind": "stage",
+     "value": "rapport>trust>money",
+     "source": "heuristic"
+    }
+   ],
+   "anchor": {
+    "messageId": "m6",
+    "field": "body"
+   }
+  }
+ ],
+ "actions": [
+  {
+   "id": "report_7726",
+   "label": "Report to 7726",
+   "primary": true
+  },
+  {
+   "id": "call_official",
+   "label": "Call real T-Mobile",
+   "payload": {
+    "number": "611"
+   }
+  },
+  {
+   "id": "alert_guardian",
+   "label": "Alert my guardian"
+  },
+  {
+   "id": "mark_safe",
+   "label": "Mark safe"
+  }
+ ],
+ "privacy": {
+  "fieldsReceived": [
+   "sender",
+   "messages[].text"
+  ],
+  "retained": false,
+  "llmUsed": false
+ },
+ "latencyMs": 42,
+ "modelVersion": "mock-1",
+ "riskSeries": [
+  0.05,
+  0.1,
+  0.18,
+  0.35,
+  0.6,
+  0.78
+ ]
+}
