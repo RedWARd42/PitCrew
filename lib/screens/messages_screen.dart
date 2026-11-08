@@ -8,6 +8,7 @@ import 'drone_chat_screen.dart';
 import '../services/account_store.dart';
 import '../services/device_services.dart';
 import '../services/conversations.dart';
+import '../services/photon_config.dart';
 import '../services/scam_analyzer.dart';
 import '../services/stores.dart';
 import '../services/walkthrough.dart';
@@ -1033,6 +1034,125 @@ class _MessagesScreenState extends State<MessagesScreen> {
     return widgets;
   }
 
+  // ---------------------------------------------------------- fleet line
+  /// The fleet also lives on Photon 2.0 (see photon/ in the repo): the
+  /// same drones answer iMessage/SMS texts and real voice calls on the
+  /// fleet's own number. With the number configured at run time
+  /// (--dart-define=PHOTON_FLEET_NUMBER=…) this row dials it; without
+  /// one it offers the setup steps — never a made-up number.
+  Widget _buildFleetLineRow() {
+    return Row(
+      children: [
+        const Icon(Icons.forum, color: kMagenta, size: 22),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Fleet Line · Photon',
+                style: TextStyle(
+                  color: context.palette.primaryText,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15.5,
+                ),
+              ),
+              Text(
+                photonFleetConfigured
+                    ? '$kPhotonFleetNumber — text or call the drones anywhere'
+                    : 'The drones, on iMessage, SMS & voice calls',
+                style: TextStyle(
+                  color: context.palette.tertiaryText,
+                  fontSize: 13.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (photonFleetConfigured) ...[
+          IconButton(
+            tooltip: 'Text the fleet',
+            icon: const Icon(Icons.message_outlined),
+            onPressed: () async {
+              final ok = await CommsService.openSmsComposer(
+                kPhotonFleetNumber,
+                'Hi fleet — please scan this message: ',
+              );
+              if (!ok && mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('No messaging app found.')),
+                );
+              }
+            },
+          ),
+          IconButton(
+            tooltip: 'Call the fleet — voice to voice',
+            icon: const Icon(Icons.phone_in_talk_outlined),
+            onPressed: () async {
+              final ok = await CommsService.openDialer(kPhotonFleetNumber);
+              if (!ok && mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('No phone app found.')),
+                );
+              }
+            },
+          ),
+        ] else
+          OutlinedButton(
+            onPressed: _showPhotonSetup,
+            child: const Text('Set up'),
+          ),
+      ],
+    );
+  }
+
+  void _showPhotonSetup() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: context.palette.sheet,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+      ),
+      builder: (sheetContext) => Padding(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Set up the Fleet Line (Photon 2.0)',
+              style: TextStyle(
+                color: context.palette.primaryText,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              '1. Create a free project at app.photon.codes.\n'
+              '2. Add an iMessage line for texts and an SMS number — '
+              'voice calls live on the SMS number.\n'
+              '3. Run the fleet service in this repo\'s photon/ folder '
+              'with the project ID and secret.\n'
+              '4. For voice, add a Voice profile on the number and '
+              'connect it over SIP (Retell, ElevenLabs, LiveKit or '
+              'Twilio) — the pack is in photon/voice/.\n'
+              '5. Relaunch this app with '
+              '--dart-define=PHOTON_FLEET_NUMBER=<the SMS number> and '
+              'the Text / Call buttons appear here.',
+              style: TextStyle(
+                color: context.palette.secondaryText,
+                fontSize: 15.5,
+                height: 1.45,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   // -------------------------------------------------------- bottom panel
   Widget _buildBottomPanel(MessageAnalysis? analysis) {
     if (_walkSteps != null && analysis != null) {
@@ -1074,6 +1194,10 @@ class _MessagesScreenState extends State<MessagesScreen> {
                   label: const Text('Release the Fleet'),
                 ),
               ),
+              const SizedBox(height: 14),
+              Divider(color: context.palette.divider, height: 1),
+              const SizedBox(height: 10),
+              _buildFleetLineRow(),
             ],
           ),
         );

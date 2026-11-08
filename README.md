@@ -286,3 +286,16 @@ actually found something keep their post. Drones that checked and found
 nothing fly back to their dock slots along the bottom, wearing a green
 check badge — so after a scan, the side of the screen shows exactly who
 flagged the message, and a clean message leaves the whole fleet docked.
+
+## Photon 2.0 — the Fleet Line
+
+The fleet also lives outside the app on **Photon 2.0** (Spectrum),
+in `photon/`: text the fleet's iMessage line a suspicious message and
+the same six drones scan it and reply in the conversation; call the
+fleet's SMS number and the on-duty drone answers voice-to-voice over
+SIP (Retell / ElevenLabs / LiveKit / Twilio voice profile). The
+service's brain is a TypeScript port of this app's engine with
+identical calibration. The Drone Bay carries a Fleet Line card: run
+the app with `--dart-define=PHOTON_FLEET_NUMBER=+1…` and it gains
+Text / Call buttons for the fleet number; without it, the card shows
+the setup steps. Full guide: `photon/README.md`.

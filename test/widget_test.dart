@@ -119,18 +119,21 @@ void main() {
     );
     tester.widget<InkWell>(row).onTap!();
     await tester.pump(const Duration(milliseconds: 300));
-    // One more frame: the auto-launch fires post-frame, and its
-    // scanning state needs a rebuild to be visible.
-    await tester.pump(const Duration(milliseconds: 50));
 
-    // Inside the thread: back button, only this contact — and the
-    // fleet has launched ITSELF (no Release the Fleet press): a drone
-    // is mid-scan.
+    // First rendered frame of the thread is the Drone Bay (idle):
+    // back button, only this contact, and the Photon Fleet Line row
+    // offering setup (no fleet number is configured in tests).
     expect(find.byIcon(Icons.arrow_back), findsOneWidget);
-    expect(find.text('Release the Fleet'), findsNothing);
-    expect(find.textContaining('scanning…'), findsOneWidget);
+    expect(find.text('Fleet Line \u00b7 Photon'), findsOneWidget);
+    expect(find.text('Set up'), findsOneWidget);
     expect(find.textContaining('URGENT'), findsWidgets);
     expect(find.text('Mom'), findsNothing);
+
+    // Then the fleet launches ITSELF (auto-fleet, post-frame): the
+    // Release button is gone and a drone is mid-scan.
+    await tester.pump(const Duration(milliseconds: 50));
+    expect(find.text('Release the Fleet'), findsNothing);
+    expect(find.textContaining('scanning\u2026'), findsOneWidget);
 
     // Let the scan finish: the fleet lands and the verdict panel
     // replaces the scanning status.
