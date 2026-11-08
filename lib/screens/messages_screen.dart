@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'drone_chat_screen.dart';
 import '../services/account_store.dart';
 import '../services/device_services.dart';
 import '../services/conversations.dart';
+import '../services/fleet_backend.dart';
 import '../services/gemini_service.dart';
 import '../services/photon_config.dart';
 import '../services/scam_analyzer.dart';
@@ -1322,6 +1324,13 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       // Filing the report also lands the message in the
                       // Blocked tab's incident list (shared with family).
                       BlocklistStore.blockFromAnalysis(analysis);
+                      // [MLH] MongoDB Atlas: mirror the report to the
+                      // fleet backend's shared blocklist when one is
+                      // configured — fire-and-forget, never blocks the
+                      // protection flow.
+                      if (fleetBackendConfigured) {
+                        unawaited(FleetBackend.syncReport(analysis));
+                      }
                       setState(() => _phase = FleetPhase.protected);
                     },
                     icon: const Icon(Icons.shield),
