@@ -9,7 +9,7 @@ for Vultr's cheapest Cloud Compute tier.
 1. Sign up at vultr.com and claim the MLH hacker credits.
 2. **Deploy New Instance → Cloud Compute**: Ubuntu 24.04, the
    smallest regular plan, any US region (Dallas is closest to UTD).
-   Paste `cloud-init.yaml` into the user-data / Cloud Init field.
+   Paste `startup-script.sh` as a Vultr Startup Script (Account -> Startup Scripts) and select it for the instance. (`cloud-init.yaml` in this folder is the same staging in cloud-config form, for API/user-data deploys.)
 3. When it boots, SSH in and finish the one manual step (the Atlas
    password deliberately never travels through cloud-init):
 
