@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/demo_emails.dart';
 import '../models/email.dart';
 import '../models/message.dart';
+import '../services/account_store.dart';
 import '../services/email_analyzer.dart';
 import '../services/stores.dart';
 import '../services/walkthrough.dart';
@@ -779,7 +780,10 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
           ),
         );
       case _Phase.protected:
-        final report = buildReport(_analysis);
+        final report = buildReport(
+          _analysis,
+          accountName: AccountStore.displayName,
+        );
         return _panelShell(
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

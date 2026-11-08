@@ -11,6 +11,7 @@ import 'dart:async';
 
 import '../models/family_and_blocked.dart';
 import '../models/message.dart';
+import 'account_store.dart';
 import 'scam_analyzer.dart';
 import 'walkthrough.dart';
 
@@ -65,8 +66,9 @@ class BlocklistStore {
   static int get count => _entries.length;
   static int get reportedCount =>
       _entries.where((e) => e.status == BlockStatus.reported).length;
-  static int get sharedCount =>
-      _entries.where((e) => e.blockedBy != 'You').length;
+  static int get sharedCount => _entries
+      .where((e) => e.blockedBy.startsWith(FamilyStore.contact.name))
+      .length;
 
   static bool isBlocked(String messageId) =>
       _entries.any((e) => e.id == messageId);
@@ -77,7 +79,10 @@ class BlocklistStore {
     for (final e in _entries) {
       if (e.id == analysis.message.id) return e;
     }
-    final report = buildReport(analysis);
+    final report = buildReport(
+      analysis,
+      accountName: AccountStore.displayName,
+    );
     final body = analysis.message.body;
     final entry = BlockedEntry(
       id: analysis.message.id,
@@ -87,7 +92,7 @@ class BlocklistStore {
       riskScore: analysis.riskScore,
       categories: analysis.flaggingDrones,
       status: BlockStatus.reported,
-      blockedBy: 'You',
+      blockedBy: AccountStore.displayName,
       incidentId: report.incidentId,
     );
     _entries.insert(0, entry);
@@ -123,8 +128,11 @@ class BlocklistStore {
           riskScore: int.tryParse(b['risk'] ?? '') ?? analysis.riskScore,
           categories: analysis.flaggingDrones,
           status: BlockStatus.reported,
-          blockedBy: 'You (overlay)',
-          incidentId: buildReport(analysis).incidentId,
+          blockedBy: '${AccountStore.displayName} (overlay)',
+          incidentId: buildReport(
+            analysis,
+            accountName: AccountStore.displayName,
+          ).incidentId,
         ),
       );
       added = true;
@@ -192,7 +200,10 @@ class FamilyStore {
   /// "don't face it alone" move: the trusted contact sees exactly what
   /// the drones found, in the user's own thread with them.
   static void shareScan(MessageAnalysis analysis, String timeLabel) {
-    final report = buildReport(analysis);
+    final report = buildReport(
+      analysis,
+      accountName: AccountStore.displayName,
+    );
     _messages.add(
       FamilyChatMessage(
         fromMe: true,

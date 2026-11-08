@@ -22,6 +22,19 @@ tell at a time. The protection report writes itself as a byproduct.
 | Impersonator | pink | Impersonation & asks for PINs/passwords/payment rails |
 | Swap | green | SIM-swap / port-out priming & verification-code fishing |
 
+## Accounts — general, not one demo persona
+
+Swat opens on a login screen. Whoever logs in is the person being
+protected: their name comes **from the account info** — the name on the
+account, or one made from the account email (`maya.reyes@…` → "Maya
+Reyes") — and it follows them through the greeting ("Protecting Maya"),
+protection reports ("Protected account: Maya Reyes"), and the block
+list (blocks filed under their name). The account persists on-device
+(SharedPreferences via the `swat/account` channel); sign-out lives in
+the account sheet on the Messages tab. Demo honesty: local account
+only, no password, no server — the store's shape is where a real auth
+provider slots in.
+
 ## The `Message-Detection` flow
 
 1. **Inbox** — an Android-Messages-style thread view. On Android it reads

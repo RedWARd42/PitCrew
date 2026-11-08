@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/message.dart';
+import '../services/account_store.dart';
 import '../services/device_services.dart';
 import '../services/scam_analyzer.dart';
 import '../services/stores.dart';
@@ -248,6 +249,63 @@ class _MessagesScreenState extends State<MessagesScreen> {
     );
   }
 
+  void _showAccountSheet() {
+    final account = AccountStore.account;
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: const Color(0xFF15151F),
+      builder: (sheetContext) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                account?.displayName ?? 'Signed in',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                account?.email ?? '',
+                style: const TextStyle(color: Colors.white54, fontSize: 15),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Swat protects this account on this phone. Reports and '
+                'blocks are filed under this name.',
+                style: TextStyle(
+                  color: Colors.white38,
+                  fontSize: 13.5,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 18),
+              SizedBox(
+                width: double.infinity,
+                height: 54,
+                child: OutlinedButton(
+                  onPressed: () async {
+                    Navigator.of(sheetContext).pop();
+                    await AccountStore.signOut();
+                  },
+                  child: const Text(
+                    'Sign out',
+                    style: TextStyle(fontSize: 17),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _toggleOverlay() async {
     if (_overlayOn) {
       await OverlayService.stopOverlay();
@@ -293,20 +351,28 @@ class _MessagesScreenState extends State<MessagesScreen> {
       backgroundColor: kBackground,
       appBar: AppBar(
         backgroundColor: const Color(0xFF12121C),
-        title: const Column(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Messages',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(
-              'protected by Swat',
-              style: TextStyle(fontSize: 11, color: kMagenta),
+              'Protecting ${AccountStore.firstName}',
+              style: const TextStyle(fontSize: 11, color: kMagenta),
             ),
           ],
         ),
         actions: [
+          IconButton(
+            tooltip: 'Account',
+            icon: const Icon(
+              Icons.account_circle_outlined,
+              color: Colors.white70,
+            ),
+            onPressed: _showAccountSheet,
+          ),
           IconButton(
             tooltip: _overlayOn
                 ? 'Stop the floating drone'
@@ -759,7 +825,10 @@ class _MessagesScreenState extends State<MessagesScreen> {
   }
 
   Widget _buildProtectedPanel(MessageAnalysis analysis) {
-    final report = buildReport(analysis);
+    final report = buildReport(
+      analysis,
+      accountName: AccountStore.displayName,
+    );
     return _panelShell(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

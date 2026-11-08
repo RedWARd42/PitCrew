@@ -29,6 +29,8 @@ class MainActivity : FlutterActivity() {
         private const val SMS_CHANNEL = "swat/sms"
         private const val OVERLAY_CHANNEL = "swat/overlay"
         private const val COMMS_CHANNEL = "swat/comms"
+        private const val ACCOUNT_CHANNEL = "swat/account"
+        private const val ACCOUNT_PREFS = "swat_account"
         private const val SMS_PERMISSION_REQUEST = 4101
         private const val MAX_MESSAGES = 30
     }
@@ -54,6 +56,38 @@ class MainActivity : FlutterActivity() {
                             call.argument<String>("body"),
                         )
                     )
+                    else -> result.notImplemented()
+                }
+            }
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, ACCOUNT_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                val prefs = getSharedPreferences(ACCOUNT_PREFS, MODE_PRIVATE)
+                when (call.method) {
+                    "getAccount" -> {
+                        val email = prefs.getString("email", null)
+                        if (email == null) {
+                            result.success(null)
+                        } else {
+                            result.success(
+                                mapOf(
+                                    "name" to (prefs.getString("name", "") ?: ""),
+                                    "email" to email,
+                                )
+                            )
+                        }
+                    }
+                    "saveAccount" -> {
+                        prefs.edit()
+                            .putString("name", call.argument<String>("name") ?: "")
+                            .putString("email", call.argument<String>("email") ?: "")
+                            .apply()
+                        result.success(null)
+                    }
+                    "clearAccount" -> {
+                        prefs.edit().clear().apply()
+                        result.success(null)
+                    }
                     else -> result.notImplemented()
                 }
             }

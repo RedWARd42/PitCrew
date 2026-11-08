@@ -96,9 +96,10 @@ class ProtectionReport {
   final List<String> lines;
 }
 
-ProtectionReport buildReport(MessageAnalysis analysis) {
+ProtectionReport buildReport(MessageAnalysis analysis, {String? accountName}) {
   final m = analysis.message;
   final lines = <String>[
+    if (accountName != null) 'Protected account: $accountName',
     'Sender: ${m.sender}',
     'Risk score: ${analysis.riskScore}/100 '
         '(confidence ${analysis.confidence}%) — ${analysis.verdict.label}',
