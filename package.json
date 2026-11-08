@@ -1,0 +1,35 @@
+{
+  "name": "groundtruth",
+  "private": true,
+  "packageManager": "pnpm@10.28.2",
+  "scripts": {
+    "dev": "pnpm --filter @groundtruth/field dev",
+    "demo": "pnpm dev",
+    "build": "pnpm --filter @groundtruth/field build",
+    "test": "vitest run",
+    "eval": "tsx services/agents/eval.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "contracts": "tsx packages/contracts/generate.ts",
+    "supabase:verify": "tsx scripts/verify-supabase.ts",
+    "photon:info": "tsx scripts/photon-info.ts"
+  },
+  "dependencies": {
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.9.0",
+    "tsx": "^4.20.0",
+    "vitest": "^3.2.0",
+    "fast-check": "^4.0.0",
+    "@playwright/test": "^1.56.0",
+    "turbo": "^2.5.0",
+    "eslint": "^9.0.0",
+    "typescript-eslint": "^8.0.0",
+    "prettier": "^3.6.0"
+  }
+}

@@ -1,0 +1,1422 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Groundtruth API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/state": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Plant snapshot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "investigations": {
+                      "default": [],
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "assetId": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          },
+                          "telemetry": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "type": "number"
+                              },
+                              "baseline": {
+                                "type": "number"
+                              },
+                              "unit": {
+                                "type": "string"
+                              },
+                              "history": {
+                                "type": "array",
+                                "items": {
+                                  "type": "number"
+                                }
+                              },
+                              "status": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "value",
+                              "baseline",
+                              "unit",
+                              "history",
+                              "status"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "answers": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "checkId": {
+                                  "type": "string",
+                                  "enum": [
+                                    "local_reading",
+                                    "physical_check",
+                                    "repeat_reading"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "number"
+                                },
+                                "condition": {
+                                  "type": "string",
+                                  "enum": [
+                                    "abnormal",
+                                    "normal",
+                                    "uncertain"
+                                  ]
+                                },
+                                "detail": {
+                                  "type": "string",
+                                  "maxLength": 1000
+                                },
+                                "ts": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "checkId",
+                                "ts"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "nextCheck": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "local_reading",
+                                  "physical_check",
+                                  "repeat_reading"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "checking",
+                              "review"
+                            ]
+                          },
+                          "summary": {
+                            "type": "string"
+                          },
+                          "nextAction": {
+                            "type": "string"
+                          },
+                          "hypotheses": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "title": {
+                                  "type": "string"
+                                },
+                                "status": {
+                                  "type": "string",
+                                  "enum": [
+                                    "supported",
+                                    "weakened",
+                                    "unresolved"
+                                  ]
+                                },
+                                "reason": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "title",
+                                "status",
+                                "reason"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "guidance": {
+                            "type": "string"
+                          },
+                          "useModel": {
+                            "type": "boolean"
+                          },
+                          "mode": {
+                            "type": "string",
+                            "enum": [
+                              "planning",
+                              "live",
+                              "deterministic",
+                              "fallback"
+                            ]
+                          },
+                          "model": {
+                            "type": "string"
+                          },
+                          "calls": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "tool": {
+                                  "type": "string"
+                                },
+                                "summary": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "tool",
+                                "summary"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "revision": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "assetId",
+                          "createdAt",
+                          "updatedAt",
+                          "telemetry",
+                          "answers",
+                          "nextCheck",
+                          "status",
+                          "summary",
+                          "nextAction",
+                          "hypotheses",
+                          "guidance",
+                          "useModel",
+                          "mode",
+                          "model",
+                          "calls",
+                          "revision"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "clock": {
+                      "type": "string"
+                    },
+                    "scenario": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "paused": {
+                      "type": "boolean"
+                    },
+                    "cacheMode": {
+                      "type": "string",
+                      "enum": [
+                        "only",
+                        "prefer",
+                        "live"
+                      ]
+                    },
+                    "assets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "zone": {
+                            "type": "string"
+                          },
+                          "criticality": {
+                            "type": "number"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "routeOrder": {
+                            "type": "number"
+                          },
+                          "metric": {
+                            "type": "string"
+                          },
+                          "unit": {
+                            "type": "string"
+                          },
+                          "baseline": {
+                            "type": "number"
+                          },
+                          "value": {
+                            "type": "number"
+                          },
+                          "history": {
+                            "type": "array",
+                            "items": {
+                              "type": "number"
+                            }
+                          },
+                          "feeds": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "type",
+                          "zone",
+                          "criticality",
+                          "status",
+                          "routeOrder",
+                          "metric",
+                          "unit",
+                          "baseline",
+                          "value",
+                          "history",
+                          "feeds"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "people": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "role": {
+                            "type": "string"
+                          },
+                          "onCall": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "role",
+                          "onCall"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "notes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "assetId": {
+                            "type": "string"
+                          },
+                          "author": {
+                            "type": "string"
+                          },
+                          "text": {
+                            "type": "string"
+                          },
+                          "ts": {
+                            "type": "string"
+                          },
+                          "structured": {
+                            "type": "object",
+                            "properties": {
+                              "component": {
+                                "type": "string"
+                              },
+                              "symptom": {
+                                "type": "string"
+                              },
+                              "severity": {
+                                "type": "string",
+                                "enum": [
+                                  "info",
+                                  "watch",
+                                  "critical"
+                                ]
+                              },
+                              "followUp": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "component",
+                              "symptom",
+                              "severity",
+                              "followUp"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "assetId",
+                          "author",
+                          "text",
+                          "ts",
+                          "structured"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "warnings": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "assetId": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "severity": {
+                            "type": "string",
+                            "enum": [
+                              "info",
+                              "watch",
+                              "critical"
+                            ]
+                          },
+                          "ownerId": {
+                            "type": "string"
+                          },
+                          "dueAt": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string",
+                            "enum": [
+                              "open",
+                              "owned",
+                              "escalated",
+                              "resolved"
+                            ]
+                          },
+                          "escalationLevel": {
+                            "type": "number"
+                          },
+                          "readback": {
+                            "type": "string"
+                          },
+                          "evidence": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "nextAction": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "assetId",
+                          "title",
+                          "severity",
+                          "ownerId",
+                          "dueAt",
+                          "state",
+                          "escalationLevel",
+                          "readback",
+                          "evidence",
+                          "nextAction",
+                          "createdAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "incidents": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "hypothesis": {
+                            "type": "string"
+                          },
+                          "severity": {
+                            "type": "string",
+                            "enum": [
+                              "info",
+                              "watch",
+                              "critical"
+                            ]
+                          },
+                          "ownerId": {
+                            "type": "string"
+                          },
+                          "assetIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "alarmCount": {
+                            "type": "number"
+                          },
+                          "etaMinutes": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "confidence": {
+                            "anyOf": [
+                              {
+                                "type": "array",
+                                "prefixItems": [
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "number"
+                                  }
+                                ],
+                                "items": false,
+                                "minItems": 2,
+                                "maxItems": 2
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "assumptions": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "procedureId": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "hypothesis",
+                          "severity",
+                          "ownerId",
+                          "assetIds",
+                          "alarmCount",
+                          "etaMinutes",
+                          "confidence",
+                          "assumptions",
+                          "procedureId",
+                          "createdAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "procedures": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "assetTypes": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "version": {
+                            "type": "number"
+                          },
+                          "approved": {
+                            "type": "boolean"
+                          },
+                          "steps": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "number": {
+                                  "type": "number"
+                                },
+                                "text": {
+                                  "type": "string"
+                                },
+                                "action": {
+                                  "type": "object",
+                                  "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "enum": [
+                                        "inspect",
+                                        "open_breaker",
+                                        "bypass",
+                                        "stop"
+                                      ]
+                                    },
+                                    "target": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "type",
+                                    "target"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "preconditions": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                "hazards": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                "verification": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "number",
+                                "text",
+                                "action",
+                                "preconditions",
+                                "hazards",
+                                "verification"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "assetTypes",
+                          "version",
+                          "approved",
+                          "steps"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "messages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "personId": {
+                            "type": "string"
+                          },
+                          "entityId": {
+                            "type": "string"
+                          },
+                          "channel": {
+                            "type": "string",
+                            "enum": [
+                              "terminal",
+                              "imessage",
+                              "voice",
+                              "group"
+                            ]
+                          },
+                          "direction": {
+                            "type": "string",
+                            "enum": [
+                              "inbound",
+                              "outbound"
+                            ]
+                          },
+                          "text": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "queued",
+                              "sending",
+                              "sent",
+                              "read",
+                              "acked",
+                              "failed",
+                              "simulated"
+                            ]
+                          },
+                          "ts": {
+                            "type": "string"
+                          },
+                          "provider": {
+                            "type": "string"
+                          },
+                          "providerMessageId": {
+                            "type": "string"
+                          },
+                          "callTokenHash": {
+                            "type": "string"
+                          },
+                          "callExpiresAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "personId",
+                          "entityId",
+                          "channel",
+                          "direction",
+                          "text",
+                          "status",
+                          "ts"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "traces": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "agent": {
+                            "type": "string"
+                          },
+                          "trigger": {
+                            "type": "string"
+                          },
+                          "mode": {
+                            "type": "string",
+                            "enum": [
+                              "deterministic",
+                              "cached",
+                              "live",
+                              "fallback"
+                            ]
+                          },
+                          "model": {
+                            "type": "string"
+                          },
+                          "latencyMs": {
+                            "type": "number"
+                          },
+                          "plan": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "steps": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "tool": {
+                                  "type": "string"
+                                },
+                                "input": {},
+                                "result": {},
+                                "summary": {
+                                  "type": "string"
+                                },
+                                "latencyMs": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "tool",
+                                "input",
+                                "result",
+                                "summary",
+                                "latencyMs"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "summary": {
+                            "type": "string"
+                          },
+                          "ts": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "agent",
+                          "trigger",
+                          "mode",
+                          "model",
+                          "latencyMs",
+                          "plan",
+                          "steps",
+                          "summary",
+                          "ts"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "handover": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "assetId": {
+                            "type": "string"
+                          },
+                          "severity": {
+                            "type": "string",
+                            "enum": [
+                              "info",
+                              "watch",
+                              "critical"
+                            ]
+                          },
+                          "summary": {
+                            "type": "string"
+                          },
+                          "action": {
+                            "type": "string"
+                          },
+                          "contingency": {
+                            "type": "string"
+                          },
+                          "confirmed": {
+                            "type": "boolean"
+                          },
+                          "readback": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "assetId",
+                          "severity",
+                          "summary",
+                          "action",
+                          "contingency",
+                          "confirmed",
+                          "readback"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "workOrders": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "assetId": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "assetId",
+                          "title",
+                          "state"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "runs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "procedureId": {
+                            "type": "string"
+                          },
+                          "assetId": {
+                            "type": "string"
+                          },
+                          "step": {
+                            "type": "number"
+                          },
+                          "verdict": {
+                            "type": "string",
+                            "enum": [
+                              "GO",
+                              "HOLD"
+                            ]
+                          },
+                          "reasoning": {
+                            "type": "string"
+                          },
+                          "overrideReason": {
+                            "type": "string"
+                          },
+                          "completed": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "procedureId",
+                          "assetId",
+                          "step",
+                          "verdict",
+                          "reasoning",
+                          "completed"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "audit": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "ts": {
+                            "type": "string"
+                          },
+                          "action": {
+                            "type": "string"
+                          },
+                          "detail": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "ts",
+                          "action",
+                          "detail"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "investigations",
+                    "clock",
+                    "scenario",
+                    "paused",
+                    "cacheMode",
+                    "assets",
+                    "people",
+                    "notes",
+                    "warnings",
+                    "incidents",
+                    "procedures",
+                    "messages",
+                    "traces",
+                    "handover",
+                    "workOrders",
+                    "runs",
+                    "audit"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/command": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "investigate"
+                      },
+                      "assetId": {
+                        "type": "string"
+                      },
+                      "useModel": {
+                        "default": false,
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "assetId",
+                      "useModel"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "field_answer"
+                      },
+                      "investigationId": {
+                        "type": "string"
+                      },
+                      "revision": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "answer": {
+                        "type": "object",
+                        "properties": {
+                          "checkId": {
+                            "type": "string",
+                            "enum": [
+                              "local_reading",
+                              "physical_check",
+                              "repeat_reading"
+                            ]
+                          },
+                          "value": {
+                            "type": "number"
+                          },
+                          "condition": {
+                            "type": "string",
+                            "enum": [
+                              "abnormal",
+                              "normal",
+                              "uncertain"
+                            ]
+                          },
+                          "detail": {
+                            "type": "string",
+                            "maxLength": 1000
+                          }
+                        },
+                        "required": [
+                          "checkId"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "investigationId",
+                      "revision",
+                      "answer"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "take_ownership"
+                      },
+                      "warningId": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "warningId"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "scenario"
+                      },
+                      "id": {
+                        "type": "string",
+                        "enum": [
+                          "S1",
+                          "S2",
+                          "S3",
+                          "S4",
+                          "S5"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "reset"
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "step"
+                      },
+                      "seconds": {
+                        "type": "number",
+                        "minimum": 1,
+                        "maximum": 604800
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "seconds"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "pause"
+                      },
+                      "paused": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "paused"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "cache"
+                      },
+                      "mode": {
+                        "type": "string",
+                        "enum": [
+                          "only",
+                          "prefer",
+                          "live"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "mode"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "reading"
+                      },
+                      "assetId": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "assetId",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "note"
+                      },
+                      "assetId": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "assetId",
+                      "text"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "complete_inspection"
+                      },
+                      "assetId": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "assetId"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "ack"
+                      },
+                      "warningId": {
+                        "type": "string"
+                      },
+                      "readback": {
+                        "type": "string",
+                        "minLength": 8,
+                        "maxLength": 1000
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "warningId",
+                      "readback"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "read"
+                      },
+                      "messageId": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "messageId"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "check"
+                      },
+                      "procedureId": {
+                        "type": "string"
+                      },
+                      "assetId": {
+                        "type": "string"
+                      },
+                      "step": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "procedureId",
+                      "assetId",
+                      "step"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "advance"
+                      },
+                      "runId": {
+                        "type": "string"
+                      },
+                      "overrideReason": {
+                        "type": "string",
+                        "maxLength": 2000
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "runId"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "handover"
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "confirm"
+                      },
+                      "itemId": {
+                        "type": "string"
+                      },
+                      "readback": {
+                        "type": "string",
+                        "minLength": 8
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "itemId",
+                      "readback"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "send_handover"
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated snapshot"
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "409": {
+            "description": "Invalid state transition"
+          }
+        }
+      }
+    },
+    "/api/events": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "SSE snapshots"
+          }
+        }
+      }
+    }
+  }
+}

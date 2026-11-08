@@ -1,0 +1,6 @@
+import {NextResponse} from 'next/server';
+import {timingSafeEqual} from 'node:crypto';
+import {isAllowedRequestOrigin} from '../../../lib/request-origin';
+export const runtime='nodejs';
+export async function POST(request:Request){const expected=process.env.DIRECTOR_TOKEN;if(!expected)return NextResponse.json({error:'Access token is not configured'},{status:503});const origin=request.headers.get('origin');if(!isAllowedRequestOrigin(origin,new URL(request.url).origin))return NextResponse.json({error:'Cross-origin authentication rejected'},{status:403});try{const body=await request.json();const supplied=typeof body.token==='string'?body.token:'';const a=Buffer.from(expected),b=Buffer.from(supplied);if(a.length!==b.length||!timingSafeEqual(a,b))return NextResponse.json({error:'Invalid access token'},{status:401});const response=NextResponse.json({ok:true});response.cookies.set('groundtruth_access',expected,{httpOnly:true,sameSite:'strict',secure:new URL(origin??request.url).protocol==='https:',path:'/',maxAge:8*60*60});return response;}catch{return NextResponse.json({error:'Invalid authentication request'},{status:400});}}
+export async function DELETE(){const response=NextResponse.json({ok:true});response.cookies.delete('groundtruth_access');return response;}

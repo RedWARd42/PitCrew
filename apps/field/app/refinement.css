@@ -1,0 +1,43 @@
+@font-face {
+  font-family: "Manrope";
+  src: url("/fonts/manrope-variable.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+}
+:root {
+  --font-ui: "Manrope", "Segoe UI", sans-serif;
+  font-family: var(--font-ui);
+}
+body {
+  font-family: var(--font-ui);
+}
+h1,
+h2,
+h3 {
+  font-family: var(--font-ui);
+}
+h1 {
+  font-weight: 600;
+  letter-spacing: -0.045em;
+}
+.page-heading {
+  align-items: center;
+  margin-bottom: 25px;
+}
+.live-indicator {
+  margin-top: 0;
+}
+/* Remove decorative taxonomy, keeping equipment IDs and operational guidance. */
+.nav-caption,
+.task-kicker,
+.journey-link small,
+.page-footer {
+  display: none;
+}
+.sidebar nav {
+  margin-top: 4px;
+}
+.next-task > h2 {
+  margin-top: 0;
+}

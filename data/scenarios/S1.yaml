@@ -1,0 +1,11 @@
+id: S1
+title: Slow chiller drift
+seed: 42
+timeline:
+  - at: 0
+    fault: approach_drift
+    assetId: CH-3
+    value: 1.5
+expected:
+  - Mechanical technician owns warning
+  - Rattle note and sibling comparison cited

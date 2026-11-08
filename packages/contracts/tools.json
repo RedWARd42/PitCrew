@@ -1,0 +1,1058 @@
+[
+  {
+    "name": "get_asset",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "type": "string"
+        },
+        "sensorId": {
+          "type": "string"
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "query": {
+          "type": "string"
+        },
+        "action": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "inspect",
+                "open_breaker",
+                "bypass",
+                "stop"
+              ]
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "limit": {
+          "type": "number"
+        },
+        "text": {
+          "type": "string"
+        },
+        "personId": {
+          "type": "string"
+        },
+        "warningId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "get_live_state",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "type": "string"
+        },
+        "sensorId": {
+          "type": "string"
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "query": {
+          "type": "string"
+        },
+        "action": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "inspect",
+                "open_breaker",
+                "bypass",
+                "stop"
+              ]
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "limit": {
+          "type": "number"
+        },
+        "text": {
+          "type": "string"
+        },
+        "personId": {
+          "type": "string"
+        },
+        "warningId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "get_trend",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "type": "string"
+        },
+        "sensorId": {
+          "type": "string"
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "query": {
+          "type": "string"
+        },
+        "action": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "inspect",
+                "open_breaker",
+                "bypass",
+                "stop"
+              ]
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "limit": {
+          "type": "number"
+        },
+        "text": {
+          "type": "string"
+        },
+        "personId": {
+          "type": "string"
+        },
+        "warningId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "compare_siblings",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "type": "string"
+        },
+        "sensorId": {
+          "type": "string"
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "query": {
+          "type": "string"
+        },
+        "action": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "inspect",
+                "open_breaker",
+                "bypass",
+                "stop"
+              ]
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "limit": {
+          "type": "number"
+        },
+        "text": {
+          "type": "string"
+        },
+        "personId": {
+          "type": "string"
+        },
+        "warningId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "check_sensor_sanity",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "type": "string"
+        },
+        "sensorId": {
+          "type": "string"
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "query": {
+          "type": "string"
+        },
+        "action": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "inspect",
+                "open_breaker",
+                "bypass",
+                "stop"
+              ]
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "limit": {
+          "type": "number"
+        },
+        "text": {
+          "type": "string"
+        },
+        "personId": {
+          "type": "string"
+        },
+        "warningId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "get_topology",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "type": "string"
+        },
+        "sensorId": {
+          "type": "string"
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "query": {
+          "type": "string"
+        },
+        "action": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "inspect",
+                "open_breaker",
+                "bypass",
+                "stop"
+              ]
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "limit": {
+          "type": "number"
+        },
+        "text": {
+          "type": "string"
+        },
+        "personId": {
+          "type": "string"
+        },
+        "warningId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "simulate_action",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "type": "string"
+        },
+        "sensorId": {
+          "type": "string"
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "query": {
+          "type": "string"
+        },
+        "action": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "inspect",
+                "open_breaker",
+                "bypass",
+                "stop"
+              ]
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "limit": {
+          "type": "number"
+        },
+        "text": {
+          "type": "string"
+        },
+        "personId": {
+          "type": "string"
+        },
+        "warningId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "get_active_work",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "type": "string"
+        },
+        "sensorId": {
+          "type": "string"
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "query": {
+          "type": "string"
+        },
+        "action": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "inspect",
+                "open_breaker",
+                "bypass",
+                "stop"
+              ]
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "limit": {
+          "type": "number"
+        },
+        "text": {
+          "type": "string"
+        },
+        "personId": {
+          "type": "string"
+        },
+        "warningId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "project_time_to_limit",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "type": "string"
+        },
+        "sensorId": {
+          "type": "string"
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "query": {
+          "type": "string"
+        },
+        "action": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "inspect",
+                "open_breaker",
+                "bypass",
+                "stop"
+              ]
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "limit": {
+          "type": "number"
+        },
+        "text": {
+          "type": "string"
+        },
+        "personId": {
+          "type": "string"
+        },
+        "warningId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "correlate_alarms",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "type": "string"
+        },
+        "sensorId": {
+          "type": "string"
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "query": {
+          "type": "string"
+        },
+        "action": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "inspect",
+                "open_breaker",
+                "bypass",
+                "stop"
+              ]
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "limit": {
+          "type": "number"
+        },
+        "text": {
+          "type": "string"
+        },
+        "personId": {
+          "type": "string"
+        },
+        "warningId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "search_procedures",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "type": "string"
+        },
+        "sensorId": {
+          "type": "string"
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "query": {
+          "type": "string"
+        },
+        "action": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "inspect",
+                "open_breaker",
+                "bypass",
+                "stop"
+              ]
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "limit": {
+          "type": "number"
+        },
+        "text": {
+          "type": "string"
+        },
+        "personId": {
+          "type": "string"
+        },
+        "warningId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "get_notes",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "type": "string"
+        },
+        "sensorId": {
+          "type": "string"
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "query": {
+          "type": "string"
+        },
+        "action": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "inspect",
+                "open_breaker",
+                "bypass",
+                "stop"
+              ]
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "limit": {
+          "type": "number"
+        },
+        "text": {
+          "type": "string"
+        },
+        "personId": {
+          "type": "string"
+        },
+        "warningId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "add_note",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "type": "string"
+        },
+        "sensorId": {
+          "type": "string"
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "query": {
+          "type": "string"
+        },
+        "action": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "inspect",
+                "open_breaker",
+                "bypass",
+                "stop"
+              ]
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "limit": {
+          "type": "number"
+        },
+        "text": {
+          "type": "string"
+        },
+        "personId": {
+          "type": "string"
+        },
+        "warningId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "get_roster",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "type": "string"
+        },
+        "sensorId": {
+          "type": "string"
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "query": {
+          "type": "string"
+        },
+        "action": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "inspect",
+                "open_breaker",
+                "bypass",
+                "stop"
+              ]
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        "limit": {
+          "type": "number"
+        },
+        "text": {
+          "type": "string"
+        },
+        "personId": {
+          "type": "string"
+        },
+        "warningId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "create_warning",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "warning": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "assetId": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "severity": {
+              "type": "string",
+              "enum": [
+                "info",
+                "watch",
+                "critical"
+              ]
+            },
+            "ownerId": {
+              "type": "string"
+            },
+            "dueAt": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string",
+              "enum": [
+                "open",
+                "owned",
+                "escalated",
+                "resolved"
+              ]
+            },
+            "escalationLevel": {
+              "type": "number"
+            },
+            "readback": {
+              "type": "string"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "nextAction": {
+              "type": "string"
+            },
+            "createdAt": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "assetId",
+            "title",
+            "severity",
+            "ownerId",
+            "dueAt",
+            "state",
+            "escalationLevel",
+            "readback",
+            "evidence",
+            "nextAction",
+            "createdAt"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "warning"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "assign_owner",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "warningId": {
+          "type": "string"
+        },
+        "personId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "warningId",
+        "personId"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "set_deadline",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "warningId": {
+          "type": "string"
+        },
+        "dueAt": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+        }
+      },
+      "required": [
+        "warningId",
+        "dueAt"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "create_work_order",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 500
+        }
+      },
+      "required": [
+        "assetId",
+        "title"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "notify",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "personId": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "warningId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "personId",
+        "text"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "start_escalation",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "warningId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "warningId"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "open_incident_chat",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "incidentId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "incidentId"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "place_call",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "personId": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "warningId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "personId",
+        "text",
+        "warningId"
+      ],
+      "additionalProperties": false
+    }
+  }
+]

@@ -1,0 +1,3 @@
+import {defineConfig} from '@playwright/test';
+const baseURL=process.env.PLAYWRIGHT_BASE_URL??'http://127.0.0.1:3002';
+export default defineConfig({testDir:'.',testMatch:'*.spec.ts',fullyParallel:false,workers:1,timeout:60000,webServer:process.env.PLAYWRIGHT_EXTERNAL_SERVER==='1'?undefined:{command:`node apps/field/node_modules/next/dist/bin/next start apps/field --hostname 127.0.0.1 --port ${new URL(baseURL).port}`,url:`${baseURL}/api/health`,reuseExistingServer:true,timeout:60000,cwd:process.cwd()},use:{baseURL,headless:true,trace:'retain-on-failure',launchOptions:{executablePath:process.env.CHROMIUM_EXECUTABLE}},reporter:'list'});

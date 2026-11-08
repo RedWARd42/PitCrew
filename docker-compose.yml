@@ -1,0 +1,10 @@
+services:
+  groundtruth:
+    build: .
+    ports:
+      - '3000:3000'
+    environment:
+      DEMO_MODE: '1'
+      DEMO_CACHE: only
+      COMMS_MODE: terminal
+      APP_URL: http://localhost:3000

@@ -1,0 +1,10 @@
+id: S4
+title: Battery impedance creep
+seed: 42
+timeline:
+  - at: 0
+    fault: impedance_creep
+    assetId: BAT-3
+    value: 15
+expected:
+  - Weeks-scale warning despite normal voltage

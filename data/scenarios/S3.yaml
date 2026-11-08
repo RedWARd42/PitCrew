@@ -1,0 +1,16 @@
+id: S3
+title: Chiller trip cascade
+seed: 42
+timeline:
+  - at: 0
+    fault: voltage_dip
+    assetId: CH-1
+  - at: 0
+    fault: trip
+    assetId: CH-2
+  - at: 1
+    fault: failed_start
+    assetId: CH-3
+expected:
+  - 47 alarms correlate to one incident
+  - Approximately 14 minutes to restart limit

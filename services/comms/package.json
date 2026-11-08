@@ -1,0 +1,1 @@
+{"name":"@groundtruth/comms","private":true,"type":"module","dependencies":{"spectrum-ts":"latest","zod":"^4.0.0"}}

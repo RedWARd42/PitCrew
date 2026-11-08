@@ -1,0 +1,10 @@
+id: S2
+title: Maintenance trap
+seed: 42
+timeline:
+  - at: 0
+    fault: bypass
+    assetId: UPS-2
+expected:
+  - Step 6 HOLD
+  - Row D loses its last source

@@ -1,0 +1,72 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+6 0 obj
+<< /Length 1854 >>
+stream
+0.12 0.18 0.22 rg
+36 694 540 62 re f
+1 1 1 rg
+BT /F2 12 Tf 50 733 Td (GROUNDTRUTH / NMC2 DAL-1) Tj ET
+BT /F1 10 Tf 50 712 Td (METHOD OF PROCEDURE  |  MOP-UPS-OLD  |  REV 1) Tj ET
+0.12 0.18 0.22 rg
+BT /F2 17 Tf 40 669 Td (UPS-2 maintenance bypass \(superseded\)) Tj ET
+BT /F2 9 Tf 40 644 Td (FICTIONAL TRAINING DOCUMENT - NOT AN OPERATING INSTRUCTION) Tj ET
+BT /F1 9 Tf 40 620 Td (Document status: SUPERSEDED - DO NOT EXECUTE     Site: Hall 2     Permit: DEMO-026) Tj ET
+BT /F2 11 Tf 40 598 Td (Prerequisites / sign-off) Tj ET
+BT /F1 9 Tf 40 581 Td (Qualified technician, current work permit, local indications and chief engineer approval.) Tj ET
+BT /F1 9 Tf 40 566 Td (Read-back required before each step. Guardian advice never operates plant equipment.) Tj ET
+BT /F2 10 Tf 40 541 Td (One-line context \(simplified; verify actual field labels\)) Tj ET
+40 503 120 28 re S
+BT /F1 8 Tf 45 513 Td (UPS-1 / A) Tj ET
+160 517 m 175 517 l S
+175 503 120 28 re S
+BT /F1 8 Tf 180 513 Td (PDU-4 / B) Tj ET
+295 517 m 310 517 l S
+310 503 120 28 re S
+BT /F1 8 Tf 315 513 Td (Row D) Tj ET
+430 517 m 445 517 l S
+445 503 120 28 re S
+BT /F1 8 Tf 450 513 Td (UPS-2 / B) Tj ET
+BT /F1 8 Tf 40 477 Td (Margin note: UPS-2 bypass can leave Row D dependent on PDU-4.) Tj ET
+0.92 0.94 0.95 rg
+40 446 532 23 re f
+0.12 0.18 0.22 rg
+BT /F2 9 Tf 47 454 Td (STEP) Tj ET
+BT /F2 9 Tf 92 454 Td (ACTION / VERIFICATION) Tj ET
+BT /F2 10 Tf 47 426 Td (1) Tj ET
+BT /F1 9 Tf 92 426 Td (Verify old work instructions) Tj ET
+BT /F1 8 Tf 92 413 Td (Verify: Verify local indication and record read-back.) Tj ET
+40 396 m 572 396 l S
+BT /F1 8 Tf 40 45 Td (Prepared: Operations training team | Reviewed: Shift lead | 2026-11-07) Tj ET
+BT /F1 8 Tf 40 31 Td (Stop if labels, version, plant state or permit do not match. Record uncertainty and contact the chief.) Tj ET
+BT /F1 8 Tf 541 31 Td (1 / 1) Tj ET
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000000321 00000 n 
+0000000396 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+2302
+%%EOF

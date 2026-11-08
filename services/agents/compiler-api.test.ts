@@ -1,0 +1,11 @@
+import {describe,it,expect} from 'vitest';
+import {readFile} from 'node:fs/promises';
+import {compileUpload,readPdfUpload,compilerSources,sourcePdf,MAX_PDF_BYTES} from './compiler-api';
+describe('Procedure compiler boundary',()=>{
+ it('recognizes an exact seed PDF without claiming model extraction',async()=>{const pdf=await sourcePdf('MOP-UPS');const result=await compileUpload(pdf.bytes,'UPS test','only');expect(result.mode).toBe('deterministic-seed');expect(result.reviewRequired).toBe(true);expect(result.procedure.approved).toBe(false);expect(result.procedure.steps).toHaveLength(7);expect(result.notice).toMatch(/No model extraction/);});
+ it('keeps superseded revisions unapproved',async()=>{const pdf=await sourcePdf('MOP-UPS-OLD');const result=await compileUpload(pdf.bytes,'Outdated','only');expect(result.superseded).toBe(true);expect(result.procedure.approved).toBe(false);});
+ it('rejects unknown PDFs offline rather than inventing extracted steps',async()=>{await expect(compileUpload(Buffer.from('%PDF-1.4\nunknown'),'Unknown','only')).rejects.toThrow('exact seeded PDF hashes');});
+ it('rejects excessive uploads before buffering',async()=>{const request=new Request('http://localhost/upload',{method:'POST',headers:{'content-type':'multipart/form-data; boundary=test','content-length':String(MAX_PDF_BYTES+100000)},body:'x'});await expect(readPdfUpload(request)).rejects.toMatchObject({status:413});});
+ it('accepts genuine multipart PDF and rejects spoofed content',async()=>{const form=new FormData();const pdf=await readFile('data/procedures/source/MOP-BAT-rev2.pdf');form.set('file',new Blob([pdf],{type:'application/pdf'}),'battery.pdf');form.set('title','Battery test');const result=await readPdfUpload(new Request('http://localhost/upload',{method:'POST',body:form}));expect(result.title).toBe('Battery test');expect(result.bytes.length).toBe(pdf.length);const fake=new FormData();fake.set('file',new Blob(['hello'],{type:'application/pdf'}),'fake.pdf');await expect(readPdfUpload(new Request('http://localhost/upload',{method:'POST',body:fake}))).rejects.toThrow('not a PDF');});
+ it('offers five current source documents and one superseded revision',()=>{const list=compilerSources();expect(list).toHaveLength(6);expect(list.filter(s=>s.superseded)).toHaveLength(1);});
+});

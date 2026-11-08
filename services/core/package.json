@@ -1,0 +1,6 @@
+{
+  "name": "@groundtruth/core",
+  "private": true,
+  "type": "module",
+  "exports": "./store.ts"
+}

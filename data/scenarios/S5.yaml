@@ -1,0 +1,11 @@
+id: S5
+title: Lying sensor
+seed: 42
+timeline:
+  - at: 0
+    fault: sensor_bias
+    assetId: CRAH-1
+    value: 8
+expected:
+  - Calibration work order
+  - No plant warning

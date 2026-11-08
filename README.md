@@ -1,265 +1,61 @@
-# Swat — Signal Swarm
+# PitCrew
 
-A fleet of specialist drones that patrol your text messages. Built for the
-T-Mobile **Safe Signal** prompt at HackUTD 2026: protect customers from
-scams *before, during, and after* a threat — with the drone fleet as the
-interface, not a dashboard bolted onto a classifier.
+Sector agent teams investigate developing data-center issues, share evidence, and dispatch qualified technicians only when physical work is needed. Technicians receive a prepared case, record their findings, and escalate without losing completed work.
 
-## The idea (a Clicky flip)
+The primary experience is **Overview → Sector evidence → Work queue → Field checks → Lead handoff**. It uses a monochrome responsive interface, sector check-ins, equipment and qualification-aware routing, and an inspectable history of agent tools and human actions.
 
-HeyClicky puts one AI buddy by your cursor. Swat flips it: **one drone per
-scam type**, living over your messages. Instead of an opaque "spam score",
-each specialist flies to the exact words it objects to, highlights them in
-its own color, and — when tapped — walks you through what it found, one
-tell at a time. The protection report writes itself as a byproduct.
+See [the sector operations demo](docs/sector-operations.md) for the demo flow, research, architecture, and explicit simulation boundaries. Nemotron runs the investigator and dispatcher through real server-side tools when configured; the sentinel and dispatch eligibility checks are deterministic. Shared memory and tickets currently live in the server process.
 
-| Drone | Color | Patrols for |
-|---|---|---|
-| Angler | orange | Spoofed senders (real brands use short codes, not random numbers) |
-| Link | blue | Fake links (lookalike domains, shorteners, raw IPs, punycode) |
-| Scanner | purple | QR codes — decodes where they actually point |
-| Pressure | red | Urgency & threats ("suspended within 24 hours", "final notice") |
-| Impersonator | pink | Impersonation & asks for PINs/passwords/payment rails |
-| Swap | green | SIM-swap / port-out priming & verification-code fishing |
+The earlier field rounds and adaptive investigation screens remain at `/shift` and `/investigate/CH-3`; the new sector experience is at `/`, `/tickets`, `/team`, and `/activity`. The setup notes below also describe those earlier integrations.
 
-## Accounts — general, not one demo persona
+## Run the seeded demo
 
-Swat opens on a login screen. Whoever logs in is the person being
-protected: their name comes **from the account info** — the name on the
-account, or one made from the account email (`maya.reyes@…` → "Maya
-Reyes") — and it follows them through the greeting ("Protecting Maya"),
-protection reports ("Protected account: Maya Reyes"), and the block
-list (blocks filed under their name). The account persists on-device
-(SharedPreferences via the `swat/account` channel); sign-out lives in
-the account sheet on the Messages tab. Demo honesty: local account
-only, no password, no server — the store's shape is where a real auth
-provider slots in.
+Requires Node 22 and pnpm 10.28.2.
 
-## The `Message-Detection` flow
-
-1. **Inbox** — an Android-Messages-style thread view. On Android it reads
-   the device's *real* SMS store (`READ_SMS`, on-device only); anywhere
-   else it falls back to a synthetic demo inbox (hackathon rule: synthetic
-   scam data only). The demo set includes a full-strength smishing text
-   impersonating T-Mobile and the genuine article from short code **456**,
-   so the fleet has to prove it can say "this one is fine", too.
-2. **Release the Fleet** — all six drones launch at once, land beside the
-   message in order, sweep a scan beam, and highlight their evidence in
-   place. The risk score counts up with a confidence figure based on how
-   many *independent* drones flagged something.
-3. **Tap a drone** — its findings in plain English, plus **Walk me through
-   it**: a step-by-step walkthrough that highlights each tell as it's
-   explained (the narration text is written to be spoken; see
-   `lib/services/walkthrough.dart`).
-4. **Block & Report** — files the auto-written protection report (sender,
-   score, per-drone evidence) and lands on the *after* checklist: SIM-swap
-   lock, account PIN, family safe word.
-
-## Emails tab — the fleet over the mail app
-
-The same six drones scan email — where phishing still lives, and where
-Signal Swarm began. Open a message in the Gmail-style inbox and the
-reading view gets the full treatment: release the fleet, highlights in
-place, **tap a drone → "Teach me — walk through it"**, Block & Report,
-share with family. Email adds tells texts don't have, checked by the
-email analyzer (`lib/services/email_analyzer.dart`):
-
-* **Sending domain vs. display name** — "T-Mobile Billing" is free text;
-  `billing@t-mobile-verify-secure.com` is the confession (Angler).
-* **Reply-To mismatch** — From looks tidy, your reply goes to the
-  scammer's domain (Angler).
-* **Attachments** — dangerous types and double extensions like
-  `invoice.pdf.exe` (Scanner), plus everything shared with texts: links,
-  QR payloads, pressure, credential asks, code fishing.
-
-The demo mailbox includes the original Signal Swarm scenario — a payroll
-QR phish — next to a CEO gift-card fraud with *no link at all*, and a
-genuine T-Mobile bill the fleet has to acquit.
-
-## Blocked tab — what Swat stopped
-
-Modeled on the incidents + block list in
-[Squeek](https://github.com/syedkazmi14/squeek) (the team's Rowdy Hacks
-winner): every blocked message stays visible with its risk score, the
-drone categories that convicted it, its incident ID, and who blocked it —
-and the list is **shared with the trusted contact**, so a sender Alex
-blocks never reaches Maya either. Header stats: total blocked, reported
-to T-Mobile, shared by family. Any block can be undone.
-
-## Family tab — a trusted human, one tap away
-
-Protection fails when the user faces a scam alone and pressured. The
-Family tab is a dedicated thread with one trusted contact (demo: Alex,
-Maya's son) built for that moment:
-
-* **Share this scan** (on the PROTECTED panel) drops the fleet's full
-  report card into the thread and jumps straight there — *check with a
-  human before you act*, as a one-tap action, not advice in a pamphlet.
-* **Quick actions for shaky hands**: "I'm being pressured" (one-tap SOS)
-  and "Ask for the safe word". The safe word is pinned on the contact
-  card: any "family emergency" that can't produce it isn't family.
-* **Real escalation**: the call and SMS buttons hand off to the actual
-  dialer / SMS composer with the contact's number (`swat/comms` channel)
-  — the in-app thread is for scan-sharing, the phone call is for real
-  emergencies.
-
-Demo note: replies in the Family thread are canned on-device responses
-that demonstrate the shape of the exchange; the share/scan/SOS mechanics
-are real app state.
-
-## Over the real Messages app (Android) — the primary surface
-
-Swat's protection does not live inside Swat. Arm it once from the app bar
-and a native foreground service (`OverlayService.kt`) patrols **over other
-apps, including Google Messages**, using the system alert window:
-
-1. A text arrives → `SmsReceiver` catches the broadcast → the overlay's
-   **fleet scan panel opens right on top of Messages**: the message, all
-   six drones lighting up one by one with their points, each drone's
-   evidence highlighted in the text, then the verdict.
-2. **Block & Report works from the panel itself** — the sender lands in
-   the shared block list that Swat's Blocked tab reads.
-3. "Teach me" jumps into Swat for the step-by-step walkthrough; the
-   floating SWAT badge stays on patrol, and tapping it scans your latest
-   text on demand.
-
-The overlay runs a Kotlin port of the same engine (`KotlinScamAnalyzer.kt`
-— same drones, same registry, same scoring; verified to match the Dart
-engine's scores on the demo corpus). The message under scan comes from the
-SMS broadcast / the device SMS store — the same store Messages reads.
-
-Honest platform limits: an overlay can warn and act on its own surface,
-but no Android API lets a third-party app reach into Messages to block a
-tap or quarantine a text inside it — so Swat blocks at its own layer and
-says so. iOS offers no overlay and no SMS-store access at all, which is
-why this is an Android build (demoed on the emulator).
-
-## Architecture
-
-```
-lib/
-  models/message.dart          ChatMessage, Finding, MessageAnalysis (pure Dart)
-  models/email.dart            EmailMessage (display name, domain, Reply-To…)
-  models/family_and_blocked.dart  TrustedContact, BlockedEntry, chat messages
-  services/scam_analyzer.dart  the detection engine — six drone analyzers,
-                               brand registry (official domains + short codes),
-                               span-accurate evidence, honest-confidence scoring
-  services/email_analyzer.dart the fleet over email: sending-domain and
-                               Reply-To checks + attachment scan, reusing the
-                               text engine for links/QR/pressure/credentials
-  services/walkthrough.dart    click-to-explain steps + auto protection report
-  services/stores.dart         blocked list + family thread state (shared)
-  services/device_services.dart  platform channels (SMS, overlay, comms)
-  data/demo_inbox.dart         synthetic text scenarios
-  data/demo_emails.dart        synthetic email scenarios
-  screens/swat_shell.dart      Messages / Emails / Blocked / Family tabs
-  screens/messages_screen.dart messages inbox, fleet flight/scan, verdict,
-                               block & report, after-checklist, share-to-family
-  screens/emails_screen.dart   mail inbox + reading view with the fleet over
-                               it and "Teach me" walkthroughs
-  screens/blocked_screen.dart  incidents + family-shared block list
-  screens/family_screen.dart   trusted-contact thread: scan cards, SOS and
-                               safe-word quick actions, call/SMS hand-offs
-  widgets/drone_widget.dart    the drone itself (rotors, scan pulse, badges)
-android/.../MainActivity.kt    swat/sms + swat/overlay + swat/comms hosts
-android/.../OverlayService.kt  badge + fleet scan panel over other apps
-android/.../KotlinScamAnalyzer.kt  the detection engine, ported to Kotlin
-                               so the fleet runs inside the overlay
-android/.../SmsReceiver.kt     incoming-text trigger for the overlay scan
-android/.../SwatPrefs.kt       shared state: armed flag, last message,
-                               native block list
-test/                          engine tests (SMS + email), store tests,
-                               app-shell smoke test
+```sh
+pnpm install
+pnpm demo
 ```
 
-The engine is pure Dart with zero Flutter imports, so it is unit-tested
-without a device and runs identically on real and synthetic messages.
-Message content never leaves the phone.
+Open [PitCrew](http://localhost:3000). Select **Demo controls → Cooling drift**, then follow the case into **Work queue**. On a phone, use Maria Santos to accept and record a field check; escalate to Dev Morgan and inspect the generated handoff. **Sensor mismatch** demonstrates an agent-only case; **No sector coverage** demonstrates qualified senior dispatch. See the [five-minute demonstration](docs/sector-operations.md#five-minute-demonstration).
 
-## Run it
+With `NVIDIA_API_KEY` configured, the sector investigator and dispatcher use `nvidia/nemotron-3.5-lightning-30b-a3b` by default (`NEMOTRON_FLEET_MODEL` overrides it). Without credentials, the same flow runs with clearly labeled evidence rules. No GPU or Brev setup is required. Personnel, telemetry, notifications, and physical work are synthetic. Fleet state is currently in memory; the earlier Supabase integration described below does not persist it.
+The app uses Next.js route handlers for the Core API, a choice explicitly allowed by the plan. All services share Zod contracts; the simulator and engines run on the server. Agents cannot alter plant controls. Procedure completion records human work and never actuates equipment.
 
-```bash
-flutter pub get
-flutter test          # engine + smoke tests
-flutter run -d emulator-5554
+## Verify
+
+```sh
+pnpm contracts
+pnpm typecheck
+pnpm test
+pnpm eval
+pnpm build
 ```
 
-For the full demo: start the overlay from the app bar (grant "Display
-over other apps" plus the SMS permissions), open **Google Messages**, then
-in the emulator's Extended Controls → Phone, send an SMS to the emulated
-device from `+1 872-555-0147` with the smishing text. The fleet scan panel
-opens **over Messages itself** — drones, highlights, verdict, Block &
-Report — without ever entering Swat. Back in Swat, the same text is in
-the inbox view and the overlay block shows in the Blocked tab.
+Mobile browser checks are in `tests/e2e`; run `pnpm exec playwright test` after installing Chromium with `pnpm exec playwright install chromium`. The evaluation runner uses deterministic scenarios by default. A deterministic template is labeled deterministic; it is not presented as a recorded model response.
 
-## Accessibility — senior-first by design
+## Configure real services
 
-Scam texts target older adults hardest, so Swat's UI follows the
-`elderly_mobile_ui` skill's numbers: body text at 17–18sp with nothing
-meaningful below 13.5sp, secondary text kept at white70 (no
-gray-on-black "elegance"), primary actions at least 56dp tall, drone
-targets 52–56dp, plain outcome-named buttons, and the fleet honors the
-system reduce-motion setting by landing instantly instead of flying.
-The native overlay panel over Google Messages uses the same scale.
+Copy `.env.example` to `.env` at the repository root. Secrets belong only in that ignored file. Keep the default `DEMO_MODE=1`, `DEMO_CACHE=only`, and `COMMS_MODE=terminal` until live setup is complete. Never use a `NEXT_PUBLIC_` prefix for a service key.
 
-## Talk to a drone — voice conversations
+- **Supabase:** use the existing `hrkuvnanhchdvinviaii` project. Apply the SQL in `supabase/migrations` using Supabase CLI or SQL editor. No new project is needed. The migration enables RLS, grants the server role access explicitly, and publishes operational tables for realtime. The app uses its server API and SSE, so no anonymous database grants are needed. Live persistence requires `DEMO_MODE=0` and server credentials.
+- **NVIDIA:** set `NVIDIA_API_KEY`, `NEMOTRON_BASE_URL`, and an accessible `NEMOTRON_MODEL`. The model named in the plan currently shows a deprecated free endpoint in the catalog. Verify availability in your NVIDIA account before choosing live inference. The provider is configurable and has bounded calls and a deterministic fallback.
+- **Photon:** the current account uses Beta 2.0. Configure its project ID and API key (`PHOTON_API_KEY`, with the older `PHOTON_PROJECT_SECRET` name accepted as a fallback), plus the destination's `PHOTON_WEBHOOK_SECRET`. Configure opted-in phones in `PHOTON_PEOPLE_JSON` and `PHOTON_RECIPIENT_ALLOWLIST`. Enable `COMMS_MODE=live` only when ready to send. See [Photon destination settings](docs/photon-setup.md).
+- **Voice:** ElevenLabs Agents replaces the planned LiveKit worker. Use `VOICE_PROVIDER=elevenlabs` and leave `VOICE_MODE=simulated` until the agent, imported Photon SIP phone number, scoped tools and opted-in recipient are ready. See [ElevenLabs setup](docs/elevenlabs.md).
 
-Tap any drone after a scan and choose **"Talk to … — ask by voice"**.
-Each drone holds a real conversation about the message it just checked:
+Live provider behavior requires account-side setup and a real rehearsal. The procedure screen offers source PDFs and a bounded PDF upload/review flow; unfamiliar PDFs require a configured vision endpoint. SIP voice, live vision extraction, AR, gauge photos, and Brev hosting must not be claimed in a pitch unless separately configured and tested. Read [implementation status](docs/status.md) before using the original demo script.
 
-- **Dictation:** tap the microphone and ask out loud; your words are
-  transcribed into the question box live (platform speech recognizer).
-- **Spoken answers:** the drone replies in text and out loud
-  (text-to-speech), with a speaker toggle in the corner.
-- **Grounded, on-device answers:** replies are composed on the phone
-  from that drone's actual findings — its points, its evidence quotes,
-  the fleet's verdict and confidence — plus a small built-in base of
-  scam-safety knowledge for its specialty. It is not a cloud chatbot:
-  ask it something outside its scan and specialty and it says so and
-  points back to what it found. Typed questions work everywhere;
-  dictation needs a device speech recognizer and a microphone.
+## Code map
 
-## Messages are organized like Messages
+| Directory             | Purpose                                                |
+| --------------------- | ------------------------------------------------------ |
+| `apps/field`          | Next.js field app, Director, traces, phone mirror, API |
+| `packages/contracts`  | Zod schemas, generated OpenAPI and tool contracts      |
+| `services/core`       | State machine, deterministic engines, persistence      |
+| `services/sim`        | Seeded plant, fault timelines, demo clock              |
+| `services/agents`     | Workflow tools, provider, cache, MCP, scenario evals   |
+| `services/comms`      | Escalation ladder, read-backs, Spectrum adapter        |
+| `supabase/migrations` | Server-only database schema, grants, realtime          |
+| `data`                | Seed site, scenarios, procedures                       |
 
-The Messages tab opens on a **conversation list** — one row per contact
-(sender / phone number), with the latest message as a preview, a message
-count, and a risk pill showing that contact's most dangerous message.
-Tap a contact and you are in the **thread**: every message with that
-contact, where the fleet docks, flies, and scans exactly as before.
-
-The **Sort messages** bar orders the conversation list: Newest first,
-Oldest first, Highest risk first, or **By phone number** — numbers
-compared as numbers (short codes like 456 before full numbers), named
-contacts ("Mom") after the numbers.
-
-## Light and dark mode
-
-A sun/moon toggle in every app bar (and on the login screen) flips the
-whole app between the original dark theme and a light theme. All
-surfaces and text route through a brightness-aware palette
-(`lib/theme/app_palette.dart`); the drone colors and the T-Mobile
-magenta are the same in both modes. The choice is saved on the device
-and restored on the next launch. The native overlay panel over Google
-Messages keeps its dark styling in both modes — it is an alert surface
-that floats over other apps, where the high-contrast dark panel reads
-best.
-
-## The drones
-
-Each specialist is drawn as a top-down quadcopter (custom painter: four
-rotor pods, gradient body, camera lens) and wears its specialty as an
-icon in the lens — hook for Angler, link chain for Link, QR for Scanner,
-bolt for Pressure, person-search for Impersonator, swap arrows for Swap —
-so the fleet reads by shape as well as color. Name pills use the theme's
-primary text color with a colored dot, staying legible in both modes.
-Scanning adds a radar sweep, a stronger glow, and a hover bob; risk
-badges are white-ringed pills. Rotor spin and bob honor the system's
-reduced-motion setting. The native overlay chips mirror the identity
-with specialty monograms (A / L / QR / ! / ID / SIM).
-
-Deployment follows the evidence: during a scan each drone flies to a
-post on the right side while its check runs, but only drones that
-actually found something keep their post. Drones that checked and found
-nothing fly back to their dock slots along the bottom, wearing a green
-check badge — so after a scan, the side of the screen shows exactly who
-flagged the message, and a clean message leaves the whole fleet docked.
+See [architecture](docs/architecture.md), [design research](docs/design.md), and [judging map](docs/judging.md).

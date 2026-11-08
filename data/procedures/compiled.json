@@ -1,0 +1,265 @@
+[
+  {
+    "id": "MOP-UPS",
+    "title": "UPS-2 maintenance bypass & PDU-4 isolation",
+    "assetTypes": ["ups", "pdu"],
+    "version": 2,
+    "approved": true,
+    "steps": [
+      {
+        "number": 1,
+        "text": "Confirm approved maintenance window and work permit",
+        "action": {
+          "type": "inspect",
+          "target": "UPS-2"
+        },
+        "preconditions": [],
+        "hazards": [],
+        "verification": "Verify local indication and record read-back."
+      },
+      {
+        "number": 2,
+        "text": "Read local UPS status and record all active work",
+        "action": {
+          "type": "inspect",
+          "target": "UPS-2"
+        },
+        "preconditions": [],
+        "hazards": [],
+        "verification": "Verify local indication and record read-back."
+      },
+      {
+        "number": 3,
+        "text": "Verify alternate source is online",
+        "action": {
+          "type": "inspect",
+          "target": "UPS-1"
+        },
+        "preconditions": [],
+        "hazards": [],
+        "verification": "Verify local indication and record read-back."
+      },
+      {
+        "number": 4,
+        "text": "Check Row D load and redundant feed indications",
+        "action": {
+          "type": "inspect",
+          "target": "Row-D"
+        },
+        "preconditions": [],
+        "hazards": [],
+        "verification": "Verify local indication and record read-back."
+      },
+      {
+        "number": 5,
+        "text": "Notify chief engineer before isolation",
+        "action": {
+          "type": "inspect",
+          "target": "PDU-4"
+        },
+        "preconditions": [],
+        "hazards": [],
+        "verification": "Verify local indication and record read-back."
+      },
+      {
+        "number": 6,
+        "text": "Open breaker B at PDU-4",
+        "action": {
+          "type": "open_breaker",
+          "target": "PDU-4"
+        },
+        "preconditions": ["retain_last_source"],
+        "hazards": ["Loss of source"],
+        "verification": "Verify local indication and record read-back."
+      },
+      {
+        "number": 7,
+        "text": "Verify isolation and complete the work record",
+        "action": {
+          "type": "inspect",
+          "target": "PDU-4"
+        },
+        "preconditions": [],
+        "hazards": [],
+        "verification": "Verify local indication and record read-back."
+      }
+    ]
+  },
+  {
+    "id": "MOP-PUMP",
+    "title": "CHW pump swap",
+    "assetTypes": ["chiller", "pump"],
+    "version": 3,
+    "approved": true,
+    "steps": [
+      {
+        "number": 1,
+        "text": "Verify standby pump pressure and flow",
+        "action": {
+          "type": "inspect",
+          "target": "P-3"
+        },
+        "preconditions": [],
+        "hazards": [],
+        "verification": "Verify local indication and record read-back."
+      },
+      {
+        "number": 2,
+        "text": "Confirm pump B bearing inspection with mechanical lead",
+        "action": {
+          "type": "inspect",
+          "target": "CH-3"
+        },
+        "preconditions": [],
+        "hazards": [],
+        "verification": "Verify local indication and record read-back."
+      },
+      {
+        "number": 3,
+        "text": "Stop pump only after independent cooling path is verified",
+        "action": {
+          "type": "stop",
+          "target": "P-2"
+        },
+        "preconditions": ["retain_last_source"],
+        "hazards": ["Loss of source"],
+        "verification": "Verify local indication and record read-back."
+      }
+    ]
+  },
+  {
+    "id": "EOP-CHILLER",
+    "title": "Chiller restart after trip",
+    "assetTypes": ["chiller"],
+    "version": 4,
+    "approved": true,
+    "steps": [
+      {
+        "number": 1,
+        "text": "Confirm voltage stabilized and notify chief engineer",
+        "action": {
+          "type": "inspect",
+          "target": "CH-1"
+        },
+        "preconditions": [],
+        "hazards": [],
+        "verification": "Verify local indication and record read-back."
+      },
+      {
+        "number": 2,
+        "text": "Verify chilled water supply remains below restart limit of 62°F",
+        "action": {
+          "type": "inspect",
+          "target": "CDU-1"
+        },
+        "preconditions": ["temperature_below_62"],
+        "hazards": [],
+        "verification": "Verify local indication and record read-back."
+      },
+      {
+        "number": 3,
+        "text": "Request authorized operator restart; verify plant locally",
+        "action": {
+          "type": "inspect",
+          "target": "CH-3"
+        },
+        "preconditions": [],
+        "hazards": [],
+        "verification": "Verify local indication and record read-back."
+      }
+    ]
+  },
+  {
+    "id": "MOP-BAT",
+    "title": "Battery string impedance test",
+    "assetTypes": ["battery"],
+    "version": 2,
+    "approved": true,
+    "steps": [
+      {
+        "number": 1,
+        "text": "Verify PPE and approved battery test permit",
+        "action": {
+          "type": "inspect",
+          "target": "BAT-3"
+        },
+        "preconditions": [],
+        "hazards": [],
+        "verification": "Verify local indication and record read-back."
+      },
+      {
+        "number": 2,
+        "text": "Measure each cell; compare against its own baseline",
+        "action": {
+          "type": "inspect",
+          "target": "BAT-3"
+        },
+        "preconditions": [],
+        "hazards": [],
+        "verification": "Verify local indication and record read-back."
+      },
+      {
+        "number": 3,
+        "text": "Escalate impedance drift even if voltage is normal",
+        "action": {
+          "type": "inspect",
+          "target": "BAT-3"
+        },
+        "preconditions": [],
+        "hazards": [],
+        "verification": "Verify local indication and record read-back."
+      }
+    ]
+  },
+  {
+    "id": "MOP-CDU",
+    "title": "CDU filter change",
+    "assetTypes": ["cdu"],
+    "version": 1,
+    "approved": true,
+    "steps": [
+      {
+        "number": 1,
+        "text": "Verify standby coolant path and leak detection",
+        "action": {
+          "type": "inspect",
+          "target": "CDU-1"
+        },
+        "preconditions": [],
+        "hazards": [],
+        "verification": "Verify local indication and record read-back."
+      },
+      {
+        "number": 2,
+        "text": "Inspect filter differential pressure without isolating flow",
+        "action": {
+          "type": "inspect",
+          "target": "CDU-1"
+        },
+        "preconditions": [],
+        "hazards": [],
+        "verification": "Verify local indication and record read-back."
+      }
+    ]
+  },
+  {
+    "id": "MOP-UPS-OLD",
+    "title": "UPS-2 maintenance bypass (superseded)",
+    "assetTypes": ["ups"],
+    "version": 1,
+    "approved": false,
+    "steps": [
+      {
+        "number": 1,
+        "text": "Verify old work instructions",
+        "action": {
+          "type": "inspect",
+          "target": "UPS-2"
+        },
+        "preconditions": [],
+        "hazards": [],
+        "verification": "Verify local indication and record read-back."
+      }
+    ]
+  }
+]

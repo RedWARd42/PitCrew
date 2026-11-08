@@ -1,0 +1,1 @@
+{"name":"@groundtruth/agents","private":true,"type":"module","scripts":{"mcp":"tsx mcp.ts"},"dependencies":{"ai":"^6.0.0","@ai-sdk/openai-compatible":"^2.0.0","@modelcontextprotocol/sdk":"^1.25.0","zod":"^4.0.0"}}

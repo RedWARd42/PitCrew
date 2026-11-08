@@ -1,0 +1,6 @@
+{
+  "name": "@groundtruth/sim",
+  "private": true,
+  "type": "module",
+  "exports": "./index.ts"
+}

@@ -1,0 +1,56 @@
+[
+  {
+    "procedureId": "MOP-UPS",
+    "title": "UPS-2 maintenance bypass & PDU-4 isolation",
+    "filename": "MOP-UPS-rev2.pdf",
+    "revision": 2,
+    "sourceHash": "790531f930bf9afd9e090ede0d840017b5ffdb172b9619e595a46a3a1df243a6",
+    "bytes": 3826,
+    "superseded": false
+  },
+  {
+    "procedureId": "MOP-PUMP",
+    "title": "CHW pump swap",
+    "filename": "MOP-PUMP-rev3.pdf",
+    "revision": 3,
+    "sourceHash": "5bb3dee67ec1e4dfe36a80ffec610aa5b1f5539dfa0caa9541664ffba06b7c0e",
+    "bytes": 3022,
+    "superseded": false
+  },
+  {
+    "procedureId": "EOP-CHILLER",
+    "title": "Chiller restart after trip",
+    "filename": "EOP-CHILLER-rev4.pdf",
+    "revision": 4,
+    "sourceHash": "5892e2f5bdbdd95c9c110e963c8b713fa2dae1e80f47a68960fba08c99bb25de",
+    "bytes": 3049,
+    "superseded": false
+  },
+  {
+    "procedureId": "MOP-BAT",
+    "title": "Battery string impedance test",
+    "filename": "MOP-BAT-rev2.pdf",
+    "revision": 2,
+    "sourceHash": "9b5c9b093b3cafe419f0c09c60d7834b56f5e711fcfc620b2f9911ab2cd56254",
+    "bytes": 2982,
+    "superseded": false
+  },
+  {
+    "procedureId": "MOP-CDU",
+    "title": "CDU filter change",
+    "filename": "MOP-CDU-rev1.pdf",
+    "revision": 1,
+    "sourceHash": "14abba59ed2798251280086f4fa1b01b7fa101359684cce599729107cefb5e45",
+    "bytes": 2750,
+    "superseded": false
+  },
+  {
+    "procedureId": "MOP-UPS-OLD",
+    "title": "UPS-2 maintenance bypass (superseded)",
+    "filename": "MOP-UPS-OLD-rev1.pdf",
+    "revision": 1,
+    "sourceHash": "7a1e06cf886fd49187878b68127a082bda67aa7159eb69c996a83d4ac30bbda2",
+    "bytes": 2506,
+    "superseded": true
+  }
+]
