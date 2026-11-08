@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:livekit_client/livekit_client.dart';
 
+import '../theme/app_palette.dart';
+
 class CallScreen extends StatefulWidget {
   const CallScreen({super.key});
 
@@ -15,7 +17,6 @@ class CallScreen extends StatefulWidget {
 
 class _CallScreenState extends State<CallScreen> {
   static const Color pink = Color(0xFFE20074);
-  static const Color background = Color(0xFF140F19);
   static const String backendUrl = 'http://10.0.2.2:8000';
 
   Timer? _pollTimer;
@@ -116,7 +117,7 @@ class _CallScreenState extends State<CallScreen> {
         _backendConnected = false;
       });
 
-      debugPrint('SWAT backend error: $error');
+      debugPrint('Swat backend error: $error');
     } finally {
       _checking = false;
     }
@@ -298,7 +299,7 @@ class _CallScreenState extends State<CallScreen> {
       await room.disconnect();
       await room.dispose();
     } catch (error) {
-      debugPrint('SWAT cleanup error: $error');
+      debugPrint('Swat cleanup error: $error');
     }
   }
 
@@ -308,12 +309,13 @@ class _CallScreenState extends State<CallScreen> {
     final isConnected = _connectedRoom != null;
 
     return Scaffold(
-      backgroundColor: background,
+      backgroundColor: context.palette.background,
       appBar: AppBar(
-        backgroundColor: background,
-        foregroundColor: Colors.white,
+        backgroundColor: context.palette.background,
+        foregroundColor: context.palette.primaryText,
         centerTitle: true,
         title: const Text('Swat Call Protection'),
+        actions: const [ThemeToggleButton()],
       ),
       body: SafeArea(
         child: Padding(
@@ -328,20 +330,20 @@ class _CallScreenState extends State<CallScreen> {
                         ? Icons.cloud_done_rounded
                         : Icons.cloud_off_rounded,
                     color: _backendConnected
-                        ? Colors.greenAccent
-                        : Colors.orangeAccent,
+                        ? const Color(0xFF22C55E)
+                        : const Color(0xFFF59E0B),
                     size: 18,
                   ),
                   const SizedBox(width: 8),
                   Flexible(
                     child: Text(
                       _backendConnected
-                          ? 'Connected to SWAT protection'
-                          : 'Connecting to SWAT backend...',
+                          ? 'Connected to Swat protection'
+                          : 'Connecting to Swat backend...',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 13,
+                      style: TextStyle(
+                        color: context.palette.secondaryText,
+                        fontSize: 14.5,
                       ),
                     ),
                   ),
@@ -383,8 +385,8 @@ class _CallScreenState extends State<CallScreen> {
                     ? 'Incoming Call'
                     : 'Call Protection Ready',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: context.palette.primaryText,
                   fontSize: 29,
                   fontWeight: FontWeight.bold,
                 ),
@@ -402,8 +404,8 @@ class _CallScreenState extends State<CallScreen> {
                     ? 'Unknown Caller\nIncoming via Photon'
                     : 'Waiting for a Photon phone call...',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white70,
+                style: TextStyle(
+                  color: context.palette.secondaryText,
                   fontSize: 16,
                   height: 1.5,
                 ),
@@ -420,13 +422,13 @@ class _CallScreenState extends State<CallScreen> {
                     color: pink.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: const Text(
-                    'SWAT call protection active\n'
+                  child: Text(
+                    'Swat call protection active\n'
                         'AI scam analysis will be added next',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
+                      color: context.palette.primaryText,
+                      fontSize: 15,
                       height: 1.5,
                     ),
                   ),
@@ -439,8 +441,8 @@ class _CallScreenState extends State<CallScreen> {
                   _errorMessage!,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    color: Colors.orangeAccent,
-                    fontSize: 14,
+                    color: Color(0xFFF59E0B),
+                    fontSize: 15,
                   ),
                 ),
               ],
@@ -459,7 +461,7 @@ class _CallScreenState extends State<CallScreen> {
                       child: _callAction(
                         icon: Icons.call_end_rounded,
                         label: 'Decline',
-                        color: const Color(0xFFD83B43),
+                        color: const Color(0xFFEF4444),
                         onPressed: _declineCall,
                       ),
                     ),
@@ -468,7 +470,7 @@ class _CallScreenState extends State<CallScreen> {
                       child: _callAction(
                         icon: Icons.call_rounded,
                         label: 'Answer',
-                        color: const Color(0xFF259B59),
+                        color: const Color(0xFF22C55E),
                         onPressed: _answerCall,
                       ),
                     ),
@@ -486,7 +488,7 @@ class _CallScreenState extends State<CallScreen> {
                         label: _microphoneEnabled
                             ? 'Mute'
                             : 'Unmute',
-                        color: const Color(0xFF393040),
+                        color: context.palette.bubble,
                         onPressed: _toggleMicrophone,
                       ),
                     ),
@@ -495,7 +497,7 @@ class _CallScreenState extends State<CallScreen> {
                       child: _callAction(
                         icon: Icons.call_end_rounded,
                         label: 'End Call',
-                        color: const Color(0xFFD83B43),
+                        color: const Color(0xFFEF4444),
                         onPressed: _endCall,
                       ),
                     ),
@@ -503,12 +505,12 @@ class _CallScreenState extends State<CallScreen> {
                 ),
 
               if (!isRinging && !isConnected && !_connecting)
-                const Text(
-                  'SWAT is monitoring for incoming calls',
+                Text(
+                  'Swat is monitoring for incoming calls',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white54,
-                    fontSize: 14,
+                    color: context.palette.tertiaryText,
+                    fontSize: 15,
                   ),
                 ),
 
@@ -546,8 +548,8 @@ class _CallScreenState extends State<CallScreen> {
         const SizedBox(height: 12),
         Text(
           label,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: context.palette.primaryText,
             fontSize: 15,
             fontWeight: FontWeight.w600,
           ),

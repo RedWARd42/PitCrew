@@ -46,10 +46,10 @@ class _SwatShellState extends State<SwatShell> {
       body: IndexedStack(
         index: _index,
         children: [
-          const CallScreen(),
           MessagesScreen(
             onOpenFamily: () => setState(() => _index = 4),
           ),
+          const CallScreen(),
           const EmailsScreen(),
           const BlockedScreen(),
           const FamilyScreen(),
@@ -64,14 +64,14 @@ class _SwatShellState extends State<SwatShell> {
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         destinations: [
           const NavigationDestination(
-            icon: Icon(Icons.phone_outlined),
-            selectedIcon: Icon(Icons.phone),
-            label: 'Calls',
-          ),
-          const NavigationDestination(
             icon: Icon(Icons.message_outlined),
             selectedIcon: Icon(Icons.message),
             label: 'Messages',
+          ),
+          const NavigationDestination(
+            icon: Icon(Icons.phone_outlined),
+            selectedIcon: Icon(Icons.phone),
+            label: 'Calls',
           ),
           const NavigationDestination(
             icon: Icon(Icons.mail_outline),
