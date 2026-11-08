@@ -143,6 +143,17 @@ class _MessagesScreenState extends State<MessagesScreen> {
       _scanningIdx = -1;
       _walkSteps = null;
     });
+    _autoFleet();
+  }
+
+  /// The fleet launches itself: opening a thread — or moving to
+  /// another message inside it — starts the scan automatically, no
+  /// button press. (The Release the Fleet button remains as a manual
+  /// re-launch if a scan is ever interrupted.)
+  void _autoFleet() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _openSender != null) _releaseFleet();
+    });
   }
 
   void _closeThread() {
@@ -275,6 +286,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
       _scanningIdx = -1;
       _walkSteps = null;
     });
+    if (_openSender != null) _autoFleet();
   }
 
   Future<void> _releaseFleet() async {

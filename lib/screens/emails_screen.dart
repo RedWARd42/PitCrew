@@ -194,6 +194,16 @@ class _EmailDetailScreenState extends State<EmailDetailScreen> {
   List<WalkthroughStep>? _walk;
   int _walkIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    // The fleet launches itself when an email opens — same rule as
+    // message threads, no Release the Fleet press needed.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _release();
+    });
+  }
+
   /// Analyzer spans index into displayText (subject + body); the reading
   /// view renders the body separately, so shift spans by the header size.
   int get _spanOffset => widget.email.subject.length + 1;
