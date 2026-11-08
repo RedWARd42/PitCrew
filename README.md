@@ -191,3 +191,13 @@ device from `+1 872-555-0147` with the smishing text. The fleet scan panel
 opens **over Messages itself** — drones, highlights, verdict, Block &
 Report — without ever entering Swat. Back in Swat, the same text is in
 the inbox view and the overlay block shows in the Blocked tab.
+
+## Accessibility — senior-first by design
+
+Scam texts target older adults hardest, so Swat's UI follows the
+`elderly_mobile_ui` skill's numbers: body text at 17–18sp with nothing
+meaningful below 13.5sp, secondary text kept at white70 (no
+gray-on-black "elegance"), primary actions at least 56dp tall, drone
+targets 52–56dp, plain outcome-named buttons, and the fleet honors the
+system reduce-motion setting by landing instantly instead of flying.
+The native overlay panel over Google Messages uses the same scale.
