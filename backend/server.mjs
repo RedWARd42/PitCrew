@@ -14,6 +14,7 @@
 import http from 'node:http';
 import { MongoClient } from 'mongodb';
 import { validateReport, reportDocument } from './validate.mjs';
+import { INSERT_SCAN_EVENT, scanEventParams } from './tiger.mjs';
 
 const uri = process.env.MONGODB_URI;
 const port = Number(process.env.PORT ?? 8787);
@@ -34,6 +35,16 @@ const blocklist = db.collection('blocklist');
 await reports.createIndex({ incidentId: 1 }, { unique: true });
 await blocklist.createIndex({ sender: 1 }, { unique: true });
 console.log('Connected to MongoDB Atlas (db: %s)', db.databaseName);
+
+// Optional Tiger Data telemetry sink ([MLH] Best Use of Tiger Data):
+// off unless TIGERDATA_URL is set; the pg driver loads lazily so the
+// Mongo-only deployment carries no extra weight.
+let tigerPool = null;
+if (process.env.TIGERDATA_URL) {
+  const { default: pg } = await import('pg');
+  tigerPool = new pg.Pool({ connectionString: process.env.TIGERDATA_URL });
+  console.log('Tiger Data telemetry sink enabled');
+}
 
 function sendJson(res, status, obj) {
   const body = JSON.stringify(obj);
@@ -94,6 +105,14 @@ const server = http.createServer(async (req, res) => {
         },
         { upsert: true },
       );
+      if (tigerPool) {
+        try {
+          await tigerPool.query(INSERT_SCAN_EVENT, scanEventParams(doc));
+        } catch (err) {
+          // Telemetry must never fail a report.
+          console.error('Tiger Data insert failed:', err.message);
+        }
+      }
       return sendJson(res, 201, { stored: true, incidentId: doc.incidentId });
     }
 

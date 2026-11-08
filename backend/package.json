@@ -1,1 +1,15 @@
-{"dependencies":{"mongodb":"^6.10.0"},"description":"Shared blocklist + report store for Swat, backed by MongoDB Atlas.","name":"swat-fleet-backend","private":true,"scripts":{"start":"node server.mjs","test":"node test/validate.test.mjs"},"type":"module","version":"1.0.0"}
+{
+  "dependencies": {
+    "mongodb": "^6.10.0",
+    "pg": "^8.13.0"
+  },
+  "description": "Shared blocklist + report store for Swat, backed by MongoDB Atlas.",
+  "name": "swat-fleet-backend",
+  "private": true,
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node test/validate.test.mjs && node test/tiger.test.mjs"
+  },
+  "type": "module",
+  "version": "1.0.0"
+}

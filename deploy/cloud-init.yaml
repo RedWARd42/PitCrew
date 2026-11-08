@@ -1,0 +1,14 @@
+# Vultr user-data script: paste into the "Cloud Init" / user-data
+# field when creating the instance. It installs Docker, clones the
+# repo, and stages the env file. One manual step remains afterwards
+# (by design — the Atlas password never travels through this file):
+#   1. SSH in, edit /opt/swat/deploy/.env (set MONGODB_URI)
+#   2. cd /opt/swat/deploy && docker compose up -d --build
+#cloud-config
+package_update: true
+runcmd:
+  - curl -fsSL https://get.docker.com | sh
+  - systemctl enable --now docker
+  - git clone https://github.com/RedWARd42/Swat.git /opt/swat
+  - cp /opt/swat/deploy/.env.example /opt/swat/deploy/.env
+  - echo "Swat staged. Edit /opt/swat/deploy/.env, then docker compose up." > /opt/swat/SETUP.txt

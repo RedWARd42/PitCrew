@@ -1,0 +1,11 @@
+# Run from this directory:  docker compose up -d --build
+# Secrets live in deploy/.env (see .env.example) — never committed.
+services:
+  fleet-backend:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    env_file: .env
+    ports:
+      - "8787:8787"
+    restart: unless-stopped
