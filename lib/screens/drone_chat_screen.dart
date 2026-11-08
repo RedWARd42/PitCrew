@@ -61,6 +61,8 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
 
   final List<_Turn> _turns = [];
   bool _listening = false;
+  double _soundLevel = 0;
+  bool _heardSound = false;
   bool _voiceOn = true;
   bool _speaking = false;
 
@@ -173,6 +175,8 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
         _showMicUnavailable();
         return;
       }
+      _soundLevel = 0;
+      _heardSound = false;
       await _speech.listen(
         onResult: (result) {
           if (!mounted) return;
@@ -181,6 +185,14 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
             _input.selection = TextSelection.fromPosition(
               TextPosition(offset: _input.text.length),
             );
+          });
+        },
+        onSoundLevelChange: (level) {
+          if (!mounted) return;
+          setState(() {
+            _soundLevel = level;
+            // The plugin reports roughly -2 (silence) to +10 (loud).
+            if (level > 1.0) _heardSound = true;
           });
         },
         listenOptions: SpeechListenOptions(
@@ -369,21 +381,43 @@ class _DroneChatScreenState extends State<DroneChatScreen> {
   }
 
   Widget _buildListeningStrip() {
+    // Live level meter: if this bar never moves while you talk, no
+    // audio is reaching the app at all (the emulator is recording
+    // silence) — a recognizer problem looks different (bar moves,
+    // words still wrong/missing). The strip says which one it is.
+    final fraction = ((_soundLevel + 2) / 12).clamp(0.0, 1.0);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       color: const Color(0xFF3B0A24),
       child: Row(
         children: [
-          Icon(Icons.mic, color: Color(0xFFF472B6), size: 20),
-          SizedBox(width: 8),
+          const Icon(Icons.mic, color: Color(0xFFF472B6), size: 20),
+          const SizedBox(width: 8),
           Expanded(
-            child: Text(
-              'Listening… speak now. Tap the voice button to stop.',
-              style: TextStyle(
-                color: context.palette.primaryText,
-                fontSize: 15.5,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _heardSound
+                      ? 'Listening… speak now. Tap the voice button to stop.'
+                      : 'Listening, but no sound is arriving yet. On the '
+                            'emulator: Extended Controls → Microphone → '
+                            'turn on "Virtual microphone uses host audio '
+                            'input", then speak.',
+                  style: TextStyle(
+                    color: context.palette.primaryText,
+                    fontSize: 15.5,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                LinearProgressIndicator(
+                  value: fraction,
+                  minHeight: 5,
+                  color: const Color(0xFFF472B6),
+                  backgroundColor: Colors.white24,
+                ),
+              ],
             ),
           ),
         ],
